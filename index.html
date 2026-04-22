@@ -501,6 +501,7 @@ function startScan() {
       if (decodedText === lastCode && now - lastCodeTime < 2000) return;
       lastCode = decodedText;
       lastCodeTime = now;
+      showToast('🔎 สแกนได้: ' + decodedText); // debug — ลบทีหลังได้
       handleCode(decodedText);
     },
     () => { /* scanning in progress — no action needed */ }

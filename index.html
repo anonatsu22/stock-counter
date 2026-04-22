@@ -14,56 +14,29 @@
     --border: rgba(255,255,255,0.06); --mono: 'IBM Plex Mono', monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg); color: var(--text);
-    font-family: 'IBM Plex Sans Thai', sans-serif; min-height: 100vh;
-    background-image:
-      radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,102,255,0.15) 0%, transparent 60%),
-      radial-gradient(ellipse 40% 40% at 90% 90%, rgba(0,212,255,0.06) 0%, transparent 60%);
-  }
-
-  /* HEADER */
-  .header {
-    padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border); background: rgba(17,24,39,0.8);
-    backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;
-  }
+  body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans Thai', sans-serif; min-height: 100vh; background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,102,255,0.15) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 90% 90%, rgba(0,212,255,0.06) 0%, transparent 60%); }
+  .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(17,24,39,0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 10px; }
-  .logo {
-    width: 36px; height: 36px; border-radius: 10px;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
-  }
-  .header-title { font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; }
+  .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+  .header-title { font-size: 1rem; font-weight: 700; }
   .header-sub { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
-  .btn-import {
-    padding: 6px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
-    background: rgba(0,212,255,0.12); color: var(--accent);
-    border: 1px solid rgba(0,212,255,0.3); font-family: var(--mono);
-    cursor: pointer; transition: background 0.2s; white-space: nowrap;
-  }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  .btn-import { padding: 6px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); font-family: var(--mono); cursor: pointer; transition: background 0.2s; white-space: nowrap; }
   .btn-import:hover { background: rgba(0,212,255,0.2); }
-
-  /* TABS */
+  .sync-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; transition: all 0.3s; white-space: nowrap; }
+  .sync-indicator.idle { display: none; }
+  .sync-indicator.syncing { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+  .sync-indicator.ok { background: rgba(0,255,136,0.10); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+  .sync-indicator.err { background: rgba(255,68,102,0.10); color: var(--red); border: 1px solid rgba(255,68,102,0.2); }
+  .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .sync-dot.spin { animation: spin 0.7s linear infinite; border-radius: 0; background: none; border: 2px solid currentColor; border-top-color: transparent; }
+  @keyframes spin { to { transform: rotate(360deg); } }
   .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
-  .tab-btn {
-    flex: 1; padding: 12px 8px; border: none; background: transparent;
-    color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.82rem; font-weight: 600; cursor: pointer;
-    border-bottom: 2px solid transparent; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 6px;
-  }
+  .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-  .page { display: none; }
-  .page.active { display: block; }
-
-  /* ===== SCAN PAGE ===== */
+  .page { display: none; } .page.active { display: block; }
   .scan-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-  .cam-box {
-    position: relative; border-radius: 20px; overflow: hidden;
-    background: #000; aspect-ratio: 4/3; border: 1.5px solid var(--border);
-    box-shadow: 0 0 40px rgba(0,102,255,0.15);
-  }
+  .cam-box { position: relative; border-radius: 20px; overflow: hidden; background: #000; aspect-ratio: 4/3; border: 1.5px solid var(--border); box-shadow: 0 0 40px rgba(0,102,255,0.15); }
   #scanner-container { width: 100%; height: 100%; }
   #scanner-container video { width: 100%; height: 100%; object-fit: cover; }
   .cam-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
@@ -77,63 +50,50 @@
   .scan-corner.br { bottom:-2px; right:-2px; border-width:0 3px 3px 0; border-radius:0 0 4px 0; }
   .cam-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 0.85rem; }
   .cam-placeholder .big { font-size: 3rem; }
-  .scan-flash { position: absolute; inset: 0; background: rgba(0,255,136,0.2); border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
-  .scan-flash.show { opacity: 1; animation: flashOut 0.4s ease forwards; }
+  .scan-flash { position: absolute; inset: 0; background: rgba(0,255,136,0.2); border-radius: 20px; opacity: 0; pointer-events: none; }
+  .scan-flash.show { animation: flashOut 0.4s ease forwards; }
   @keyframes flashOut { 0%{opacity:1} 100%{opacity:0} }
   .scan-controls { display: flex; gap: 10px; }
-  .btn-scan {
-    flex: 1; padding: 14px; border-radius: 14px; border: none;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.95rem; font-weight: 700; cursor: pointer;
-    transition: transform 0.15s, box-shadow 0.15s;
-    box-shadow: 0 4px 20px rgba(0,102,255,0.35);
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
-  .btn-scan:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(0,102,255,0.45); }
-  .btn-scan:active { transform: scale(0.97); }
-  .btn-scan.stop { background: linear-gradient(135deg, #ff4466, #cc2244); box-shadow: 0 4px 20px rgba(255,68,102,0.35); }
+  .btn-scan { flex: 1; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(0,102,255,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
+  .btn-scan:hover { transform: translateY(-2px); } .btn-scan:active { transform: scale(0.97); }
+  .btn-scan.stop { background: linear-gradient(135deg, #ff4466, #cc2244); }
   .btn-scan:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   .btn-manual { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-  .btn-manual:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
   .last-scan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: none; }
   .last-scan.show { display: block; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1); }
   @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   .last-scan-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
   .last-scan-body { display: flex; align-items: center; gap: 12px; }
   .last-scan-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
-  .icon-ok   { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); }
-  .icon-over { background: rgba(255,204,0,0.12);  border: 1px solid rgba(255,204,0,0.25); }
-  .icon-err  { background: rgba(255,68,102,0.12); border: 1px solid rgba(255,68,102,0.25); }
-  .icon-new  { background: rgba(0,212,255,0.12);  border: 1px solid rgba(0,212,255,0.25); }
+  .icon-ok { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); }
+  .icon-over { background: rgba(255,204,0,0.12); border: 1px solid rgba(255,204,0,0.25); }
+  .icon-err { background: rgba(255,68,102,0.12); border: 1px solid rgba(255,68,102,0.25); }
+  .icon-new { background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); }
   .last-scan-info { flex: 1; min-width: 0; }
   .last-scan-name { font-weight: 700; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .last-scan-code { font-family: var(--mono); font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
   .last-scan-count { text-align: right; flex-shrink: 0; }
   .count-num { font-family: var(--mono); font-size: 1.4rem; font-weight: 700; line-height: 1; }
-  .count-of  { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-  .count-ok { color: var(--green); } .count-over { color: var(--yellow); } .count-err { color: var(--red); } .count-new { color: var(--accent); }
+  .count-of { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+  .count-ok { color: var(--green); } .count-over { color: var(--yellow); } .count-new { color: var(--accent); }
   .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .mini-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 8px; text-align: center; }
   .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
   .mini-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
   .prog-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; transition: border-color 0.4s, background 0.4s; }
   .prog-wrap.state-warn { border-color: rgba(255,204,0,0.35); background: rgba(255,204,0,0.05); }
-  .prog-wrap.state-ok   { border-color: rgba(0,255,136,0.35);  background: rgba(0,255,136,0.05); }
+  .prog-wrap.state-ok { border-color: rgba(0,255,136,0.35); background: rgba(0,255,136,0.05); }
   .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .prog-title { font-size: 0.78rem; color: var(--muted); }
-  .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); transition: color 0.3s; }
+  .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); }
   .prog-bar-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
   .prog-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s; }
   .prog-bar-fill.fill-warn { background: linear-gradient(90deg, #cc8800, var(--yellow)); }
-  .prog-bar-fill.fill-ok   { background: linear-gradient(90deg, #00aa55, var(--green)); }
-  .prog-done-msg { display: none; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; font-weight: 600; margin-top: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
-  .prog-done-msg:hover { opacity: 0.8; }
+  .prog-bar-fill.fill-ok { background: linear-gradient(90deg, #00aa55, var(--green)); }
+  .prog-done-msg { display: none; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; font-weight: 600; margin-top: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; }
   .prog-done-msg.show { display: flex; }
   .prog-done-msg.msg-warn { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.25); }
-  .prog-done-msg.msg-ok   { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.2); }
-
-  /* ===== SUMMARY PAGE ===== */
+  .prog-done-msg.msg-ok { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
   .summary-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
   .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; }
@@ -143,50 +103,40 @@
   .section-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px; }
   .section-hint { font-size: 0.72rem; color: var(--muted); padding: 0 2px; margin-top: -8px; display: flex; align-items: center; gap: 5px; }
   .item-list { display: flex; flex-direction: column; gap: 8px; }
-  .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s, background 0.2s; cursor: pointer; user-select: none; }
+  .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; cursor: pointer; user-select: none; transition: border-color 0.2s, background 0.2s; }
   .item-card:hover { border-color: rgba(255,255,255,0.14); background: var(--surface2); }
   .item-card:active { transform: scale(0.985); }
-  .item-edit-btn { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--muted); transition: background 0.2s, color 0.2s; }
-  .item-card:hover .item-edit-btn { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.25); color: var(--accent); }
+  .item-sync-icon { flex-shrink: 0; font-size: 0.75rem; width: 18px; text-align: center; }
   .item-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .s-ok      { background: var(--green);  box-shadow: 0 0 6px var(--green); }
-  .s-over    { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-  .s-short   { background: var(--red);    box-shadow: 0 0 6px var(--red); }
+  .s-ok { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .s-over { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
+  .s-short { background: var(--red); box-shadow: 0 0 6px var(--red); }
   .s-pending { background: var(--muted); }
   .item-info { flex: 1; min-width: 0; }
   .item-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .item-code { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
-  .item-note-text { font-size: 0.7rem; color: var(--yellow); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
+  .item-note-text { font-size: 0.7rem; color: var(--yellow); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .item-right { text-align: right; flex-shrink: 0; }
   .item-count { font-family: var(--mono); font-size: 0.9rem; font-weight: 700; }
   .item-expected { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
   .tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-family: var(--mono); font-weight: 600; margin-top: 4px; }
-  .tag-ok     { background: rgba(0,255,136,0.12); color: var(--green); }
-  .tag-over   { background: rgba(255,204,0,0.12);  color: var(--yellow); }
-  .tag-short  { background: rgba(255,68,102,0.12); color: var(--red); }
-  .tag-pending{ background: rgba(100,116,139,0.15); color: var(--muted); }
+  .tag-ok { background: rgba(0,255,136,0.12); color: var(--green); }
+  .tag-over { background: rgba(255,204,0,0.12); color: var(--yellow); }
+  .tag-short { background: rgba(255,68,102,0.12); color: var(--red); }
+  .tag-pending { background: rgba(100,116,139,0.15); color: var(--muted); }
   .action-row { display: flex; gap: 10px; margin-top: 4px; }
-  .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-  .btn-export:hover { background: rgba(0,255,136,0.16); }
-  .btn-reset  { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,68,102,0.3); background: rgba(255,68,102,0.08); color: var(--red); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-  .btn-reset:hover { background: rgba(255,68,102,0.16); }
-
-  /* ===== OVERLAYS ===== */
+  .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
+  .btn-reset { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,68,102,0.3); background: rgba(255,68,102,0.08); color: var(--red); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
   .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: all; }
   .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); max-height: 92vh; overflow-y: auto; }
   .overlay.show .sheet { transform: translateY(0); }
   .sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--surface3); margin: 0 auto 16px; }
   .sheet-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
-
-  /* Manual */
   .manual-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 1.1rem; font-weight: 600; padding: 14px 16px; outline: none; transition: border-color 0.2s; margin-bottom: 14px; }
   .manual-input:focus { border-color: var(--accent); }
   .manual-input::placeholder { color: var(--muted); font-weight: 400; font-family: 'IBM Plex Sans Thai', sans-serif; }
-  .btn-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-  .btn-confirm:hover { opacity: 0.9; }
-
-  /* QTY */
+  .btn-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
   .qty-mode-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; font-family: var(--mono); margin-bottom: 10px; }
   .qty-mode-badge.mode-add { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
   .qty-mode-badge.mode-set { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.3); }
@@ -208,108 +158,45 @@
   .note-textarea:focus { border-color: rgba(255,204,0,0.4); }
   .note-textarea::placeholder { color: var(--muted); }
   .qty-confirm-row { display: flex; gap: 10px; }
-  .btn-qty-cancel { flex: 0 0 80px; padding: 14px; border-radius: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-  .btn-qty-cancel:hover { background: var(--surface2); }
-  .btn-qty-ok { flex: 1; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-  .btn-qty-ok:hover { opacity: 0.9; }
+  .btn-qty-cancel { flex: 0 0 80px; padding: 14px; border-radius: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; }
+  .btn-qty-ok { flex: 1; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
   .btn-qty-ok:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-qty-ok.mode-set { background: linear-gradient(135deg, #cc8800, var(--yellow)); color: #000; }
-
-  /* ===== IMPORT SHEET (NEW) ===== */
   .import-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-  .import-tab-btn {
-    flex: 1; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border);
-    background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
-    display: flex; align-items: center; justify-content: center; gap: 5px;
-  }
-  .import-tab-btn.active {
-    background: rgba(0,212,255,0.1); color: var(--accent);
-    border-color: rgba(0,212,255,0.35);
-  }
-  .import-panel { display: none; }
-  .import-panel.active { display: block; }
-
-  /* Google Sheet panel */
-  .gsheet-info {
-    background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15);
-    border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.78rem;
-    color: var(--muted); line-height: 1.7;
-  }
+  .import-tab-btn { flex: 1; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
+  .import-tab-btn.active { background: rgba(0,212,255,0.1); color: var(--accent); border-color: rgba(0,212,255,0.35); }
+  .import-panel { display: none; } .import-panel.active { display: block; }
+  .gsheet-info { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
   .gsheet-info strong { color: var(--accent); }
-  .gsheet-steps { counter-reset: step; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
-  .gsheet-step {
-    display: flex; align-items: flex-start; gap: 8px; font-size: 0.76rem;
-    color: var(--muted);
-  }
-  .gsheet-step-num {
-    flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
-    background: rgba(0,212,255,0.15); color: var(--accent);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.65rem; font-family: var(--mono); font-weight: 700;
-  }
-  .gsheet-fields {
-    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px;
-  }
-  .field-chip {
-    padding: 3px 10px; border-radius: 20px; font-family: var(--mono); font-size: 0.7rem;
-    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
-    display: flex; align-items: center; gap: 5px;
-  }
-  .field-chip .arrow { color: var(--muted); }
-  .field-chip .target { color: var(--accent); }
-  .field-chip.optional .target { color: var(--yellow); }
-
+  .gsheet-fields { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
+  .field-chip { padding: 3px 10px; border-radius: 20px; font-family: var(--mono); font-size: 0.7rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; gap: 5px; }
+  .field-chip .arrow { color: var(--muted); } .field-chip .target { color: var(--accent); } .field-chip.optional .target { color: var(--yellow); }
+  .gsheet-steps { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
+  .gsheet-step { display: flex; align-items: flex-start; gap: 8px; font-size: 0.76rem; color: var(--muted); }
+  .gsheet-step-num { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,212,255,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-family: var(--mono); font-weight: 700; }
   .gsheet-url-wrap { position: relative; margin-bottom: 10px; }
-  .gsheet-url-input {
-    width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
-    border-radius: 12px; color: var(--text); font-family: var(--mono);
-    font-size: 0.8rem; padding: 12px 44px 12px 14px; outline: none;
-    transition: border-color 0.2s;
-  }
+  .gsheet-url-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 0.8rem; padding: 12px 44px 12px 14px; outline: none; transition: border-color 0.2s; }
   .gsheet-url-input:focus { border-color: var(--accent); }
   .gsheet-url-input::placeholder { color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; }
-  .gsheet-url-clear {
-    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
-    background: none; border: none; color: var(--muted); font-size: 1rem;
-    cursor: pointer; padding: 4px; display: none;
-  }
+  .gsheet-url-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; display: none; }
   .gsheet-url-clear.show { display: block; }
-
-  .gsheet-sheet-row {
-    display: flex; gap: 8px; margin-bottom: 14px; align-items: center;
-  }
+  .gsheet-sheet-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
   .gsheet-sheet-label { font-size: 0.76rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
-  .gsheet-sheet-input {
-    flex: 1; background: var(--surface2); border: 1.5px solid var(--border);
-    border-radius: 10px; color: var(--text); font-family: var(--mono);
-    font-size: 0.82rem; padding: 8px 12px; outline: none; transition: border-color 0.2s;
-  }
-  .gsheet-sheet-input:focus { border-color: var(--accent); }
-
-  .btn-fetch {
-    width: 100%; padding: 13px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, #005acc, var(--accent));
-    color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.92rem; font-weight: 700; cursor: pointer;
-    transition: opacity 0.2s; margin-bottom: 14px;
-    display: flex; align-items: center; justify-content: center; gap: 8px;
-  }
+  .gsheet-sheet-input { flex: 1; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 0.82rem; padding: 8px 12px; outline: none; }
+  .btn-fetch { width: 100%; padding: 13px; border-radius: 12px; border: none; background: linear-gradient(135deg, #005acc, var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-fetch:disabled { opacity: 0.4; cursor: not-allowed; }
-  .btn-fetch:not(:disabled):hover { opacity: 0.9; }
-
-  .fetch-status {
-    border-radius: 10px; padding: 10px 14px; font-size: 0.8rem;
-    margin-bottom: 14px; display: none; align-items: center; gap: 8px;
-  }
+  .fetch-status { border-radius: 10px; padding: 10px 14px; font-size: 0.8rem; margin-bottom: 14px; display: none; align-items: center; gap: 8px; }
   .fetch-status.show { display: flex; }
   .fetch-status.loading { background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); color: var(--accent); }
   .fetch-status.success { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
-  .fetch-status.error   { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
+  .fetch-status.error { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
   .spinner { width: 14px; height: 14px; border: 2px solid rgba(0,212,255,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* CSV panel (same as before) */
+  .script-url-section { background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .script-url-label { font-size: 0.72rem; color: var(--green); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .script-url-input { width: 100%; background: var(--surface2); border: 1.5px solid rgba(0,255,136,0.2); border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 0.75rem; padding: 10px 12px; outline: none; }
+  .script-url-input::placeholder { color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.78rem; }
+  .script-url-hint { font-size: 0.7rem; color: var(--muted); margin-top: 6px; }
+  .btn-save-script { margin-top: 8px; width: 100%; padding: 9px; border-radius: 9px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
   .import-format { background: var(--surface2); border-radius: 12px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
   .import-format code { font-family: var(--mono); color: var(--accent); background: rgba(0,212,255,0.08); padding: 1px 6px; border-radius: 4px; }
   .import-drop { border: 2px dashed rgba(0,212,255,0.3); border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 14px; }
@@ -323,17 +210,12 @@
   .import-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
   .import-preview-item { background: var(--surface2); border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
   .icode { font-family: var(--mono); color: var(--accent); font-size: 0.78rem; }
-  .iexp  { font-family: var(--mono); color: var(--muted); font-size: 0.78rem; }
-  .btn-import-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
-  .btn-import-confirm:hover { opacity: 0.9; }
+  .iexp { font-family: var(--mono); color: var(--muted); font-size: 0.78rem; }
+  .btn-import-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
   .btn-import-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
   #import-file-input { display: none; }
-
-  /* Toast */
-  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s; opacity: 0; z-index: 300; white-space: nowrap; }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s; opacity: 0; z-index: 300; white-space: nowrap; max-width: 90vw; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
-
-  /* Empty state */
   .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
   .empty-state .es-icon { font-size: 3rem; margin-bottom: 12px; }
   .empty-state .es-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
@@ -341,20 +223,22 @@
 </style>
 </head>
 <body>
-
-<!-- HEADER -->
 <div class="header">
   <div class="header-left">
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub" id="header-sub">v2.0 · ไม่มีข้อมูล</div>
+      <div class="header-sub" id="header-sub">v3.0 · ไม่มีข้อมูล</div>
     </div>
   </div>
-  <button class="btn-import" onclick="openImport()">📥 นำเข้าข้อมูล</button>
+  <div class="header-right">
+    <div class="sync-indicator idle" id="sync-indicator">
+      <div class="sync-dot" id="sync-dot"></div>
+      <span id="sync-text">sync</span>
+    </div>
+    <button class="btn-import" onclick="openImport()">📥 นำเข้าข้อมูล</button>
+  </div>
 </div>
-
-<!-- TABS -->
 <div class="tabs">
   <button class="tab-btn active" onclick="showTab('scan')" id="tab-scan"><span>📷</span> สแกน</button>
   <button class="tab-btn" onclick="showTab('summary')" id="tab-summary">
@@ -362,8 +246,6 @@
     <span id="tab-badge" style="display:none;background:rgba(0,212,255,0.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:0.7rem;"></span>
   </button>
 </div>
-
-<!-- SCAN PAGE -->
 <div class="page active" id="page-scan">
   <div class="scan-wrap">
     <div class="cam-box">
@@ -405,8 +287,6 @@
     </div>
   </div>
 </div>
-
-<!-- SUMMARY PAGE -->
 <div class="page" id="page-summary">
   <div class="summary-wrap">
     <div class="stats-row">
@@ -423,20 +303,14 @@
     </div>
   </div>
 </div>
-
-<!-- MANUAL OVERLAY -->
 <div class="overlay" id="manual-overlay" onclick="closeManualOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">⌨️ พิมพ์ Material</div>
-    <input type="text" class="manual-input" id="manual-input"
-           placeholder="เช่น MAT001" autocomplete="off" autocapitalize="characters"
-           onkeydown="if(event.key==='Enter') confirmManual()">
+    <input type="text" class="manual-input" id="manual-input" placeholder="เช่น 1000123" autocomplete="off" autocapitalize="characters" onkeydown="if(event.key==='Enter') confirmManual()">
     <button class="btn-confirm" onclick="confirmManual()">ยืนยัน</button>
   </div>
 </div>
-
-<!-- QTY OVERLAY -->
 <div class="overlay" id="qty-overlay">
   <div class="sheet">
     <div class="sheet-handle"></div>
@@ -450,50 +324,37 @@
     </div>
     <div class="qty-display" id="qty-display">0</div>
     <div class="numpad">
-      <button class="numpad-btn" onclick="numpad('1')">1</button>
-      <button class="numpad-btn" onclick="numpad('2')">2</button>
-      <button class="numpad-btn" onclick="numpad('3')">3</button>
-      <button class="numpad-btn" onclick="numpad('4')">4</button>
-      <button class="numpad-btn" onclick="numpad('5')">5</button>
-      <button class="numpad-btn" onclick="numpad('6')">6</button>
-      <button class="numpad-btn" onclick="numpad('7')">7</button>
-      <button class="numpad-btn" onclick="numpad('8')">8</button>
-      <button class="numpad-btn" onclick="numpad('9')">9</button>
-      <button class="numpad-btn zero" onclick="numpad('0')">0</button>
-      <button class="numpad-btn del" onclick="numpad('del')">⌫</button>
+      <button class="numpad-btn" onclick="numpad('1')">1</button><button class="numpad-btn" onclick="numpad('2')">2</button><button class="numpad-btn" onclick="numpad('3')">3</button>
+      <button class="numpad-btn" onclick="numpad('4')">4</button><button class="numpad-btn" onclick="numpad('5')">5</button><button class="numpad-btn" onclick="numpad('6')">6</button>
+      <button class="numpad-btn" onclick="numpad('7')">7</button><button class="numpad-btn" onclick="numpad('8')">8</button><button class="numpad-btn" onclick="numpad('9')">9</button>
+      <button class="numpad-btn zero" onclick="numpad('0')">0</button><button class="numpad-btn del" onclick="numpad('del')">⌫</button>
     </div>
     <div class="note-label">📝 หมายเหตุ (ไม่บังคับ)</div>
-    <textarea class="note-textarea" id="note-textarea" rows="2"
-              placeholder="เช่น สินค้าถูกขายระหว่างนับ, บาร์โค้ดชำรุด..."></textarea>
+    <textarea class="note-textarea" id="note-textarea" rows="2" placeholder="เช่น สินค้าถูกขายระหว่างนับ, บาร์โค้ดชำรุด..."></textarea>
     <div class="qty-confirm-row">
       <button class="btn-qty-cancel" onclick="closeQty()">ยกเลิก</button>
       <button class="btn-qty-ok" id="btn-qty-ok" onclick="confirmQty()">✅ ยืนยัน</button>
     </div>
   </div>
 </div>
-
-<!-- IMPORT OVERLAY -->
 <div class="overlay" id="import-overlay" onclick="closeImportOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
     <div class="sheet-title">📥 นำเข้าข้อมูลสินค้า</div>
-
-    <!-- Source tabs -->
     <div class="import-tabs">
-      <button class="import-tab-btn active" id="itab-gsheet" onclick="switchImportTab('gsheet')">
-        🔗 Google Sheet
-      </button>
-      <button class="import-tab-btn" id="itab-csv" onclick="switchImportTab('csv')">
-        📄 อัปโหลด CSV
-      </button>
+      <button class="import-tab-btn active" id="itab-gsheet" onclick="switchImportTab('gsheet')">🔗 Google Sheet</button>
+      <button class="import-tab-btn" id="itab-csv" onclick="switchImportTab('csv')">📄 CSV</button>
     </div>
-
-    <!-- ===== GOOGLE SHEET PANEL ===== -->
     <div class="import-panel active" id="ipanel-gsheet">
-
+      <div class="script-url-section">
+        <div class="script-url-label">⚡ Apps Script URL (สำหรับ Sync)</div>
+        <input type="url" class="script-url-input" id="script-url-input" placeholder="https://script.google.com/macros/s/AKfy.../exec" />
+        <div class="script-url-hint">วาง Web App URL จาก Apps Script เพื่อ sync ข้อมูลกลับ Sheet แบบ real-time</div>
+        <button class="btn-save-script" onclick="saveScriptUrl()">💾 บันทึก URL</button>
+      </div>
       <div class="gsheet-info">
-        <strong>Field ที่ดึงมาจาก Google Sheet:</strong>
-        <div class="gsheet-fields" style="margin-top:8px">
+        <strong>Field ที่ดึงจาก Sheet:</strong>
+        <div class="gsheet-fields">
           <div class="field-chip"><span>Material</span><span class="arrow">→</span><span class="target">matcode</span></div>
           <div class="field-chip"><span>Material Description</span><span class="arrow">→</span><span class="target">name</span></div>
           <div class="field-chip"><span>Unrestricted</span><span class="arrow">→</span><span class="target">expected</span></div>
@@ -501,660 +362,348 @@
           <div class="field-chip optional"><span>Remark</span><span class="arrow">→</span><span class="target">หมายเหตุ</span></div>
         </div>
         <div class="gsheet-steps">
-          <div class="gsheet-step"><div class="gsheet-step-num">1</div><div>เปิด Google Sheet → กด <strong style="color:var(--text)">Share</strong></div></div>
-          <div class="gsheet-step"><div class="gsheet-step-num">2</div><div>เปลี่ยนเป็น <strong style="color:var(--text)">"Anyone with the link"</strong> → Viewer</div></div>
-          <div class="gsheet-step"><div class="gsheet-step-num">3</div><div>Copy URL แล้ววางด้านล่าง</div></div>
+          <div class="gsheet-step"><div class="gsheet-step-num">1</div><div>Share Sheet → <strong style="color:var(--text)">Anyone with the link</strong></div></div>
+          <div class="gsheet-step"><div class="gsheet-step-num">2</div><div>วาง URL ด้านล่าง แล้วกด "ดึงข้อมูล"</div></div>
         </div>
       </div>
-
       <div class="gsheet-url-wrap">
-        <input type="url" class="gsheet-url-input" id="gsheet-url-input"
-               placeholder="วาง URL Google Sheet ที่นี่..."
-               oninput="onUrlInput()" />
+        <input type="url" class="gsheet-url-input" id="gsheet-url-input" placeholder="วาง URL Google Sheet ที่นี่..." oninput="onUrlInput()" />
         <button class="gsheet-url-clear" id="gsheet-url-clear" onclick="clearUrl()">✕</button>
       </div>
-
       <div class="gsheet-sheet-row">
         <span class="gsheet-sheet-label">ชื่อ Sheet (tab):</span>
-        <input type="text" class="gsheet-sheet-input" id="gsheet-sheet-name"
-               placeholder="Sheet1" value="Sheet1" />
+        <input type="text" class="gsheet-sheet-input" id="gsheet-sheet-name" placeholder="Sheet1" value="Sheet1" />
       </div>
-
       <div class="fetch-status" id="fetch-status">
         <div class="spinner" id="fetch-spinner"></div>
         <span id="fetch-status-text"></span>
       </div>
-
-      <button class="btn-fetch" id="btn-fetch" onclick="fetchGSheet()" disabled>
-        <span id="fetch-btn-icon">🔗</span> ดึงข้อมูลจาก Google Sheet
-      </button>
-
+      <button class="btn-fetch" id="btn-fetch" onclick="fetchGSheet()" disabled>🔗 ดึงข้อมูลจาก Google Sheet</button>
       <div class="import-preview" id="gsheet-preview">
         <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="gsheet-count">0</span> รายการ)</div>
         <div class="import-preview-list" id="gsheet-preview-list"></div>
       </div>
-
-      <button class="btn-import-confirm" id="btn-gsheet-confirm" onclick="confirmGSheet()" disabled>
-        ✅ นำเข้าข้อมูล
-      </button>
+      <button class="btn-import-confirm" id="btn-gsheet-confirm" onclick="confirmGSheet()" disabled>✅ นำเข้าข้อมูล</button>
     </div>
-
-    <!-- ===== CSV PANEL ===== -->
     <div class="import-panel" id="ipanel-csv">
-      <div class="import-format">
-        รูปแบบ CSV ต้องมีคอลัมน์:<br>
-        <code>Material</code>, <code>Material Description</code>, <code>Unrestricted</code><br>
-        (ไม่บังคับ) <code>Count</code>, <code>Remark</code><br><br>
-        ตัวอย่าง:<br>
-        <code>Material,Material Description,Unrestricted</code><br>
-        <code>1000123,น็อตหกเหลี่ยม M8,50</code>
-      </div>
-      <div class="import-drop" id="import-drop"
-           onclick="document.getElementById('import-file-input').click()"
-           ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
+      <div class="import-format">คอลัมน์ที่รองรับ:<br><code>Material</code>, <code>Material Description</code>, <code>Unrestricted</code><br>(ไม่บังคับ) <code>Count</code>, <code>Remark</code></div>
+      <div class="import-drop" id="import-drop" onclick="document.getElementById('import-file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
         <div class="import-drop-icon">📂</div>
-        <div class="import-drop-text">
-          <strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br>
-          <span style="font-size:0.75rem">รองรับ .csv และ .txt</span>
-        </div>
+        <div class="import-drop-text"><strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง</div>
       </div>
       <input type="file" id="import-file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
       <div class="import-preview" id="csv-preview">
         <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="csv-count">0</span> รายการ)</div>
         <div class="import-preview-list" id="csv-preview-list"></div>
       </div>
-      <button class="btn-import-confirm" id="btn-csv-confirm" onclick="confirmImport()" disabled>
-        📥 นำเข้าข้อมูล
-      </button>
+      <button class="btn-import-confirm" id="btn-csv-confirm" onclick="confirmImport()" disabled>📥 นำเข้าข้อมูล</button>
     </div>
-
   </div>
 </div>
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
 <script>
-// =================== STATE ===================
-let STOCK_DATA   = [];
-let counts       = {};
-let notes        = {};
-let scanning     = false;
-let lastCode     = '', lastCodeTime = 0;
-let codeReader   = null;
-let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
-let pendingImport = [];
-let pendingGSheet = [];
+let STOCK_DATA=[],counts={},notes={},syncStatus={},scanning=false,lastCode='',lastCodeTime=0,codeReader=null;
+let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add',pendingImport=[],pendingGSheet=[],SCRIPT_URL='';
 
-// =================== TABS ===================
-function showTab(t) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('page-' + t).classList.add('active');
-  document.getElementById('tab-' + t).classList.add('active');
-  if (t === 'summary') renderSummary();
+function saveScriptUrl(){
+  const v=document.getElementById('script-url-input').value.trim();
+  if(!v||!v.startsWith('https://script.google.com')){showToast('❌ URL ไม่ถูกต้อง');return;}
+  SCRIPT_URL=v; showToast('✅ บันทึก Script URL — พร้อม sync!');
 }
 
-// =================== SCANNER ===================
-function toggleScan() { scanning ? stopScan() : startScan(); }
+async function syncToSheet(matcode){
+  if(!SCRIPT_URL)return;
+  const item=STOCK_DATA.find(i=>i.matcode===matcode); if(!item)return;
+  const count=counts[matcode]||0, remark=notes[matcode]||'', diff=count-item.expected;
+  const status=count===0?'ยังไม่นับ':count===item.expected?'ตรง':diff>0?`เกิน ${diff}`:`ขาด ${Math.abs(diff)}`;
+  setSyncIndicator('syncing','กำลัง sync...'); syncStatus[matcode]='pending';
+  try{
+    await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({material:matcode,count,remark,status,difference:diff}),mode:'no-cors'});
+    syncStatus[matcode]='ok'; setSyncIndicator('ok','sync แล้ว'); setTimeout(()=>setSyncIndicator('idle'),3000);
+  }catch(e){
+    syncStatus[matcode]='err'; setSyncIndicator('err','sync ไม่ได้'); setTimeout(()=>setSyncIndicator('idle'),5000);
+  }
+  if(document.getElementById('page-summary').classList.contains('active'))renderSummary();
+}
 
-function startScan() {
-  if (STOCK_DATA.length === 0) { showToast('⚠️ กรุณานำเข้าข้อมูลสินค้าก่อน'); return; }
-  const btn = document.getElementById('btn-scan');
-  btn.disabled = true;
-  btn.innerHTML = '<span>⏳</span> กำลังเปิดกล้อง...';
-  const container = document.getElementById('scanner-container');
-  container.innerHTML = '';
-  const video = document.createElement('video');
-  video.id = 'zxing-video';
-  video.setAttribute('playsinline', 'true');
-  container.appendChild(video);
-  const hints = new Map();
-  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
-    ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
-    ZXing.BarcodeFormat.EAN_13,   ZXing.BarcodeFormat.EAN_8,
-    ZXing.BarcodeFormat.UPC_A,    ZXing.BarcodeFormat.UPC_E,
-    ZXing.BarcodeFormat.QR_CODE,  ZXing.BarcodeFormat.DATA_MATRIX,
-  ]);
-  hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-  codeReader = new ZXing.BrowserMultiFormatReader(hints, 300);
-  codeReader.decodeFromConstraints(
-    { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
-    'zxing-video',
-    (result) => {
-      if (result) {
-        const code = result.getText(), now = Date.now();
-        if (code === lastCode && now - lastCodeTime < 2000) return;
-        lastCode = code; lastCodeTime = now;
-        handleCode(code);
-      }
-    }
-  ).then(() => {
-    scanning = true;
-    document.getElementById('cam-placeholder').style.display = 'none';
-    document.getElementById('cam-overlay').style.display = 'flex';
-    btn.disabled = false;
-    btn.innerHTML = '<span>⏹</span> หยุดสแกน';
-    btn.classList.add('stop');
-  }).catch(err => {
-    let msg = '❌ ไม่สามารถเปิดกล้องได้';
-    if (err?.name === 'NotAllowedError') msg = '❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
-    else if (err?.name === 'NotFoundError') msg = '❌ ไม่พบกล้องในอุปกรณ์นี้';
-    showToast(msg);
-    container.innerHTML = ''; codeReader = null;
-    btn.disabled = false; btn.innerHTML = '<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
+function setSyncIndicator(state,text=''){
+  const el=document.getElementById('sync-indicator'),dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');
+  el.className='sync-indicator '+state; txt.textContent=text;
+  dot.className=state==='syncing'?'sync-dot spin':'sync-dot';
+}
+
+function showTab(t){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('page-'+t).classList.add('active');
+  document.getElementById('tab-'+t).classList.add('active');
+  if(t==='summary')renderSummary();
+}
+
+function toggleScan(){scanning?stopScan():startScan();}
+
+function startScan(){
+  if(!STOCK_DATA.length){showToast('⚠️ กรุณานำเข้าข้อมูลก่อน');return;}
+  const btn=document.getElementById('btn-scan'); btn.disabled=true; btn.innerHTML='<span>⏳</span> กำลังเปิดกล้อง...';
+  const container=document.getElementById('scanner-container'); container.innerHTML='';
+  const video=document.createElement('video'); video.id='zxing-video'; video.setAttribute('playsinline','true'); container.appendChild(video);
+  const hints=new Map();
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.CODE_128,ZXing.BarcodeFormat.CODE_39,ZXing.BarcodeFormat.EAN_13,ZXing.BarcodeFormat.EAN_8,ZXing.BarcodeFormat.UPC_A,ZXing.BarcodeFormat.UPC_E,ZXing.BarcodeFormat.QR_CODE,ZXing.BarcodeFormat.DATA_MATRIX]);
+  hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+  codeReader=new ZXing.BrowserMultiFormatReader(hints,300);
+  codeReader.decodeFromConstraints({video:{facingMode:'environment',width:{ideal:1280},height:{ideal:720}}},'zxing-video',(result)=>{
+    if(result){const code=result.getText(),now=Date.now();if(code===lastCode&&now-lastCodeTime<2000)return;lastCode=code;lastCodeTime=now;handleCode(code);}
+  }).then(()=>{
+    scanning=true; document.getElementById('cam-placeholder').style.display='none'; document.getElementById('cam-overlay').style.display='flex';
+    btn.disabled=false; btn.innerHTML='<span>⏹</span> หยุดสแกน'; btn.classList.add('stop');
+  }).catch(err=>{
+    let msg='❌ ไม่สามารถเปิดกล้องได้';
+    if(err?.name==='NotAllowedError')msg='❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
+    else if(err?.name==='NotFoundError')msg='❌ ไม่พบกล้องในอุปกรณ์นี้';
+    showToast(msg); container.innerHTML=''; codeReader=null; btn.disabled=false; btn.innerHTML='<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
   });
 }
 
-function stopScan() {
-  if (codeReader) { codeReader.reset(); codeReader = null; }
-  scanning = false;
-  document.getElementById('cam-overlay').style.display = 'none';
-  document.getElementById('cam-placeholder').style.display = 'flex';
-  document.getElementById('scanner-container').innerHTML = '';
-  const btn = document.getElementById('btn-scan');
-  btn.innerHTML = '<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
+function stopScan(){
+  if(codeReader){codeReader.reset();codeReader=null;} scanning=false;
+  document.getElementById('cam-overlay').style.display='none'; document.getElementById('cam-placeholder').style.display='flex';
+  document.getElementById('scanner-container').innerHTML='';
+  const btn=document.getElementById('btn-scan'); btn.innerHTML='<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
 }
 
-// =================== HANDLE CODE ===================
-function handleCode(code) {
-  const flash = document.getElementById('scan-flash');
-  flash.classList.remove('show'); void flash.offsetWidth; flash.classList.add('show');
-  const item = STOCK_DATA.find(i => i.matcode === code);
-  if (!item) { showLastScan({ code, found: false }); showToast('⚠️ ไม่พบ Material นี้ในระบบ'); return; }
-  openQty(code, item, 'add');
+function handleCode(code){
+  const flash=document.getElementById('scan-flash'); flash.classList.remove('show'); void flash.offsetWidth; flash.classList.add('show');
+  const item=STOCK_DATA.find(i=>i.matcode===code);
+  if(!item){showLastScan({code,found:false});showToast('⚠️ ไม่พบ Material นี้ในระบบ');return;}
+  openQty(code,item,'add');
 }
 
-function applyCount(code, item, qty, mode, note) {
-  counts[code] = mode === 'set' ? qty : (counts[code] || 0) + qty;
-  if (note && note.trim()) notes[code] = note.trim();
-  else if (mode === 'set') notes[code] = '';
-
-  showLastScan({ code, item, count: counts[code], found: true });
-  updateProgress(); updateBadge();
-  if (document.getElementById('page-summary').classList.contains('active')) renderSummary();
-
-  const diff = counts[code] - item.expected;
-  if (counts[code] === item.expected) showToast(`✅ ${item.name} — ครบแล้ว!`);
-  else if (diff > 0) showToast(`⚠️ ${item.name} — เกิน ${diff} ชิ้น`);
+function applyCount(code,item,qty,mode,note){
+  counts[code]=mode==='set'?qty:(counts[code]||0)+qty;
+  if(note&&note.trim())notes[code]=note.trim(); else if(mode==='set')notes[code]='';
+  showLastScan({code,item,count:counts[code],found:true}); updateProgress(); updateBadge();
+  if(document.getElementById('page-summary').classList.contains('active'))renderSummary();
+  const diff=counts[code]-item.expected;
+  if(counts[code]===item.expected)showToast(`✅ ${item.name} — ครบแล้ว!`);
+  else if(diff>0)showToast(`⚠️ ${item.name} — เกิน ${diff} ชิ้น`);
   else showToast(`${mode==='set'?'✏️':'📦'} ${item.name} — ${counts[code]}/${item.expected}`);
+  syncToSheet(code);
 }
 
-// =================== QTY POPUP ===================
-function openQty(code, item, mode = 'add') {
-  qtyCode = code; qtyItem = item; qtyVal = ''; qtyMode = mode;
-  document.getElementById('qty-item-name').textContent = item.name;
-  const already = counts[code] || 0;
-  document.getElementById('qty-item-meta').textContent =
-    mode === 'set' ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}`
-                   : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
-  document.getElementById('note-textarea').value = notes[code] || '';
-  const badge = document.getElementById('qty-mode-badge');
-  const display = document.getElementById('qty-display');
-  const okBtn = document.getElementById('btn-qty-ok');
-  if (mode === 'set') {
-    badge.textContent = '✏️ แก้ไขจำนวน'; badge.className = 'qty-mode-badge mode-set';
-    display.classList.add('mode-set'); okBtn.textContent = '✏️ บันทึก'; okBtn.className = 'btn-qty-ok mode-set';
-  } else {
-    badge.textContent = '➕ เพิ่มจำนวน'; badge.className = 'qty-mode-badge mode-add';
-    display.classList.remove('mode-set'); okBtn.textContent = '✅ ยืนยัน'; okBtn.className = 'btn-qty-ok';
-  }
-  updateQtyDisplay();
-  document.getElementById('qty-overlay').classList.add('show');
+function openQty(code,item,mode='add'){
+  qtyCode=code; qtyItem=item; qtyVal=''; qtyMode=mode;
+  document.getElementById('qty-item-name').textContent=item.name;
+  const already=counts[code]||0;
+  document.getElementById('qty-item-meta').textContent=mode==='set'?`${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}`:`${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
+  document.getElementById('note-textarea').value=notes[code]||'';
+  const badge=document.getElementById('qty-mode-badge'),display=document.getElementById('qty-display'),okBtn=document.getElementById('btn-qty-ok');
+  if(mode==='set'){badge.textContent='✏️ แก้ไขจำนวน';badge.className='qty-mode-badge mode-set';display.classList.add('mode-set');okBtn.textContent='✏️ บันทึก';okBtn.className='btn-qty-ok mode-set';}
+  else{badge.textContent='➕ เพิ่มจำนวน';badge.className='qty-mode-badge mode-add';display.classList.remove('mode-set');okBtn.textContent='✅ ยืนยัน';okBtn.className='btn-qty-ok';}
+  updateQtyDisplay(); document.getElementById('qty-overlay').classList.add('show');
 }
 
-function closeQty() {
-  document.getElementById('qty-overlay').classList.remove('show');
-  qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add'; lastCode = '';
-}
+function closeQty(){document.getElementById('qty-overlay').classList.remove('show');qtyCode=null;qtyItem=null;qtyVal='';qtyMode='add';lastCode='';}
 
-function numpad(key) {
-  if (key === 'del') qtyVal = qtyVal.slice(0, -1);
-  else { if (qtyVal === '0') qtyVal = key; else if (qtyVal.length >= 5) return; else qtyVal += key; }
+function numpad(key){
+  if(key==='del')qtyVal=qtyVal.slice(0,-1);
+  else{if(qtyVal==='0')qtyVal=key;else if(qtyVal.length>=5)return;else qtyVal+=key;}
   updateQtyDisplay();
 }
 
-function updateQtyDisplay() {
-  const el = document.getElementById('qty-display');
-  const n = parseInt(qtyVal) || 0;
-  el.textContent = n === 0 ? '0' : n.toLocaleString();
-  el.classList.toggle('has-val', n > 0);
-  document.getElementById('btn-qty-ok').disabled = qtyMode === 'set' ? qtyVal === '' : n <= 0;
+function updateQtyDisplay(){
+  const el=document.getElementById('qty-display'),n=parseInt(qtyVal)||0;
+  el.textContent=n===0?'0':n.toLocaleString(); el.classList.toggle('has-val',n>0);
+  document.getElementById('btn-qty-ok').disabled=qtyMode==='set'?qtyVal==='':n<=0;
 }
 
-function confirmQty() {
-  const qty = parseInt(qtyVal) || 0;
-  if (qtyMode !== 'set' && qty <= 0) return;
-  if (qtyMode === 'set' && qtyVal === '') return;
-  const note = document.getElementById('note-textarea').value;
-  const [code, item, mode] = [qtyCode, qtyItem, qtyMode];
-  closeQty();
-  applyCount(code, item, qty, mode, note);
+function confirmQty(){
+  const qty=parseInt(qtyVal)||0; if(qtyMode!=='set'&&qty<=0)return; if(qtyMode==='set'&&qtyVal==='')return;
+  const note=document.getElementById('note-textarea').value,[code,item,mode]=[qtyCode,qtyItem,qtyMode];
+  closeQty(); applyCount(code,item,qty,mode,note);
 }
 
-function editCount(matcode) {
-  const item = STOCK_DATA.find(i => i.matcode === matcode);
-  if (item) openQty(matcode, item, 'set');
+function editCount(matcode){const item=STOCK_DATA.find(i=>i.matcode===matcode);if(item)openQty(matcode,item,'set');}
+
+function showLastScan({code,item,count,found}){
+  const el=document.getElementById('last-scan'),body=document.getElementById('last-scan-body'); el.classList.add('show');
+  if(!found){body.innerHTML=`<div class="last-scan-icon icon-err">❓</div><div class="last-scan-info"><div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div><div class="last-scan-code">${code}</div></div>`;return;}
+  const diff=count-item.expected; let iconClass,countClass,tag;
+  if(count===item.expected){iconClass='icon-ok';countClass='count-ok';tag=`<span class="tag tag-ok">✅ ครบ</span>`;}
+  else if(diff>0){iconClass='icon-over';countClass='count-over';tag=`<span class="tag tag-over">⚠️ เกิน ${diff}</span>`;}
+  else{iconClass='icon-new';countClass='count-new';tag=`<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`;}
+  body.innerHTML=`<div class="last-scan-icon ${iconClass}">📦</div><div class="last-scan-info"><div class="last-scan-name">${escHtml(item.name)}</div><div class="last-scan-code">${code}</div>${tag}</div><div class="last-scan-count"><div class="count-num ${countClass}">${count}</div><div class="count-of">จาก ${item.expected}</div></div>`;
 }
 
-// =================== LAST SCAN ===================
-function showLastScan({ code, item, count, found }) {
-  const el = document.getElementById('last-scan');
-  const body = document.getElementById('last-scan-body');
-  el.classList.add('show');
-  if (!found) {
-    body.innerHTML = `<div class="last-scan-icon icon-err">❓</div>
-      <div class="last-scan-info">
-        <div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div>
-        <div class="last-scan-code">${code}</div>
-      </div>`;
-    return;
-  }
-  const diff = count - item.expected;
-  let iconClass, countClass, tag;
-  if (count === item.expected)    { iconClass='icon-ok';   countClass='count-ok';   tag=`<span class="tag tag-ok">✅ ครบ</span>`; }
-  else if (diff > 0)              { iconClass='icon-over'; countClass='count-over'; tag=`<span class="tag tag-over">⚠️ เกิน ${diff}</span>`; }
-  else                            { iconClass='icon-new';  countClass='count-new';  tag=`<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`; }
-  body.innerHTML = `
-    <div class="last-scan-icon ${iconClass}">📦</div>
-    <div class="last-scan-info">
-      <div class="last-scan-name">${escHtml(item.name)}</div>
-      <div class="last-scan-code">${code}</div>${tag}
-    </div>
-    <div class="last-scan-count">
-      <div class="count-num ${countClass}">${count}</div>
-      <div class="count-of">จาก ${item.expected}</div>
-    </div>`;
+function openManual(){document.getElementById('manual-overlay').classList.add('show');setTimeout(()=>document.getElementById('manual-input').focus(),300);}
+function closeManual(){document.getElementById('manual-overlay').classList.remove('show');document.getElementById('manual-input').value='';}
+function closeManualOutside(e){if(e.target===document.getElementById('manual-overlay'))closeManual();}
+function confirmManual(){const val=document.getElementById('manual-input').value.trim().toUpperCase();if(!val)return;closeManual();handleCode(val);}
+
+function switchImportTab(tab){
+  ['gsheet','csv'].forEach(t=>{document.getElementById('itab-'+t).classList.toggle('active',t===tab);document.getElementById('ipanel-'+t).classList.toggle('active',t===tab);});
 }
 
-// =================== MANUAL ===================
-function openManual() {
-  document.getElementById('manual-overlay').classList.add('show');
-  setTimeout(() => document.getElementById('manual-input').focus(), 300);
-}
-function closeManual() { document.getElementById('manual-overlay').classList.remove('show'); document.getElementById('manual-input').value = ''; }
-function closeManualOutside(e) { if (e.target === document.getElementById('manual-overlay')) closeManual(); }
-function confirmManual() {
-  const val = document.getElementById('manual-input').value.trim().toUpperCase();
-  if (!val) return;
-  closeManual(); handleCode(val);
-}
-
-// =================== IMPORT TABS ===================
-function switchImportTab(tab) {
-  ['gsheet','csv'].forEach(t => {
-    document.getElementById('itab-' + t).classList.toggle('active', t === tab);
-    document.getElementById('ipanel-' + t).classList.toggle('active', t === tab);
-  });
-}
-
-// =================== GOOGLE SHEET ===================
-function onUrlInput() {
-  const val = document.getElementById('gsheet-url-input').value.trim();
-  document.getElementById('gsheet-url-clear').classList.toggle('show', val.length > 0);
-  document.getElementById('btn-fetch').disabled = val.length === 0;
-  setFetchStatus('');
-  pendingGSheet = [];
+function onUrlInput(){
+  const val=document.getElementById('gsheet-url-input').value.trim();
+  document.getElementById('gsheet-url-clear').classList.toggle('show',val.length>0);
+  document.getElementById('btn-fetch').disabled=val.length===0;
+  setFetchStatus(''); pendingGSheet=[];
   document.getElementById('gsheet-preview').classList.remove('show');
-  document.getElementById('btn-gsheet-confirm').disabled = true;
+  document.getElementById('btn-gsheet-confirm').disabled=true;
 }
 
-function clearUrl() {
-  document.getElementById('gsheet-url-input').value = '';
-  onUrlInput();
+function clearUrl(){document.getElementById('gsheet-url-input').value='';onUrlInput();}
+
+function setFetchStatus(type,msg=''){
+  const el=document.getElementById('fetch-status'); el.className='fetch-status';
+  if(!type){el.style.display='none';return;}
+  el.classList.add('show',type); el.style.display='';
+  document.getElementById('fetch-spinner').style.display=type==='loading'?'block':'none';
+  document.getElementById('fetch-status-text').textContent=msg;
 }
 
-function setFetchStatus(type, msg = '') {
-  const el = document.getElementById('fetch-status');
-  el.className = 'fetch-status';
-  if (!type) { el.style.display = 'none'; return; }
-  el.classList.add('show', type);
-  el.style.display = '';
-  document.getElementById('fetch-spinner').style.display = type === 'loading' ? 'block' : 'none';
-  document.getElementById('fetch-status-text').textContent = msg;
+function buildCsvUrl(rawUrl,sheetName){
+  const m=rawUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/); if(!m)return null;
+  const sheetId=m[1],gidMatch=rawUrl.match(/[#&?]gid=(\d+)/);
+  if(gidMatch)return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gidMatch[1]}`;
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName||'Sheet1')}`;
 }
 
-/**
- * แปลง Google Sheet URL ทุกรูปแบบ → CSV export URL
- * รองรับ:
- *   https://docs.google.com/spreadsheets/d/SHEET_ID/edit#gid=...
- *   https://docs.google.com/spreadsheets/d/SHEET_ID/pubhtml
- *   https://docs.google.com/spreadsheets/d/SHEET_ID/  (และอื่นๆ)
- */
-function buildCsvUrl(rawUrl, sheetName) {
-  let sheetId = null;
-  const m = rawUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
-  if (m) sheetId = m[1];
-  if (!sheetId) return null;
-
-  // ถ้ามี gid ใน URL ให้ใช้ gid แทนชื่อ sheet
-  const gidMatch = rawUrl.match(/[#&?]gid=(\d+)/);
-  if (gidMatch) {
-    return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gidMatch[1]}`;
-  }
-  // ใช้ชื่อ sheet
-  const encodedName = encodeURIComponent(sheetName || 'Sheet1');
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedName}`;
+async function fetchGSheet(){
+  const rawUrl=document.getElementById('gsheet-url-input').value.trim(),sheetName=document.getElementById('gsheet-sheet-name').value.trim()||'Sheet1';
+  const csvUrl=buildCsvUrl(rawUrl,sheetName); if(!csvUrl){setFetchStatus('error','❌ URL ไม่ถูกต้อง');return;}
+  setFetchStatus('loading','กำลังดึงข้อมูล...'); document.getElementById('btn-fetch').disabled=true; document.getElementById('btn-gsheet-confirm').disabled=true; pendingGSheet=[];
+  try{
+    const res=await fetch(csvUrl); if(!res.ok)throw new Error(`HTTP ${res.status}`);
+    const text=await res.text(),parsed=parseStockCSV(text);
+    if(!parsed.length)throw new Error('ไม่พบข้อมูล หรือ Sheet ยังไม่ได้เปิดเป็น Public');
+    pendingGSheet=parsed; setFetchStatus('success',`✅ ดึงสำเร็จ ${parsed.length} รายการ`);
+    renderPreview('gsheet',parsed); document.getElementById('btn-gsheet-confirm').disabled=false;
+  }catch(err){setFetchStatus('error',err.message.includes('fetch')?'❌ ดึงไม่ได้ — ตรวจสอบ Public setting':`❌ ${err.message}`);}
+  finally{document.getElementById('btn-fetch').disabled=false;}
 }
 
-async function fetchGSheet() {
-  const rawUrl   = document.getElementById('gsheet-url-input').value.trim();
-  const sheetName = document.getElementById('gsheet-sheet-name').value.trim() || 'Sheet1';
-  const csvUrl   = buildCsvUrl(rawUrl, sheetName);
+function confirmGSheet(){if(pendingGSheet.length){applyImport(pendingGSheet);closeImport();}}
 
-  if (!csvUrl) { setFetchStatus('error', '❌ URL ไม่ถูกต้อง กรุณาใส่ URL จาก Google Sheets'); return; }
-
-  setFetchStatus('loading', 'กำลังดึงข้อมูล...');
-  document.getElementById('btn-fetch').disabled = true;
-  document.getElementById('btn-gsheet-confirm').disabled = true;
-  pendingGSheet = [];
-
-  try {
-    const res = await fetch(csvUrl);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const text = await res.text();
-    const parsed = parseStockCSV(text);
-    if (parsed.length === 0) throw new Error('ไม่พบข้อมูลที่ถูกต้อง หรือ Sheet ยังไม่เปิดเป็น Public');
-    pendingGSheet = parsed;
-    setFetchStatus('success', `✅ ดึงข้อมูลสำเร็จ ${parsed.length} รายการ`);
-    renderPreview('gsheet', parsed);
-    document.getElementById('btn-gsheet-confirm').disabled = false;
-  } catch (err) {
-    let msg = `❌ ${err.message}`;
-    if (err.message.includes('fetch') || err.message.includes('Failed')) {
-      msg = '❌ ดึงข้อมูลไม่ได้ — ตรวจสอบว่า Sheet เปิดเป็น Public แล้ว';
-    }
-    setFetchStatus('error', msg);
-  } finally {
-    document.getElementById('btn-fetch').disabled = false;
-  }
+function openImport(){
+  pendingImport=[];pendingGSheet=[];
+  ['csv-preview','gsheet-preview'].forEach(id=>document.getElementById(id).classList.remove('show'));
+  document.getElementById('btn-csv-confirm').disabled=true; document.getElementById('btn-gsheet-confirm').disabled=true;
+  document.getElementById('import-file-input').value=''; document.getElementById('script-url-input').value=SCRIPT_URL;
+  setFetchStatus(''); document.getElementById('import-overlay').classList.add('show');
 }
+function closeImport(){document.getElementById('import-overlay').classList.remove('show');}
+function closeImportOutside(e){if(e.target===document.getElementById('import-overlay'))closeImport();}
+function dragOver(e){e.preventDefault();document.getElementById('import-drop').classList.add('drag-over');}
+function dragLeave(){document.getElementById('import-drop').classList.remove('drag-over');}
+function dropFile(e){e.preventDefault();dragLeave();if(e.dataTransfer.files[0])parseCSVFile(e.dataTransfer.files[0]);}
+function handleFileSelect(e){if(e.target.files[0])parseCSVFile(e.target.files[0]);}
 
-function confirmGSheet() {
-  if (!pendingGSheet.length) return;
-  applyImport(pendingGSheet);
-  closeImport();
+function parseCSVFile(file){
+  const reader=new FileReader();
+  reader.onload=(e)=>{const parsed=parseStockCSV(e.target.result);if(!parsed.length){showToast('❌ ไม่พบข้อมูล');return;}pendingImport=parsed;renderPreview('csv',parsed);document.getElementById('btn-csv-confirm').disabled=false;};
+  reader.readAsText(file,'UTF-8');
 }
+function confirmImport(){if(pendingImport.length){applyImport(pendingImport);closeImport();}}
 
-// =================== CSV UPLOAD ===================
-function openImport() {
-  pendingImport = []; pendingGSheet = [];
-  document.getElementById('csv-preview').classList.remove('show');
-  document.getElementById('gsheet-preview').classList.remove('show');
-  document.getElementById('btn-csv-confirm').disabled = true;
-  document.getElementById('btn-gsheet-confirm').disabled = true;
-  document.getElementById('import-file-input').value = '';
-  setFetchStatus('');
-  document.getElementById('import-overlay').classList.add('show');
-}
-function closeImport() { document.getElementById('import-overlay').classList.remove('show'); }
-function closeImportOutside(e) { if (e.target === document.getElementById('import-overlay')) closeImport(); }
-function dragOver(e)  { e.preventDefault(); document.getElementById('import-drop').classList.add('drag-over'); }
-function dragLeave()  { document.getElementById('import-drop').classList.remove('drag-over'); }
-function dropFile(e)  { e.preventDefault(); dragLeave(); if (e.dataTransfer.files[0]) parseCSVFile(e.dataTransfer.files[0]); }
-function handleFileSelect(e) { if (e.target.files[0]) parseCSVFile(e.target.files[0]); }
-
-function parseCSVFile(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const parsed = parseStockCSV(e.target.result);
-    if (parsed.length === 0) { showToast('❌ ไม่พบข้อมูลที่ถูกต้องในไฟล์'); return; }
-    pendingImport = parsed;
-    renderPreview('csv', parsed);
-    document.getElementById('btn-csv-confirm').disabled = false;
-  };
-  reader.readAsText(file, 'UTF-8');
-}
-
-function confirmImport() {
-  if (!pendingImport.length) return;
-  applyImport(pendingImport);
-  closeImport();
-}
-
-// =================== SHARED PARSE ===================
-/**
- * parseStockCSV — รองรับ header ชื่อ:
- *   Material, Material Description, Unrestricted, Count (opt), Remark (opt)
- * รองรับ fallback: matcode/name/expected (รูปแบบเดิม)
- */
-function parseStockCSV(raw) {
-  const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-  if (lines.length < 2) return [];
-
-  // แยก header row
-  const headerLine = lines[0];
-  const headers = splitCSVRow(headerLine).map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
-
-  // หา index ของแต่ละ field
-  const COL = {
-    matcode:  findCol(headers, ['material']),
-    name:     findCol(headers, ['material description', 'description', 'name']),
-    expected: findCol(headers, ['unrestricted', 'expected', 'qty']),
-    count:    findCol(headers, ['count']),
-    remark:   findCol(headers, ['remark', 'note', 'หมายเหตุ']),
-  };
-
-  // ถ้าไม่มี header ที่รู้จัก → ลอง fallback positional (column 0,1,2)
-  const usePositional = COL.matcode === -1 && COL.name === -1;
-  const startIdx = usePositional ? (isNaN(parseInt(lines[0].split(',').pop())) ? 1 : 0) : 1;
-
-  const parsed = [];
-  for (let i = startIdx; i < lines.length; i++) {
-    const parts = splitCSVRow(lines[i]).map(p => p.trim().replace(/^"|"$/g, ''));
-    if (parts.length < 2) continue;
-
-    let matcode, name, expected, count, remark;
-    if (usePositional) {
-      matcode  = (parts[0] || '').toUpperCase();
-      name     = parts.slice(1, parts.length - 1).join(' ').trim() || parts[1] || '';
-      expected = parseInt(parts[parts.length - 1]);
-      count    = NaN; remark = '';
-    } else {
-      matcode  = COL.matcode  >= 0 ? (parts[COL.matcode]  || '').toUpperCase() : '';
-      name     = COL.name     >= 0 ? (parts[COL.name]     || '') : '';
-      expected = COL.expected >= 0 ? parseInt(parts[COL.expected] || '0') : 0;
-      count    = COL.count    >= 0 ? parseInt(parts[COL.count]    || '') : NaN;
-      remark   = COL.remark   >= 0 ? (parts[COL.remark]   || '') : '';
-    }
-
-    if (!matcode || !name || isNaN(expected)) continue;
-    parsed.push({ matcode, name, expected, count: isNaN(count) ? null : count, remark });
+function parseStockCSV(raw){
+  const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l); if(lines.length<2)return[];
+  const headers=splitCSVRow(lines[0]).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
+  const COL={matcode:findCol(headers,['material']),name:findCol(headers,['material description','description','name']),expected:findCol(headers,['unrestricted','expected','qty']),count:findCol(headers,['count']),remark:findCol(headers,['remark','note','หมายเหตุ'])};
+  const usePos=COL.matcode===-1&&COL.name===-1,startIdx=usePos?(isNaN(parseInt(lines[0].split(',').pop()))?1:0):1;
+  const parsed=[];
+  for(let i=startIdx;i<lines.length;i++){
+    const parts=splitCSVRow(lines[i]).map(p=>p.trim().replace(/^"|"$/g,''));if(parts.length<2)continue;
+    let matcode,name,expected,count,remark;
+    if(usePos){matcode=(parts[0]||'').toUpperCase();name=parts.slice(1,parts.length-1).join(' ').trim()||parts[1]||'';expected=parseInt(parts[parts.length-1]);count=NaN;remark='';}
+    else{matcode=COL.matcode>=0?(parts[COL.matcode]||'').toUpperCase():'';name=COL.name>=0?(parts[COL.name]||''):'';expected=COL.expected>=0?parseInt(parts[COL.expected]||'0'):0;count=COL.count>=0?parseInt(parts[COL.count]||''):NaN;remark=COL.remark>=0?(parts[COL.remark]||''):'';}
+    if(!matcode||!name||isNaN(expected))continue;
+    parsed.push({matcode,name,expected,count:isNaN(count)?null:count,remark});
   }
   return parsed;
 }
 
-function findCol(headers, candidates) {
-  for (const c of candidates) {
-    const idx = headers.indexOf(c);
-    if (idx !== -1) return idx;
-    // partial match
-    const partial = headers.findIndex(h => h.includes(c) || c.includes(h));
-    if (partial !== -1) return partial;
-  }
-  return -1;
+function findCol(headers,candidates){
+  for(const c of candidates){const idx=headers.indexOf(c);if(idx!==-1)return idx;const p=headers.findIndex(h=>h.includes(c)||c.includes(h));if(p!==-1)return p;}return -1;
 }
 
-function splitCSVRow(line) {
-  // รองรับ comma inside quotes
-  const result = []; let cur = ''; let inQ = false;
-  for (let i = 0; i < line.length; i++) {
-    const ch = line[i];
-    if (ch === '"') { inQ = !inQ; }
-    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
-    else cur += ch;
-  }
-  result.push(cur);
-  return result;
+function splitCSVRow(line){
+  const result=[];let cur='',inQ=false;
+  for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){result.push(cur);cur='';}else cur+=ch;}
+  result.push(cur);return result;
 }
 
-function renderPreview(source, parsed) {
-  const previewEl  = document.getElementById(source + '-preview');
-  const countEl    = document.getElementById(source + '-count');
-  const listEl     = document.getElementById(source + '-preview-list');
-  countEl.textContent = parsed.length;
-  listEl.innerHTML = parsed.slice(0, 5).map(p =>
-    `<div class="import-preview-item">
-      <div><span class="icode">${escHtml(p.matcode)}</span> ${escHtml(p.name)}</div>
-      <span class="iexp">เป้า ${p.expected}${p.count !== null ? ' · นับ ' + p.count : ''}</span>
-    </div>`
-  ).join('') +
-  (parsed.length > 5 ? `<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length - 5} รายการ</div>` : '');
-  previewEl.classList.add('show');
+function renderPreview(source,parsed){
+  document.getElementById(source+'-count').textContent=parsed.length;
+  document.getElementById(source+'-preview-list').innerHTML=parsed.slice(0,5).map(p=>`<div class="import-preview-item"><div><span class="icode">${escHtml(p.matcode)}</span> ${escHtml(p.name)}</div><span class="iexp">เป้า ${p.expected}${p.count!==null?' · นับ '+p.count:''}</span></div>`).join('')+(parsed.length>5?`<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length-5} รายการ</div>`:'');
+  document.getElementById(source+'-preview').classList.add('show');
 }
 
-// =================== APPLY IMPORT ===================
-function applyImport(parsed) {
-  STOCK_DATA = parsed;
-  counts = {}; notes = {};
-  STOCK_DATA.forEach(item => {
-    counts[item.matcode] = item.count !== null ? item.count : 0;
-    notes[item.matcode]  = item.remark || '';
-  });
-  document.getElementById('header-sub').textContent = `v2.0 · ${STOCK_DATA.length} รายการ`;
+function applyImport(parsed){
+  STOCK_DATA=parsed; counts={}; notes={}; syncStatus={};
+  STOCK_DATA.forEach(item=>{counts[item.matcode]=item.count!==null?item.count:0;notes[item.matcode]=item.remark||'';syncStatus[item.matcode]='';});
+  document.getElementById('header-sub').textContent=`v3.0 · ${STOCK_DATA.length} รายการ`;
   document.getElementById('last-scan').classList.remove('show');
   updateProgress(); updateBadge(); renderSummary();
   showToast(`✅ นำเข้าสำเร็จ ${STOCK_DATA.length} รายการ`);
 }
 
-// =================== SUMMARY ===================
-function renderSummary() {
-  if (STOCK_DATA.length === 0) {
-    ['stat-ok','stat-diff','stat-pending'].forEach(id => document.getElementById(id).textContent = 0);
-    document.getElementById('item-list').innerHTML = `
-      <div class="empty-state">
-        <div class="es-icon">📂</div>
-        <div class="es-title">ยังไม่มีข้อมูลสินค้า</div>
-        <div class="es-sub">กดปุ่ม "📥 นำเข้าข้อมูล" เพื่อโหลดรายการสินค้า</div>
-      </div>`;
-    return;
-  }
-  let ok = 0, diff = 0, pending = 0;
-  STOCK_DATA.forEach(item => {
-    const c = counts[item.matcode] || 0;
-    if (c === 0) pending++; else if (c === item.expected) ok++; else diff++;
-  });
-  document.getElementById('stat-ok').textContent      = ok;
-  document.getElementById('stat-diff').textContent    = diff;
-  document.getElementById('stat-pending').textContent = pending;
-  document.getElementById('item-list').innerHTML = STOCK_DATA.map(item => {
-    const c = counts[item.matcode] || 0;
-    const note = notes[item.matcode] || '';
-    let sc, tagHtml, cc;
-    if (c === 0)               { sc='s-pending'; tagHtml=`<span class="tag tag-pending">⏳ ยังไม่นับ</span>`; cc='color:var(--muted)'; }
-    else if (c===item.expected){ sc='s-ok';      tagHtml=`<span class="tag tag-ok">✅ ครบ</span>`;            cc='color:var(--green)'; }
-    else if (c>item.expected)  { sc='s-over';    tagHtml=`<span class="tag tag-over">⚠️ เกิน ${c-item.expected}</span>`; cc='color:var(--yellow)'; }
-    else                       { sc='s-short';   tagHtml=`<span class="tag tag-short">❌ ขาด ${item.expected-c}</span>`;  cc='color:var(--red)'; }
-    const noteHtml = note ? `<div class="item-note-text">📝 ${escHtml(note)}</div>` : '';
-    return `<div class="item-card" onclick="editCount('${item.matcode}')">
-      <div class="item-status ${sc}"></div>
-      <div class="item-info">
-        <div class="item-name">${escHtml(item.name)}</div>
-        <div class="item-code">${item.matcode}</div>
-        ${tagHtml}${noteHtml}
-      </div>
-      <div class="item-right">
-        <div class="item-count" style="${cc}">${c}</div>
-        <div class="item-expected">เป้า: ${item.expected}</div>
-      </div>
-      <div class="item-edit-btn">✏️</div>
-    </div>`;
+function renderSummary(){
+  if(!STOCK_DATA.length){['stat-ok','stat-diff','stat-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('item-list').innerHTML=`<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">ยังไม่มีข้อมูลสินค้า</div><div class="es-sub">กดปุ่ม "📥 นำเข้าข้อมูล"</div></div>`;return;}
+  let ok=0,diff=0,pending=0;
+  STOCK_DATA.forEach(item=>{const c=counts[item.matcode]||0;if(c===0)pending++;else if(c===item.expected)ok++;else diff++;});
+  document.getElementById('stat-ok').textContent=ok; document.getElementById('stat-diff').textContent=diff; document.getElementById('stat-pending').textContent=pending;
+  document.getElementById('item-list').innerHTML=STOCK_DATA.map(item=>{
+    const c=counts[item.matcode]||0,note=notes[item.matcode]||'',ss=syncStatus[item.matcode]||'';
+    const syncIcon=ss==='ok'?'🟢':ss==='err'?'🔴':ss==='pending'?'🔄':'';
+    let sc,tagHtml,cc;
+    if(c===0){sc='s-pending';tagHtml=`<span class="tag tag-pending">⏳ ยังไม่นับ</span>`;cc='color:var(--muted)';}
+    else if(c===item.expected){sc='s-ok';tagHtml=`<span class="tag tag-ok">✅ ครบ</span>`;cc='color:var(--green)';}
+    else if(c>item.expected){sc='s-over';tagHtml=`<span class="tag tag-over">⚠️ เกิน ${c-item.expected}</span>`;cc='color:var(--yellow)';}
+    else{sc='s-short';tagHtml=`<span class="tag tag-short">❌ ขาด ${item.expected-c}</span>`;cc='color:var(--red)';}
+    const noteHtml=note?`<div class="item-note-text">📝 ${escHtml(note)}</div>`:'';
+    return `<div class="item-card" onclick="editCount('${item.matcode}')"><div class="item-status ${sc}"></div><div class="item-info"><div class="item-name">${escHtml(item.name)}</div><div class="item-code">${item.matcode}</div>${tagHtml}${noteHtml}</div><div class="item-right"><div class="item-count" style="${cc}">${c}</div><div class="item-expected">เป้า: ${item.expected}</div></div>${syncIcon?`<div class="item-sync-icon">${syncIcon}</div>`:''}</div>`;
   }).join('');
 }
 
-function updateProgress() {
-  if (STOCK_DATA.length === 0) {
-    ['mini-ok','mini-diff','mini-pending'].forEach(id => document.getElementById(id).textContent = 0);
-    document.getElementById('prog-pct').textContent = '0 / 0 Material';
-    document.getElementById('prog-bar').style.width = '0%';
-    document.getElementById('prog-done-msg').classList.remove('show');
-    return;
-  }
-  let ok = 0, diff = 0, pending = 0;
-  STOCK_DATA.forEach(item => {
-    const c = counts[item.matcode] || 0;
-    if (c === 0) pending++; else if (c === item.expected) ok++; else diff++;
-  });
-  document.getElementById('mini-ok').textContent      = ok;
-  document.getElementById('mini-diff').textContent    = diff;
-  document.getElementById('mini-pending').textContent = pending;
-  const total = STOCK_DATA.length, counted = total - pending;
-  const pct = total ? Math.round(counted / total * 100) : 0;
-  const wrap = document.getElementById('prog-wrap');
-  const bar  = document.getElementById('prog-bar');
-  const msg  = document.getElementById('prog-done-msg');
-  const pctEl   = document.getElementById('prog-pct');
-  const titleEl = document.getElementById('prog-title');
-  pctEl.textContent = `${counted} / ${total} Material`;
-  bar.style.width   = pct + '%';
-  wrap.classList.remove('state-warn','state-ok');
-  bar.classList.remove('fill-warn','fill-ok');
-  msg.classList.remove('show','msg-warn','msg-ok');
-  if (counted < total) {
-    titleEl.textContent = 'นับไปแล้ว'; pctEl.style.color = 'var(--accent)';
-  } else if (diff > 0) {
-    wrap.classList.add('state-warn'); bar.classList.add('fill-warn');
-    titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--yellow)';
-    msg.classList.add('show','msg-warn');
-    msg.innerHTML = `⚠️ พบ ${diff} Material ผิดปกติ — แตะเพื่อดูสรุป`;
-  } else {
-    wrap.classList.add('state-ok'); bar.classList.add('fill-ok');
-    titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--green)';
-    msg.classList.add('show','msg-ok'); msg.innerHTML = '✅ ครบและตรงทั้งหมด!';
-  }
+function updateProgress(){
+  if(!STOCK_DATA.length){['mini-ok','mini-diff','mini-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('prog-pct').textContent='0 / 0 Material';document.getElementById('prog-bar').style.width='0%';document.getElementById('prog-done-msg').classList.remove('show');return;}
+  let ok=0,diff=0,pending=0;
+  STOCK_DATA.forEach(item=>{const c=counts[item.matcode]||0;if(c===0)pending++;else if(c===item.expected)ok++;else diff++;});
+  document.getElementById('mini-ok').textContent=ok; document.getElementById('mini-diff').textContent=diff; document.getElementById('mini-pending').textContent=pending;
+  const total=STOCK_DATA.length,counted=total-pending,pct=total?Math.round(counted/total*100):0;
+  const wrap=document.getElementById('prog-wrap'),bar=document.getElementById('prog-bar'),msg=document.getElementById('prog-done-msg'),pctEl=document.getElementById('prog-pct'),titleEl=document.getElementById('prog-title');
+  pctEl.textContent=`${counted} / ${total} Material`; bar.style.width=pct+'%';
+  wrap.classList.remove('state-warn','state-ok'); bar.classList.remove('fill-warn','fill-ok'); msg.classList.remove('show','msg-warn','msg-ok');
+  if(counted<total){titleEl.textContent='นับไปแล้ว';pctEl.style.color='var(--accent)';}
+  else if(diff>0){wrap.classList.add('state-warn');bar.classList.add('fill-warn');titleEl.textContent='นับครบแล้ว';pctEl.style.color='var(--yellow)';msg.classList.add('show','msg-warn');msg.innerHTML=`⚠️ พบ ${diff} Material ผิดปกติ — แตะเพื่อดูสรุป`;}
+  else{wrap.classList.add('state-ok');bar.classList.add('fill-ok');titleEl.textContent='นับครบแล้ว';pctEl.style.color='var(--green)';msg.classList.add('show','msg-ok');msg.innerHTML='✅ ครบและตรงทั้งหมด!';}
 }
 
-function updateBadge() {
-  const counted = STOCK_DATA.filter(i => (counts[i.matcode] || 0) > 0).length;
-  const badge = document.getElementById('tab-badge');
-  if (counted > 0) { badge.style.display = ''; badge.textContent = counted; }
-  else badge.style.display = 'none';
+function updateBadge(){
+  const counted=STOCK_DATA.filter(i=>(counts[i.matcode]||0)>0).length,badge=document.getElementById('tab-badge');
+  if(counted>0){badge.style.display='';badge.textContent=counted;}else badge.style.display='none';
 }
 
-function resetAll() {
-  if (!confirm('รีเซ็ตการนับทั้งหมดใช่ไหม?')) return;
-  STOCK_DATA.forEach(item => { counts[item.matcode] = 0; notes[item.matcode] = ''; });
+function resetAll(){
+  if(!confirm('รีเซ็ตการนับทั้งหมดใช่ไหม?'))return;
+  STOCK_DATA.forEach(item=>{counts[item.matcode]=0;notes[item.matcode]='';syncStatus[item.matcode]='';});
   document.getElementById('last-scan').classList.remove('show');
-  updateProgress(); updateBadge(); renderSummary();
-  showToast('🔄 รีเซ็ตเรียบร้อยแล้ว');
+  updateProgress(); updateBadge(); renderSummary(); showToast('🔄 รีเซ็ตเรียบร้อย');
 }
 
-// =================== EXPORT CSV ===================
-function exportCSV() {
-  if (STOCK_DATA.length === 0) { showToast('⚠️ ไม่มีข้อมูลสำหรับ Export'); return; }
-  const now = new Date();
-  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-  const rows = [
-    ['Material','Material Description','Unrestricted','Count','Difference','Status','Remark'],
-    ...STOCK_DATA.map(item => {
-      const c    = counts[item.matcode] || 0;
-      const diff = c - item.expected;
-      const remark = notes[item.matcode] || '';
-      const status = c === 0 ? 'ยังไม่นับ' : c === item.expected ? 'ตรง' : diff > 0 ? `เกิน ${diff}` : `ขาด ${Math.abs(diff)}`;
-      return [item.matcode, `"${item.name}"`, item.expected, c, diff, status, `"${remark}"`];
-    })
-  ];
-  const csv  = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url; a.download = `stock_count_${stamp}.csv`; a.click();
-  URL.revokeObjectURL(url);
-  showToast('📤 Export เรียบร้อยแล้ว');
+function exportCSV(){
+  if(!STOCK_DATA.length){showToast('⚠️ ไม่มีข้อมูล');return;}
+  const now=new Date(),stamp=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  const rows=[['Material','Material Description','Unrestricted','Count','Difference','Status','Remark'],...STOCK_DATA.map(item=>{const c=counts[item.matcode]||0,diff=c-item.expected,remark=notes[item.matcode]||'',status=c===0?'ยังไม่นับ':c===item.expected?'ตรง':diff>0?`เกิน ${diff}`:`ขาด ${Math.abs(diff)}`;return[item.matcode,`"${item.name}"`,item.expected,c,diff,status,`"${remark}"`];})];
+  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=`stock_count_${stamp}.csv`;a.click();URL.revokeObjectURL(url);showToast('📤 Export เรียบร้อย');
 }
 
-// =================== UTILS ===================
-function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 let toastTimer;
-function showToast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg; el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
-}
+function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500);}
 
-// Init
 updateProgress(); updateBadge(); renderSummary();
 </script>
 </body>

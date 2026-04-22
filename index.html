@@ -371,10 +371,15 @@
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
   /* Progress bar */
-  .progress-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; }
-  .progress-top { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.82rem; }
-  .progress-bar-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.5s cubic-bezier(0.22,1,0.36,1); }
+  .mini-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
+  }
+  .mini-stat {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 10px 8px; text-align: center;
+  }
+  .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
+  .mini-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
 </style>
 </head>
 <body>
@@ -385,7 +390,7 @@
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub">v1.3 · DEMO</div>
+      <div class="header-sub">v1.4 · DEMO</div>
     </div>
   </div>
   <div class="badge-demo">⚡ DEMO</div>
@@ -436,13 +441,18 @@
       <div class="last-scan-body" id="last-scan-body"></div>
     </div>
 
-    <div class="progress-wrap">
-      <div class="progress-top">
-        <span style="color:var(--muted);font-size:0.8rem">ความคืบหน้าการนับ</span>
-        <span style="font-family:var(--mono);font-size:0.8rem" id="prog-text">0 / 0</span>
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-num stat-ok" id="mini-ok">0</div>
+        <div class="mini-stat-label">✅ ครบ</div>
       </div>
-      <div class="progress-bar-bg">
-        <div class="progress-bar-fill" id="prog-bar" style="width:0%"></div>
+      <div class="mini-stat">
+        <div class="mini-stat-num stat-diff" id="mini-diff">0</div>
+        <div class="mini-stat-label">⚠️ ผิดปกติ</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-num stat-pending" id="mini-pending">0</div>
+        <div class="mini-stat-label">⏳ ยังไม่นับ</div>
       </div>
     </div>
 
@@ -830,11 +840,16 @@ function renderSummary() {
 }
 
 function updateProgress() {
-  const counted = STOCK_DATA.filter(i => (counts[i.matcode] || 0) > 0).length;
-  const total = STOCK_DATA.length;
-  const pct = total ? Math.round(counted / total * 100) : 0;
-  document.getElementById('prog-text').textContent = `${counted} / ${total}`;
-  document.getElementById('prog-bar').style.width = pct + '%';
+  let ok = 0, diff = 0, pending = 0;
+  STOCK_DATA.forEach(item => {
+    const c = counts[item.matcode] || 0;
+    if (c === 0) pending++;
+    else if (c === item.expected) ok++;
+    else diff++;
+  });
+  document.getElementById('mini-ok').textContent = ok;
+  document.getElementById('mini-diff').textContent = diff;
+  document.getElementById('mini-pending').textContent = pending;
 }
 
 function updateBadge() {

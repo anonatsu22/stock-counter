@@ -750,6 +750,7 @@ function applyCount(code, item, qty, mode) {
   showLastScan({ code, item, count: counts[code], found: true });
   updateProgress();
   updateBadge();
+  if (document.getElementById('page-summary').classList.contains('active')) renderSummary();
 
   const diff = counts[code] - item.expected;
   const modeLabel = mode === 'set' ? '✏️ แก้ไขแล้ว —' : '📦';

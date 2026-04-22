@@ -174,7 +174,7 @@
   /* ===== OVERLAYS ===== */
   .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: all; }
-  .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); max-height: 92vh; overflow-y: auto; }
   .overlay.show .sheet { transform: translateY(0); }
   .sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--surface3); margin: 0 auto 16px; }
   .sheet-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
@@ -215,7 +215,101 @@
   .btn-qty-ok:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-qty-ok.mode-set { background: linear-gradient(135deg, #cc8800, var(--yellow)); color: #000; }
 
-  /* Import sheet */
+  /* ===== IMPORT SHEET (NEW) ===== */
+  .import-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
+  .import-tab-btn {
+    flex: 1; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border);
+    background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center; gap: 5px;
+  }
+  .import-tab-btn.active {
+    background: rgba(0,212,255,0.1); color: var(--accent);
+    border-color: rgba(0,212,255,0.35);
+  }
+  .import-panel { display: none; }
+  .import-panel.active { display: block; }
+
+  /* Google Sheet panel */
+  .gsheet-info {
+    background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.78rem;
+    color: var(--muted); line-height: 1.7;
+  }
+  .gsheet-info strong { color: var(--accent); }
+  .gsheet-steps { counter-reset: step; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  .gsheet-step {
+    display: flex; align-items: flex-start; gap: 8px; font-size: 0.76rem;
+    color: var(--muted);
+  }
+  .gsheet-step-num {
+    flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%;
+    background: rgba(0,212,255,0.15); color: var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.65rem; font-family: var(--mono); font-weight: 700;
+  }
+  .gsheet-fields {
+    display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 14px;
+  }
+  .field-chip {
+    padding: 3px 10px; border-radius: 20px; font-family: var(--mono); font-size: 0.7rem;
+    background: var(--surface2); border: 1px solid var(--border); color: var(--text);
+    display: flex; align-items: center; gap: 5px;
+  }
+  .field-chip .arrow { color: var(--muted); }
+  .field-chip .target { color: var(--accent); }
+  .field-chip.optional .target { color: var(--yellow); }
+
+  .gsheet-url-wrap { position: relative; margin-bottom: 10px; }
+  .gsheet-url-input {
+    width: 100%; background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 12px; color: var(--text); font-family: var(--mono);
+    font-size: 0.8rem; padding: 12px 44px 12px 14px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .gsheet-url-input:focus { border-color: var(--accent); }
+  .gsheet-url-input::placeholder { color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; }
+  .gsheet-url-clear {
+    position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+    background: none; border: none; color: var(--muted); font-size: 1rem;
+    cursor: pointer; padding: 4px; display: none;
+  }
+  .gsheet-url-clear.show { display: block; }
+
+  .gsheet-sheet-row {
+    display: flex; gap: 8px; margin-bottom: 14px; align-items: center;
+  }
+  .gsheet-sheet-label { font-size: 0.76rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
+  .gsheet-sheet-input {
+    flex: 1; background: var(--surface2); border: 1.5px solid var(--border);
+    border-radius: 10px; color: var(--text); font-family: var(--mono);
+    font-size: 0.82rem; padding: 8px 12px; outline: none; transition: border-color 0.2s;
+  }
+  .gsheet-sheet-input:focus { border-color: var(--accent); }
+
+  .btn-fetch {
+    width: 100%; padding: 13px; border-radius: 12px; border: none;
+    background: linear-gradient(135deg, #005acc, var(--accent));
+    color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif;
+    font-size: 0.92rem; font-weight: 700; cursor: pointer;
+    transition: opacity 0.2s; margin-bottom: 14px;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .btn-fetch:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-fetch:not(:disabled):hover { opacity: 0.9; }
+
+  .fetch-status {
+    border-radius: 10px; padding: 10px 14px; font-size: 0.8rem;
+    margin-bottom: 14px; display: none; align-items: center; gap: 8px;
+  }
+  .fetch-status.show { display: flex; }
+  .fetch-status.loading { background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); color: var(--accent); }
+  .fetch-status.success { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
+  .fetch-status.error   { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
+  .spinner { width: 14px; height: 14px; border: 2px solid rgba(0,212,255,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* CSV panel (same as before) */
   .import-format { background: var(--surface2); border-radius: 12px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
   .import-format code { font-family: var(--mono); color: var(--accent); background: rgba(0,212,255,0.08); padding: 1px 6px; border-radius: 4px; }
   .import-drop { border: 2px dashed rgba(0,212,255,0.3); border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 14px; }
@@ -254,10 +348,10 @@
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub" id="header-sub">v1.8 · ไม่มีข้อมูล</div>
+      <div class="header-sub" id="header-sub">v2.0 · ไม่มีข้อมูล</div>
     </div>
   </div>
-  <button class="btn-import" onclick="openImport()">📥 นำเข้า CSV</button>
+  <button class="btn-import" onclick="openImport()">📥 นำเข้าข้อมูล</button>
 </div>
 
 <!-- TABS -->
@@ -334,7 +428,7 @@
 <div class="overlay" id="manual-overlay" onclick="closeManualOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">⌨️ พิมพ์ Matcode</div>
+    <div class="sheet-title">⌨️ พิมพ์ Material</div>
     <input type="text" class="manual-input" id="manual-input"
            placeholder="เช่น MAT001" autocomplete="off" autocapitalize="characters"
            onkeydown="if(event.key==='Enter') confirmManual()">
@@ -382,31 +476,98 @@
 <div class="overlay" id="import-overlay" onclick="closeImportOutside(event)">
   <div class="sheet">
     <div class="sheet-handle"></div>
-    <div class="sheet-title">📥 นำเข้าข้อมูลสินค้า (CSV)</div>
-    <div class="import-format">
-      รูปแบบไฟล์ CSV ต้องมีคอลัมน์:<br>
-      <code>matcode</code>, <code>name</code>, <code>expected</code><br><br>
-      ตัวอย่าง:<br>
-      <code>MAT001,น็อตหกเหลี่ยม M8,50</code><br>
-      <code>MAT002,สกรูหัวจม M6x20,100</code>
+    <div class="sheet-title">📥 นำเข้าข้อมูลสินค้า</div>
+
+    <!-- Source tabs -->
+    <div class="import-tabs">
+      <button class="import-tab-btn active" id="itab-gsheet" onclick="switchImportTab('gsheet')">
+        🔗 Google Sheet
+      </button>
+      <button class="import-tab-btn" id="itab-csv" onclick="switchImportTab('csv')">
+        📄 อัปโหลด CSV
+      </button>
     </div>
-    <div class="import-drop" id="import-drop"
-         onclick="document.getElementById('import-file-input').click()"
-         ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
-      <div class="import-drop-icon">📂</div>
-      <div class="import-drop-text">
-        <strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br>
-        <span style="font-size:0.75rem">รองรับ .csv และ .txt</span>
+
+    <!-- ===== GOOGLE SHEET PANEL ===== -->
+    <div class="import-panel active" id="ipanel-gsheet">
+
+      <div class="gsheet-info">
+        <strong>Field ที่ดึงมาจาก Google Sheet:</strong>
+        <div class="gsheet-fields" style="margin-top:8px">
+          <div class="field-chip"><span>Material</span><span class="arrow">→</span><span class="target">matcode</span></div>
+          <div class="field-chip"><span>Material Description</span><span class="arrow">→</span><span class="target">name</span></div>
+          <div class="field-chip"><span>Unrestricted</span><span class="arrow">→</span><span class="target">expected</span></div>
+          <div class="field-chip optional"><span>Count</span><span class="arrow">→</span><span class="target">นับแล้ว</span></div>
+          <div class="field-chip optional"><span>Remark</span><span class="arrow">→</span><span class="target">หมายเหตุ</span></div>
+        </div>
+        <div class="gsheet-steps">
+          <div class="gsheet-step"><div class="gsheet-step-num">1</div><div>เปิด Google Sheet → กด <strong style="color:var(--text)">Share</strong></div></div>
+          <div class="gsheet-step"><div class="gsheet-step-num">2</div><div>เปลี่ยนเป็น <strong style="color:var(--text)">"Anyone with the link"</strong> → Viewer</div></div>
+          <div class="gsheet-step"><div class="gsheet-step-num">3</div><div>Copy URL แล้ววางด้านล่าง</div></div>
+        </div>
       </div>
+
+      <div class="gsheet-url-wrap">
+        <input type="url" class="gsheet-url-input" id="gsheet-url-input"
+               placeholder="วาง URL Google Sheet ที่นี่..."
+               oninput="onUrlInput()" />
+        <button class="gsheet-url-clear" id="gsheet-url-clear" onclick="clearUrl()">✕</button>
+      </div>
+
+      <div class="gsheet-sheet-row">
+        <span class="gsheet-sheet-label">ชื่อ Sheet (tab):</span>
+        <input type="text" class="gsheet-sheet-input" id="gsheet-sheet-name"
+               placeholder="Sheet1" value="Sheet1" />
+      </div>
+
+      <div class="fetch-status" id="fetch-status">
+        <div class="spinner" id="fetch-spinner"></div>
+        <span id="fetch-status-text"></span>
+      </div>
+
+      <button class="btn-fetch" id="btn-fetch" onclick="fetchGSheet()" disabled>
+        <span id="fetch-btn-icon">🔗</span> ดึงข้อมูลจาก Google Sheet
+      </button>
+
+      <div class="import-preview" id="gsheet-preview">
+        <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="gsheet-count">0</span> รายการ)</div>
+        <div class="import-preview-list" id="gsheet-preview-list"></div>
+      </div>
+
+      <button class="btn-import-confirm" id="btn-gsheet-confirm" onclick="confirmGSheet()" disabled>
+        ✅ นำเข้าข้อมูล
+      </button>
     </div>
-    <input type="file" id="import-file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
-    <div class="import-preview" id="import-preview">
-      <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="import-count">0</span> รายการ)</div>
-      <div class="import-preview-list" id="import-preview-list"></div>
+
+    <!-- ===== CSV PANEL ===== -->
+    <div class="import-panel" id="ipanel-csv">
+      <div class="import-format">
+        รูปแบบ CSV ต้องมีคอลัมน์:<br>
+        <code>Material</code>, <code>Material Description</code>, <code>Unrestricted</code><br>
+        (ไม่บังคับ) <code>Count</code>, <code>Remark</code><br><br>
+        ตัวอย่าง:<br>
+        <code>Material,Material Description,Unrestricted</code><br>
+        <code>1000123,น็อตหกเหลี่ยม M8,50</code>
+      </div>
+      <div class="import-drop" id="import-drop"
+           onclick="document.getElementById('import-file-input').click()"
+           ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
+        <div class="import-drop-icon">📂</div>
+        <div class="import-drop-text">
+          <strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br>
+          <span style="font-size:0.75rem">รองรับ .csv และ .txt</span>
+        </div>
+      </div>
+      <input type="file" id="import-file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
+      <div class="import-preview" id="csv-preview">
+        <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="csv-count">0</span> รายการ)</div>
+        <div class="import-preview-list" id="csv-preview-list"></div>
+      </div>
+      <button class="btn-import-confirm" id="btn-csv-confirm" onclick="confirmImport()" disabled>
+        📥 นำเข้าข้อมูล
+      </button>
     </div>
-    <button class="btn-import-confirm" id="btn-import-confirm" onclick="confirmImport()" disabled>
-      📥 นำเข้าข้อมูล
-    </button>
+
   </div>
 </div>
 
@@ -423,6 +584,7 @@ let lastCode     = '', lastCodeTime = 0;
 let codeReader   = null;
 let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
 let pendingImport = [];
+let pendingGSheet = [];
 
 // =================== TABS ===================
 function showTab(t) {
@@ -499,7 +661,7 @@ function handleCode(code) {
   const flash = document.getElementById('scan-flash');
   flash.classList.remove('show'); void flash.offsetWidth; flash.classList.add('show');
   const item = STOCK_DATA.find(i => i.matcode === code);
-  if (!item) { showLastScan({ code, found: false }); showToast('⚠️ ไม่พบ Matcode นี้ในระบบ'); return; }
+  if (!item) { showLastScan({ code, found: false }); showToast('⚠️ ไม่พบ Material นี้ในระบบ'); return; }
   openQty(code, item, 'add');
 }
 
@@ -618,6 +780,243 @@ function confirmManual() {
   closeManual(); handleCode(val);
 }
 
+// =================== IMPORT TABS ===================
+function switchImportTab(tab) {
+  ['gsheet','csv'].forEach(t => {
+    document.getElementById('itab-' + t).classList.toggle('active', t === tab);
+    document.getElementById('ipanel-' + t).classList.toggle('active', t === tab);
+  });
+}
+
+// =================== GOOGLE SHEET ===================
+function onUrlInput() {
+  const val = document.getElementById('gsheet-url-input').value.trim();
+  document.getElementById('gsheet-url-clear').classList.toggle('show', val.length > 0);
+  document.getElementById('btn-fetch').disabled = val.length === 0;
+  setFetchStatus('');
+  pendingGSheet = [];
+  document.getElementById('gsheet-preview').classList.remove('show');
+  document.getElementById('btn-gsheet-confirm').disabled = true;
+}
+
+function clearUrl() {
+  document.getElementById('gsheet-url-input').value = '';
+  onUrlInput();
+}
+
+function setFetchStatus(type, msg = '') {
+  const el = document.getElementById('fetch-status');
+  el.className = 'fetch-status';
+  if (!type) { el.style.display = 'none'; return; }
+  el.classList.add('show', type);
+  el.style.display = '';
+  document.getElementById('fetch-spinner').style.display = type === 'loading' ? 'block' : 'none';
+  document.getElementById('fetch-status-text').textContent = msg;
+}
+
+/**
+ * แปลง Google Sheet URL ทุกรูปแบบ → CSV export URL
+ * รองรับ:
+ *   https://docs.google.com/spreadsheets/d/SHEET_ID/edit#gid=...
+ *   https://docs.google.com/spreadsheets/d/SHEET_ID/pubhtml
+ *   https://docs.google.com/spreadsheets/d/SHEET_ID/  (และอื่นๆ)
+ */
+function buildCsvUrl(rawUrl, sheetName) {
+  let sheetId = null;
+  const m = rawUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) sheetId = m[1];
+  if (!sheetId) return null;
+
+  // ถ้ามี gid ใน URL ให้ใช้ gid แทนชื่อ sheet
+  const gidMatch = rawUrl.match(/[#&?]gid=(\d+)/);
+  if (gidMatch) {
+    return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gidMatch[1]}`;
+  }
+  // ใช้ชื่อ sheet
+  const encodedName = encodeURIComponent(sheetName || 'Sheet1');
+  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodedName}`;
+}
+
+async function fetchGSheet() {
+  const rawUrl   = document.getElementById('gsheet-url-input').value.trim();
+  const sheetName = document.getElementById('gsheet-sheet-name').value.trim() || 'Sheet1';
+  const csvUrl   = buildCsvUrl(rawUrl, sheetName);
+
+  if (!csvUrl) { setFetchStatus('error', '❌ URL ไม่ถูกต้อง กรุณาใส่ URL จาก Google Sheets'); return; }
+
+  setFetchStatus('loading', 'กำลังดึงข้อมูล...');
+  document.getElementById('btn-fetch').disabled = true;
+  document.getElementById('btn-gsheet-confirm').disabled = true;
+  pendingGSheet = [];
+
+  try {
+    const res = await fetch(csvUrl);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const text = await res.text();
+    const parsed = parseStockCSV(text);
+    if (parsed.length === 0) throw new Error('ไม่พบข้อมูลที่ถูกต้อง หรือ Sheet ยังไม่เปิดเป็น Public');
+    pendingGSheet = parsed;
+    setFetchStatus('success', `✅ ดึงข้อมูลสำเร็จ ${parsed.length} รายการ`);
+    renderPreview('gsheet', parsed);
+    document.getElementById('btn-gsheet-confirm').disabled = false;
+  } catch (err) {
+    let msg = `❌ ${err.message}`;
+    if (err.message.includes('fetch') || err.message.includes('Failed')) {
+      msg = '❌ ดึงข้อมูลไม่ได้ — ตรวจสอบว่า Sheet เปิดเป็น Public แล้ว';
+    }
+    setFetchStatus('error', msg);
+  } finally {
+    document.getElementById('btn-fetch').disabled = false;
+  }
+}
+
+function confirmGSheet() {
+  if (!pendingGSheet.length) return;
+  applyImport(pendingGSheet);
+  closeImport();
+}
+
+// =================== CSV UPLOAD ===================
+function openImport() {
+  pendingImport = []; pendingGSheet = [];
+  document.getElementById('csv-preview').classList.remove('show');
+  document.getElementById('gsheet-preview').classList.remove('show');
+  document.getElementById('btn-csv-confirm').disabled = true;
+  document.getElementById('btn-gsheet-confirm').disabled = true;
+  document.getElementById('import-file-input').value = '';
+  setFetchStatus('');
+  document.getElementById('import-overlay').classList.add('show');
+}
+function closeImport() { document.getElementById('import-overlay').classList.remove('show'); }
+function closeImportOutside(e) { if (e.target === document.getElementById('import-overlay')) closeImport(); }
+function dragOver(e)  { e.preventDefault(); document.getElementById('import-drop').classList.add('drag-over'); }
+function dragLeave()  { document.getElementById('import-drop').classList.remove('drag-over'); }
+function dropFile(e)  { e.preventDefault(); dragLeave(); if (e.dataTransfer.files[0]) parseCSVFile(e.dataTransfer.files[0]); }
+function handleFileSelect(e) { if (e.target.files[0]) parseCSVFile(e.target.files[0]); }
+
+function parseCSVFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const parsed = parseStockCSV(e.target.result);
+    if (parsed.length === 0) { showToast('❌ ไม่พบข้อมูลที่ถูกต้องในไฟล์'); return; }
+    pendingImport = parsed;
+    renderPreview('csv', parsed);
+    document.getElementById('btn-csv-confirm').disabled = false;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function confirmImport() {
+  if (!pendingImport.length) return;
+  applyImport(pendingImport);
+  closeImport();
+}
+
+// =================== SHARED PARSE ===================
+/**
+ * parseStockCSV — รองรับ header ชื่อ:
+ *   Material, Material Description, Unrestricted, Count (opt), Remark (opt)
+ * รองรับ fallback: matcode/name/expected (รูปแบบเดิม)
+ */
+function parseStockCSV(raw) {
+  const lines = raw.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+  if (lines.length < 2) return [];
+
+  // แยก header row
+  const headerLine = lines[0];
+  const headers = splitCSVRow(headerLine).map(h => h.trim().toLowerCase().replace(/^"|"$/g, ''));
+
+  // หา index ของแต่ละ field
+  const COL = {
+    matcode:  findCol(headers, ['material']),
+    name:     findCol(headers, ['material description', 'description', 'name']),
+    expected: findCol(headers, ['unrestricted', 'expected', 'qty']),
+    count:    findCol(headers, ['count']),
+    remark:   findCol(headers, ['remark', 'note', 'หมายเหตุ']),
+  };
+
+  // ถ้าไม่มี header ที่รู้จัก → ลอง fallback positional (column 0,1,2)
+  const usePositional = COL.matcode === -1 && COL.name === -1;
+  const startIdx = usePositional ? (isNaN(parseInt(lines[0].split(',').pop())) ? 1 : 0) : 1;
+
+  const parsed = [];
+  for (let i = startIdx; i < lines.length; i++) {
+    const parts = splitCSVRow(lines[i]).map(p => p.trim().replace(/^"|"$/g, ''));
+    if (parts.length < 2) continue;
+
+    let matcode, name, expected, count, remark;
+    if (usePositional) {
+      matcode  = (parts[0] || '').toUpperCase();
+      name     = parts.slice(1, parts.length - 1).join(' ').trim() || parts[1] || '';
+      expected = parseInt(parts[parts.length - 1]);
+      count    = NaN; remark = '';
+    } else {
+      matcode  = COL.matcode  >= 0 ? (parts[COL.matcode]  || '').toUpperCase() : '';
+      name     = COL.name     >= 0 ? (parts[COL.name]     || '') : '';
+      expected = COL.expected >= 0 ? parseInt(parts[COL.expected] || '0') : 0;
+      count    = COL.count    >= 0 ? parseInt(parts[COL.count]    || '') : NaN;
+      remark   = COL.remark   >= 0 ? (parts[COL.remark]   || '') : '';
+    }
+
+    if (!matcode || !name || isNaN(expected)) continue;
+    parsed.push({ matcode, name, expected, count: isNaN(count) ? null : count, remark });
+  }
+  return parsed;
+}
+
+function findCol(headers, candidates) {
+  for (const c of candidates) {
+    const idx = headers.indexOf(c);
+    if (idx !== -1) return idx;
+    // partial match
+    const partial = headers.findIndex(h => h.includes(c) || c.includes(h));
+    if (partial !== -1) return partial;
+  }
+  return -1;
+}
+
+function splitCSVRow(line) {
+  // รองรับ comma inside quotes
+  const result = []; let cur = ''; let inQ = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') { inQ = !inQ; }
+    else if (ch === ',' && !inQ) { result.push(cur); cur = ''; }
+    else cur += ch;
+  }
+  result.push(cur);
+  return result;
+}
+
+function renderPreview(source, parsed) {
+  const previewEl  = document.getElementById(source + '-preview');
+  const countEl    = document.getElementById(source + '-count');
+  const listEl     = document.getElementById(source + '-preview-list');
+  countEl.textContent = parsed.length;
+  listEl.innerHTML = parsed.slice(0, 5).map(p =>
+    `<div class="import-preview-item">
+      <div><span class="icode">${escHtml(p.matcode)}</span> ${escHtml(p.name)}</div>
+      <span class="iexp">เป้า ${p.expected}${p.count !== null ? ' · นับ ' + p.count : ''}</span>
+    </div>`
+  ).join('') +
+  (parsed.length > 5 ? `<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length - 5} รายการ</div>` : '');
+  previewEl.classList.add('show');
+}
+
+// =================== APPLY IMPORT ===================
+function applyImport(parsed) {
+  STOCK_DATA = parsed;
+  counts = {}; notes = {};
+  STOCK_DATA.forEach(item => {
+    counts[item.matcode] = item.count !== null ? item.count : 0;
+    notes[item.matcode]  = item.remark || '';
+  });
+  document.getElementById('header-sub').textContent = `v2.0 · ${STOCK_DATA.length} รายการ`;
+  document.getElementById('last-scan').classList.remove('show');
+  updateProgress(); updateBadge(); renderSummary();
+  showToast(`✅ นำเข้าสำเร็จ ${STOCK_DATA.length} รายการ`);
+}
+
 // =================== SUMMARY ===================
 function renderSummary() {
   if (STOCK_DATA.length === 0) {
@@ -626,7 +1025,7 @@ function renderSummary() {
       <div class="empty-state">
         <div class="es-icon">📂</div>
         <div class="es-title">ยังไม่มีข้อมูลสินค้า</div>
-        <div class="es-sub">กดปุ่ม "📥 นำเข้า CSV" เพื่อโหลดรายการสินค้า</div>
+        <div class="es-sub">กดปุ่ม "📥 นำเข้าข้อมูล" เพื่อโหลดรายการสินค้า</div>
       </div>`;
     return;
   }
@@ -666,7 +1065,7 @@ function renderSummary() {
 function updateProgress() {
   if (STOCK_DATA.length === 0) {
     ['mini-ok','mini-diff','mini-pending'].forEach(id => document.getElementById(id).textContent = 0);
-    document.getElementById('prog-pct').textContent = '0 / 0 Matcode';
+    document.getElementById('prog-pct').textContent = '0 / 0 Material';
     document.getElementById('prog-bar').style.width = '0%';
     document.getElementById('prog-done-msg').classList.remove('show');
     return;
@@ -686,7 +1085,7 @@ function updateProgress() {
   const msg  = document.getElementById('prog-done-msg');
   const pctEl   = document.getElementById('prog-pct');
   const titleEl = document.getElementById('prog-title');
-  pctEl.textContent = `${counted} / ${total} Matcode`;
+  pctEl.textContent = `${counted} / ${total} Material`;
   bar.style.width   = pct + '%';
   wrap.classList.remove('state-warn','state-ok');
   bar.classList.remove('fill-warn','fill-ok');
@@ -697,7 +1096,7 @@ function updateProgress() {
     wrap.classList.add('state-warn'); bar.classList.add('fill-warn');
     titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--yellow)';
     msg.classList.add('show','msg-warn');
-    msg.innerHTML = `⚠️ พบ ${diff} Matcode ผิดปกติ — แตะเพื่อดูสรุป`;
+    msg.innerHTML = `⚠️ พบ ${diff} Material ผิดปกติ — แตะเพื่อดูสรุป`;
   } else {
     wrap.classList.add('state-ok'); bar.classList.add('fill-ok');
     titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--green)';
@@ -720,80 +1119,19 @@ function resetAll() {
   showToast('🔄 รีเซ็ตเรียบร้อยแล้ว');
 }
 
-// =================== IMPORT CSV ===================
-function openImport() {
-  pendingImport = [];
-  document.getElementById('import-preview').classList.remove('show');
-  document.getElementById('btn-import-confirm').disabled = true;
-  document.getElementById('import-file-input').value = '';
-  document.getElementById('import-overlay').classList.add('show');
-}
-function closeImport() { document.getElementById('import-overlay').classList.remove('show'); }
-function closeImportOutside(e) { if (e.target === document.getElementById('import-overlay')) closeImport(); }
-function dragOver(e)  { e.preventDefault(); document.getElementById('import-drop').classList.add('drag-over'); }
-function dragLeave()  { document.getElementById('import-drop').classList.remove('drag-over'); }
-function dropFile(e)  { e.preventDefault(); dragLeave(); if (e.dataTransfer.files[0]) parseCSVFile(e.dataTransfer.files[0]); }
-function handleFileSelect(e) { if (e.target.files[0]) parseCSVFile(e.target.files[0]); }
-
-function parseCSVFile(file) {
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const lines = e.target.result.split(/\r?\n/).map(l => l.trim()).filter(l => l);
-    const parsed = [];
-    let startIdx = 0;
-    // ข้าม header ถ้าคอลัมน์ที่ 3 ไม่ใช่ตัวเลข
-    if (lines[0] && isNaN(parseInt(lines[0].split(',').pop()))) startIdx = 1;
-    for (let i = startIdx; i < lines.length; i++) {
-      const parts = lines[i].split(',');
-      if (parts.length < 3) continue;
-      const matcode  = parts[0].trim().toUpperCase();
-      const expected = parseInt(parts[parts.length - 1].trim());
-      const name     = parts.slice(1, parts.length - 1).join(',').trim().replace(/^"|"$/g, '');
-      if (!matcode || !name || isNaN(expected)) continue;
-      parsed.push({ matcode, name, expected });
-    }
-    if (parsed.length === 0) { showToast('❌ ไม่พบข้อมูลที่ถูกต้องในไฟล์'); return; }
-    pendingImport = parsed;
-    document.getElementById('import-count').textContent = parsed.length;
-    document.getElementById('import-preview-list').innerHTML =
-      parsed.slice(0, 5).map(p =>
-        `<div class="import-preview-item">
-          <div><span class="icode">${p.matcode}</span> ${escHtml(p.name)}</div>
-          <span class="iexp">เป้า ${p.expected}</span>
-        </div>`
-      ).join('') +
-      (parsed.length > 5 ? `<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length - 5} รายการ</div>` : '');
-    document.getElementById('import-preview').classList.add('show');
-    document.getElementById('btn-import-confirm').disabled = false;
-  };
-  reader.readAsText(file, 'UTF-8');
-}
-
-function confirmImport() {
-  if (!pendingImport.length) return;
-  STOCK_DATA = pendingImport;
-  counts = {}; notes = {};
-  STOCK_DATA.forEach(item => { counts[item.matcode] = 0; notes[item.matcode] = ''; });
-  document.getElementById('header-sub').textContent = `v1.8 · ${STOCK_DATA.length} รายการ`;
-  closeImport();
-  document.getElementById('last-scan').classList.remove('show');
-  updateProgress(); updateBadge(); renderSummary();
-  showToast(`✅ นำเข้าสำเร็จ ${STOCK_DATA.length} รายการ`);
-}
-
 // =================== EXPORT CSV ===================
 function exportCSV() {
   if (STOCK_DATA.length === 0) { showToast('⚠️ ไม่มีข้อมูลสำหรับ Export'); return; }
   const now = new Date();
   const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
   const rows = [
-    ['matcode','name','expected','counted','difference','status','note'],
+    ['Material','Material Description','Unrestricted','Count','Difference','Status','Remark'],
     ...STOCK_DATA.map(item => {
       const c    = counts[item.matcode] || 0;
       const diff = c - item.expected;
-      const note = notes[item.matcode] || '';
+      const remark = notes[item.matcode] || '';
       const status = c === 0 ? 'ยังไม่นับ' : c === item.expected ? 'ตรง' : diff > 0 ? `เกิน ${diff}` : `ขาด ${Math.abs(diff)}`;
-      return [item.matcode, `"${item.name}"`, item.expected, c, diff, status, `"${note}"`];
+      return [item.matcode, `"${item.name}"`, item.expected, c, diff, status, `"${remark}"`];
     })
   ];
   const csv  = '\uFEFF' + rows.map(r => r.join(',')).join('\n');

@@ -3,32 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Stock Counter Demo</title>
+<title>Stock Counter</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 <style>
   :root {
-    --bg: #0a0e17;
-    --surface: #111827;
-    --surface2: #1c2537;
-    --surface3: #243044;
-    --accent: #00d4ff;
-    --accent2: #0066ff;
-    --green: #00ff88;
-    --red: #ff4466;
-    --yellow: #ffcc00;
-    --text: #e2e8f0;
-    --muted: #64748b;
-    --border: rgba(255,255,255,0.06);
-    --mono: 'IBM Plex Mono', monospace;
+    --bg: #0a0e17; --surface: #111827; --surface2: #1c2537; --surface3: #243044;
+    --accent: #00d4ff; --accent2: #0066ff; --green: #00ff88; --red: #ff4466;
+    --yellow: #ffcc00; --text: #e2e8f0; --muted: #64748b;
+    --border: rgba(255,255,255,0.06); --mono: 'IBM Plex Mono', monospace;
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     background: var(--bg); color: var(--text);
-    font-family: 'IBM Plex Sans Thai', sans-serif;
-    min-height: 100vh;
+    font-family: 'IBM Plex Sans Thai', sans-serif; min-height: 100vh;
     background-image:
       radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,102,255,0.15) 0%, transparent 60%),
       radial-gradient(ellipse 40% 40% at 90% 90%, rgba(0,212,255,0.06) 0%, transparent 60%);
@@ -37,9 +25,8 @@
   /* HEADER */
   .header {
     padding: 16px 20px; display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 1px solid var(--border);
-    background: rgba(17,24,39,0.8); backdrop-filter: blur(12px);
-    position: sticky; top: 0; z-index: 50;
+    border-bottom: 1px solid var(--border); background: rgba(17,24,39,0.8);
+    backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50;
   }
   .header-left { display: flex; align-items: center; gap: 10px; }
   .logo {
@@ -49,17 +36,16 @@
   }
   .header-title { font-size: 1rem; font-weight: 700; letter-spacing: 0.02em; }
   .header-sub { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
-  .badge-demo {
-    padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
-    background: rgba(255,204,0,0.15); color: var(--yellow);
-    border: 1px solid rgba(255,204,0,0.3); font-family: var(--mono); letter-spacing: 0.05em;
+  .btn-import {
+    padding: 6px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    background: rgba(0,212,255,0.12); color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.3); font-family: var(--mono);
+    cursor: pointer; transition: background 0.2s; white-space: nowrap;
   }
+  .btn-import:hover { background: rgba(0,212,255,0.2); }
 
   /* TABS */
-  .tabs {
-    display: flex;
-    background: var(--surface); border-bottom: 1px solid var(--border);
-  }
+  .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
   .tab-btn {
     flex: 1; padding: 12px 8px; border: none; background: transparent;
     color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
@@ -68,75 +54,33 @@
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-  /* PAGES */
   .page { display: none; }
   .page.active { display: block; }
 
   /* ===== SCAN PAGE ===== */
   .scan-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
-
   .cam-box {
     position: relative; border-radius: 20px; overflow: hidden;
-    background: #000; aspect-ratio: 4/3;
-    border: 1.5px solid var(--border);
+    background: #000; aspect-ratio: 4/3; border: 1.5px solid var(--border);
     box-shadow: 0 0 40px rgba(0,102,255,0.15);
   }
-
   #scanner-container { width: 100%; height: 100%; }
   #scanner-container video { width: 100%; height: 100%; object-fit: cover; }
-
-  .cam-overlay {
-    position: absolute; inset: 0; pointer-events: none;
-    display: flex; align-items: center; justify-content: center;
-  }
-
-  .scan-frame {
-    width: 70%; aspect-ratio: 3/1;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    box-shadow: 0 0 0 9999px rgba(0,0,0,0.45);
-    position: relative;
-  }
-
-  .scan-line {
-    position: absolute; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-    top: 0; animation: scanMove 2s ease-in-out infinite;
-    box-shadow: 0 0 8px var(--accent);
-  }
-
-  @keyframes scanMove {
-    0%   { top: 0%; }
-    50%  { top: 100%; }
-    100% { top: 0%; }
-  }
-
-  .scan-corner {
-    position: absolute; width: 16px; height: 16px;
-    border-color: var(--accent); border-style: solid;
-  }
-  .scan-corner.tl { top: -2px; left: -2px; border-width: 3px 0 0 3px; border-radius: 4px 0 0 0; }
-  .scan-corner.tr { top: -2px; right: -2px; border-width: 3px 3px 0 0; border-radius: 0 4px 0 0; }
-  .scan-corner.bl { bottom: -2px; left: -2px; border-width: 0 0 3px 3px; border-radius: 0 0 0 4px; }
-  .scan-corner.br { bottom: -2px; right: -2px; border-width: 0 3px 3px 0; border-radius: 0 0 4px 0; }
-
-  .cam-placeholder {
-    position: absolute; inset: 0;
-    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
-    color: var(--muted); font-size: 0.85rem;
-  }
+  .cam-overlay { position: absolute; inset: 0; pointer-events: none; display: flex; align-items: center; justify-content: center; }
+  .scan-frame { width: 70%; aspect-ratio: 3/1; border: 2px solid var(--accent); border-radius: 8px; box-shadow: 0 0 0 9999px rgba(0,0,0,0.45); position: relative; }
+  .scan-line { position: absolute; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); top: 0; animation: scanMove 2s ease-in-out infinite; box-shadow: 0 0 8px var(--accent); }
+  @keyframes scanMove { 0%{top:0%} 50%{top:100%} 100%{top:0%} }
+  .scan-corner { position: absolute; width: 16px; height: 16px; border-color: var(--accent); border-style: solid; }
+  .scan-corner.tl { top:-2px; left:-2px; border-width:3px 0 0 3px; border-radius:4px 0 0 0; }
+  .scan-corner.tr { top:-2px; right:-2px; border-width:3px 3px 0 0; border-radius:0 4px 0 0; }
+  .scan-corner.bl { bottom:-2px; left:-2px; border-width:0 0 3px 3px; border-radius:0 0 0 4px; }
+  .scan-corner.br { bottom:-2px; right:-2px; border-width:0 3px 3px 0; border-radius:0 0 4px 0; }
+  .cam-placeholder { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; color: var(--muted); font-size: 0.85rem; }
   .cam-placeholder .big { font-size: 3rem; }
-
-  .scan-flash {
-    position: absolute; inset: 0; background: rgba(0,255,136,0.2);
-    border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.1s;
-  }
+  .scan-flash { position: absolute; inset: 0; background: rgba(0,255,136,0.2); border-radius: 20px; opacity: 0; pointer-events: none; transition: opacity 0.1s; }
   .scan-flash.show { opacity: 1; animation: flashOut 0.4s ease forwards; }
   @keyframes flashOut { 0%{opacity:1} 100%{opacity:0} }
-
   .scan-controls { display: flex; gap: 10px; }
-
   .btn-scan {
     flex: 1; padding: 14px; border-radius: 14px; border: none;
     background: linear-gradient(135deg, var(--accent2), var(--accent));
@@ -150,30 +94,14 @@
   .btn-scan:active { transform: scale(0.97); }
   .btn-scan.stop { background: linear-gradient(135deg, #ff4466, #cc2244); box-shadow: 0 4px 20px rgba(255,68,102,0.35); }
   .btn-scan:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
-
-  .btn-manual {
-    padding: 14px 16px; border-radius: 14px;
-    border: 1.5px solid var(--border); background: var(--surface2);
-    color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.85rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;
-  }
+  .btn-manual { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   .btn-manual:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-
-  .last-scan {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 14px 16px; display: none;
-  }
+  .last-scan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: none; }
   .last-scan.show { display: block; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1); }
-  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(10px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
+  @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
   .last-scan-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
   .last-scan-body { display: flex; align-items: center; gap: 12px; }
-  .last-scan-icon {
-    width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-    display: flex; align-items: center; justify-content: center; font-size: 1.3rem;
-  }
+  .last-scan-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
   .icon-ok   { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); }
   .icon-over { background: rgba(255,204,0,0.12);  border: 1px solid rgba(255,204,0,0.25); }
   .icon-err  { background: rgba(255,68,102,0.12); border: 1px solid rgba(255,68,102,0.25); }
@@ -184,273 +112,138 @@
   .last-scan-count { text-align: right; flex-shrink: 0; }
   .count-num { font-family: var(--mono); font-size: 1.4rem; font-weight: 700; line-height: 1; }
   .count-of  { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
-  .count-ok   { color: var(--green); }
-  .count-over { color: var(--yellow); }
-  .count-err  { color: var(--red); }
-  .count-new  { color: var(--accent); }
-
-  .manual-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
-    display: flex; align-items: flex-end; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
-  .manual-overlay.show { opacity: 1; pointer-events: all; }
-  .manual-sheet {
-    width: 100%; max-width: 520px;
-    background: var(--surface); border-radius: 24px 24px 0 0;
-    padding: 24px 20px 36px;
-    border-top: 1px solid var(--border);
-    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
-  }
-  .manual-overlay.show .manual-sheet { transform: translateY(0); }
-  .manual-handle {
-    width: 40px; height: 4px; border-radius: 2px;
-    background: var(--surface3); margin: 0 auto 20px;
-  }
-  .manual-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
-  .manual-input-wrap { position: relative; margin-bottom: 14px; }
-  .manual-input {
-    width: 100%; background: var(--surface2);
-    border: 1.5px solid var(--border); border-radius: 12px;
-    color: var(--text); font-family: var(--mono);
-    font-size: 1.1rem; font-weight: 600;
-    padding: 14px 16px; outline: none; transition: border-color 0.2s;
-  }
-  .manual-input:focus { border-color: var(--accent); }
-  .manual-input::placeholder { color: var(--muted); font-weight: 400; font-family: 'IBM Plex Sans Thai', sans-serif; }
-  .btn-confirm {
-    width: 100%; padding: 14px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-  }
-  .btn-confirm:hover { opacity: 0.9; }
+  .count-ok { color: var(--green); } .count-over { color: var(--yellow); } .count-err { color: var(--red); } .count-new { color: var(--accent); }
+  .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .mini-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 8px; text-align: center; }
+  .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
+  .mini-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+  .prog-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; transition: border-color 0.4s, background 0.4s; }
+  .prog-wrap.state-warn { border-color: rgba(255,204,0,0.35); background: rgba(255,204,0,0.05); }
+  .prog-wrap.state-ok   { border-color: rgba(0,255,136,0.35);  background: rgba(0,255,136,0.05); }
+  .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prog-title { font-size: 0.78rem; color: var(--muted); }
+  .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); transition: color 0.3s; }
+  .prog-bar-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+  .prog-bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--accent2), var(--accent)); transition: width 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s; }
+  .prog-bar-fill.fill-warn { background: linear-gradient(90deg, #cc8800, var(--yellow)); }
+  .prog-bar-fill.fill-ok   { background: linear-gradient(90deg, #00aa55, var(--green)); }
+  .prog-done-msg { display: none; align-items: center; justify-content: center; gap: 8px; font-size: 0.82rem; font-weight: 600; margin-top: 8px; padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s; }
+  .prog-done-msg:hover { opacity: 0.8; }
+  .prog-done-msg.show { display: flex; }
+  .prog-done-msg.msg-warn { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.25); }
+  .prog-done-msg.msg-ok   { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.2); }
 
   /* ===== SUMMARY PAGE ===== */
   .summary-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
   .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-  .stat-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 16px; padding: 14px 12px; text-align: center;
-  }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; }
   .stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; line-height: 1; }
   .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
-  .stat-ok   { color: var(--green); }
-  .stat-diff { color: var(--red); }
-  .stat-pending { color: var(--yellow); }
-  .section-label {
-    font-size: 0.72rem; color: var(--muted); font-family: var(--mono);
-    letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px;
-  }
-
-  /* hint ใต้ section label */
-  .section-hint {
-    font-size: 0.72rem; color: var(--muted);
-    padding: 0 2px; margin-top: -8px;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .section-hint span { opacity: 0.6; }
-
+  .stat-ok { color: var(--green); } .stat-diff { color: var(--red); } .stat-pending { color: var(--yellow); }
+  .section-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px; }
+  .section-hint { font-size: 0.72rem; color: var(--muted); padding: 0 2px; margin-top: -8px; display: flex; align-items: center; gap: 5px; }
   .item-list { display: flex; flex-direction: column; gap: 8px; }
-  .item-card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 12px 14px;
-    display: flex; align-items: center; gap: 12px;
-    transition: border-color 0.2s, background 0.2s;
-    /* ---- เพิ่ม: ทำให้กดได้ ---- */
-    cursor: pointer; user-select: none;
-  }
+  .item-card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; display: flex; align-items: center; gap: 12px; transition: border-color 0.2s, background 0.2s; cursor: pointer; user-select: none; }
   .item-card:hover { border-color: rgba(255,255,255,0.14); background: var(--surface2); }
   .item-card:active { transform: scale(0.985); }
-
-  /* ปุ่มดินสอด้านขวา */
-  .item-edit-btn {
-    flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
-    background: var(--surface3); border: 1px solid var(--border);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 0.85rem; color: var(--muted);
-    transition: background 0.2s, color 0.2s;
-  }
-  .item-card:hover .item-edit-btn {
-    background: rgba(0,212,255,0.12);
-    border-color: rgba(0,212,255,0.25);
-    color: var(--accent);
-  }
-
+  .item-edit-btn { flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px; background: var(--surface3); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.85rem; color: var(--muted); transition: background 0.2s, color 0.2s; }
+  .item-card:hover .item-edit-btn { background: rgba(0,212,255,0.12); border-color: rgba(0,212,255,0.25); color: var(--accent); }
   .item-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-  .s-ok      { background: var(--green); box-shadow: 0 0 6px var(--green); }
+  .s-ok      { background: var(--green);  box-shadow: 0 0 6px var(--green); }
   .s-over    { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
-  .s-short   { background: var(--red); box-shadow: 0 0 6px var(--red); }
+  .s-short   { background: var(--red);    box-shadow: 0 0 6px var(--red); }
   .s-pending { background: var(--muted); }
   .item-info { flex: 1; min-width: 0; }
   .item-name { font-size: 0.88rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .item-code { font-family: var(--mono); font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+  .item-note-text { font-size: 0.7rem; color: var(--yellow); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: flex; align-items: center; gap: 4px; }
   .item-right { text-align: right; flex-shrink: 0; }
   .item-count { font-family: var(--mono); font-size: 0.9rem; font-weight: 700; }
   .item-expected { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
-  .tag {
-    display: inline-block; padding: 2px 8px; border-radius: 20px;
-    font-size: 0.65rem; font-family: var(--mono); font-weight: 600; margin-top: 4px;
-  }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 0.65rem; font-family: var(--mono); font-weight: 600; margin-top: 4px; }
   .tag-ok     { background: rgba(0,255,136,0.12); color: var(--green); }
   .tag-over   { background: rgba(255,204,0,0.12);  color: var(--yellow); }
   .tag-short  { background: rgba(255,68,102,0.12); color: var(--red); }
   .tag-pending{ background: rgba(100,116,139,0.15); color: var(--muted); }
-  .btn-reset {
-    width: 100%; padding: 12px; border-radius: 12px;
-    border: 1.5px solid rgba(255,68,102,0.3);
-    background: rgba(255,68,102,0.08); color: var(--red);
-    font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem;
-    font-weight: 600; cursor: pointer; transition: background 0.2s; margin-top: 4px;
-  }
+  .action-row { display: flex; gap: 10px; margin-top: 4px; }
+  .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  .btn-export:hover { background: rgba(0,255,136,0.16); }
+  .btn-reset  { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,68,102,0.3); background: rgba(255,68,102,0.08); color: var(--red); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
   .btn-reset:hover { background: rgba(255,68,102,0.16); }
 
-  /* ===== QTY OVERLAY ===== */
-  .qty-overlay {
-    position: fixed; inset: 0; z-index: 200;
-    background: rgba(0,0,0,0.75); backdrop-filter: blur(6px);
-    display: flex; align-items: flex-end; justify-content: center;
-    opacity: 0; pointer-events: none; transition: opacity 0.25s;
-  }
-  .qty-overlay.show { opacity: 1; pointer-events: all; }
-  .qty-sheet {
-    width: 100%; max-width: 520px;
-    background: var(--surface); border-radius: 24px 24px 0 0;
-    padding: 20px 20px 36px; border-top: 1px solid var(--border);
-    transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
-  }
-  .qty-overlay.show .qty-sheet { transform: translateY(0); }
-  .qty-handle {
-    width: 40px; height: 4px; border-radius: 2px;
-    background: var(--surface3); margin: 0 auto 16px;
-  }
+  /* ===== OVERLAYS ===== */
+  .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
+  .overlay.show { opacity: 1; pointer-events: all; }
+  .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .overlay.show .sheet { transform: translateY(0); }
+  .sheet-handle { width: 40px; height: 4px; border-radius: 2px; background: var(--surface3); margin: 0 auto 16px; }
+  .sheet-title { font-size: 1rem; font-weight: 700; margin-bottom: 14px; }
 
-  /* ---- เพิ่ม: โหมด badge บนหัว popup ---- */
-  .qty-mode-badge {
-    display: inline-flex; align-items: center; gap: 5px;
-    padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
-    font-family: var(--mono); margin-bottom: 10px;
-    transition: background 0.3s, color 0.3s, border-color 0.3s;
-  }
-  .qty-mode-badge.mode-add {
-    background: rgba(0,212,255,0.12); color: var(--accent);
-    border: 1px solid rgba(0,212,255,0.25);
-  }
-  .qty-mode-badge.mode-set {
-    background: rgba(255,204,0,0.12); color: var(--yellow);
-    border: 1px solid rgba(255,204,0,0.3);
-  }
+  /* Manual */
+  .manual-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 1.1rem; font-weight: 600; padding: 14px 16px; outline: none; transition: border-color 0.2s; margin-bottom: 14px; }
+  .manual-input:focus { border-color: var(--accent); }
+  .manual-input::placeholder { color: var(--muted); font-weight: 400; font-family: 'IBM Plex Sans Thai', sans-serif; }
+  .btn-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+  .btn-confirm:hover { opacity: 0.9; }
 
-  .qty-item-info {
-    display: flex; align-items: center; gap: 12px;
-    background: var(--surface2); border-radius: 14px;
-    padding: 12px 14px; margin-bottom: 16px;
-  }
-  .qty-item-icon {
-    width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0;
-    background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25);
-    display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-  }
+  /* QTY */
+  .qty-mode-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; font-family: var(--mono); margin-bottom: 10px; }
+  .qty-mode-badge.mode-add { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
+  .qty-mode-badge.mode-set { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.3); }
+  .qty-item-info { display: flex; align-items: center; gap: 12px; background: var(--surface2); border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; }
+  .qty-item-icon { width: 40px; height: 40px; border-radius: 10px; flex-shrink: 0; background: rgba(0,212,255,0.12); border: 1px solid rgba(0,212,255,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
   .qty-item-name { font-weight: 700; font-size: 0.9rem; }
   .qty-item-meta { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); margin-top: 3px; }
-  .qty-display {
-    background: var(--surface2); border: 1.5px solid var(--border);
-    border-radius: 14px; padding: 14px 18px;
-    font-family: var(--mono); font-size: 2rem; font-weight: 700;
-    color: var(--accent); text-align: center; margin-bottom: 12px;
-    min-height: 66px; display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.2s, color 0.3s;
-  }
+  .qty-display { background: var(--surface2); border: 1.5px solid var(--border); border-radius: 14px; padding: 14px 18px; font-family: var(--mono); font-size: 2rem; font-weight: 700; color: var(--accent); text-align: center; margin-bottom: 12px; min-height: 66px; display: flex; align-items: center; justify-content: center; transition: border-color 0.2s, color 0.3s; }
   .qty-display.has-val { border-color: rgba(0,212,255,0.3); }
-  /* โหมดแก้ไข: display เป็นสีเหลือง */
   .qty-display.mode-set { color: var(--yellow); }
   .qty-display.mode-set.has-val { border-color: rgba(255,204,0,0.3); }
-
-  .numpad {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;
-  }
-  .numpad-btn {
-    padding: 16px; border-radius: 12px; border: 1px solid var(--border);
-    background: var(--surface2); color: var(--text);
-    font-family: var(--mono); font-size: 1.2rem; font-weight: 700;
-    cursor: pointer; transition: background 0.15s, transform 0.1s;
-  }
+  .numpad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px; }
+  .numpad-btn { padding: 16px; border-radius: 12px; border: 1px solid var(--border); background: var(--surface2); color: var(--text); font-family: var(--mono); font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background 0.15s, transform 0.1s; }
   .numpad-btn:active { background: var(--surface3); transform: scale(0.95); }
   .numpad-btn.del { color: var(--muted); font-size: 1rem; }
   .numpad-btn.zero { grid-column: span 2; }
+  .note-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 6px; }
+  .note-textarea { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; padding: 10px 14px; outline: none; resize: none; transition: border-color 0.2s; line-height: 1.5; margin-bottom: 12px; }
+  .note-textarea:focus { border-color: rgba(255,204,0,0.4); }
+  .note-textarea::placeholder { color: var(--muted); }
   .qty-confirm-row { display: flex; gap: 10px; }
-  .btn-qty-cancel {
-    flex: 0 0 80px; padding: 14px; border-radius: 12px;
-    border: 1.5px solid var(--border); background: transparent;
-    color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s;
-  }
+  .btn-qty-cancel { flex: 0 0 80px; padding: 14px; border-radius: 12px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.9rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
   .btn-qty-cancel:hover { background: var(--surface2); }
-  .btn-qty-ok {
-    flex: 1; padding: 14px; border-radius: 12px; border: none;
-    background: linear-gradient(135deg, var(--accent2), var(--accent));
-    color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif;
-    font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-  }
+  .btn-qty-ok { flex: 1; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
   .btn-qty-ok:hover { opacity: 0.9; }
   .btn-qty-ok:disabled { opacity: 0.4; cursor: not-allowed; }
-  /* โหมดแก้ไข: ปุ่ม ok เป็นสีเหลือง */
-  .btn-qty-ok.mode-set {
-    background: linear-gradient(135deg, #cc8800, var(--yellow));
-    color: #000;
-  }
+  .btn-qty-ok.mode-set { background: linear-gradient(135deg, #cc8800, var(--yellow)); color: #000; }
+
+  /* Import sheet */
+  .import-format { background: var(--surface2); border-radius: 12px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
+  .import-format code { font-family: var(--mono); color: var(--accent); background: rgba(0,212,255,0.08); padding: 1px 6px; border-radius: 4px; }
+  .import-drop { border: 2px dashed rgba(0,212,255,0.3); border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 14px; }
+  .import-drop:hover, .import-drop.drag-over { border-color: var(--accent); background: rgba(0,212,255,0.05); }
+  .import-drop-icon { font-size: 2.5rem; margin-bottom: 8px; }
+  .import-drop-text { font-size: 0.88rem; color: var(--muted); }
+  .import-drop-text strong { color: var(--accent); }
+  .import-preview { margin-bottom: 14px; display: none; }
+  .import-preview.show { display: block; }
+  .import-preview-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
+  .import-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
+  .import-preview-item { background: var(--surface2); border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
+  .icode { font-family: var(--mono); color: var(--accent); font-size: 0.78rem; }
+  .iexp  { font-family: var(--mono); color: var(--muted); font-size: 0.78rem; }
+  .btn-import-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s; }
+  .btn-import-confirm:hover { opacity: 0.9; }
+  .btn-import-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
+  #import-file-input { display: none; }
 
   /* Toast */
-  .toast {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: 12px; padding: 12px 20px;
-    font-size: 0.88rem; font-weight: 600;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s;
-    opacity: 0; z-index: 300; white-space: nowrap;
-  }
+  .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s; opacity: 0; z-index: 300; white-space: nowrap; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  .mini-stats {
-    display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
-  }
-  .mini-stat {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 10px 8px; text-align: center;
-  }
-  .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
-  .mini-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
-
-  .prog-wrap {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 12px 14px;
-    transition: border-color 0.4s, background 0.4s;
-  }
-  .prog-wrap.state-warn { border-color: rgba(255,204,0,0.35); background: rgba(255,204,0,0.05); }
-  .prog-wrap.state-ok   { border-color: rgba(0,255,136,0.35);  background: rgba(0,255,136,0.05); }
-  .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-  .prog-title { font-size: 0.78rem; color: var(--muted); transition: color 0.3s; }
-  .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); transition: color 0.3s; }
-  .prog-bar-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
-  .prog-bar-fill {
-    height: 100%; border-radius: 4px;
-    background: linear-gradient(90deg, var(--accent2), var(--accent));
-    transition: width 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s;
-  }
-  .prog-bar-fill.fill-warn { background: linear-gradient(90deg, #cc8800, var(--yellow)); }
-  .prog-bar-fill.fill-ok   { background: linear-gradient(90deg, #00aa55, var(--green)); }
-
-  .prog-done-msg {
-    display: none; align-items: center; justify-content: center; gap: 8px;
-    font-size: 0.82rem; font-weight: 600; margin-top: 8px;
-    padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s;
-  }
-  .prog-done-msg:hover { opacity: 0.8; }
-  .prog-done-msg.show { display: flex; }
-  .prog-done-msg.msg-warn { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.25); }
-  .prog-done-msg.msg-ok   { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.2);  }
+  /* Empty state */
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .es-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-state .es-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
+  .empty-state .es-sub { font-size: 0.82rem; }
 </style>
 </head>
 <body>
@@ -461,35 +254,31 @@
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub">v1.7 · DEMO</div>
+      <div class="header-sub" id="header-sub">v1.8 · ไม่มีข้อมูล</div>
     </div>
   </div>
-  <div class="badge-demo">⚡ DEMO</div>
+  <button class="btn-import" onclick="openImport()">📥 นำเข้า CSV</button>
 </div>
 
 <!-- TABS -->
 <div class="tabs">
-  <button class="tab-btn active" onclick="showTab('scan')" id="tab-scan">
-    <span>📷</span> สแกน
-  </button>
+  <button class="tab-btn active" onclick="showTab('scan')" id="tab-scan"><span>📷</span> สแกน</button>
   <button class="tab-btn" onclick="showTab('summary')" id="tab-summary">
-    <span>📊</span> สรุป <span id="tab-badge" style="display:none;background:rgba(0,212,255,0.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:0.7rem;"></span>
+    <span>📊</span> สรุป
+    <span id="tab-badge" style="display:none;background:rgba(0,212,255,0.2);color:var(--accent);border-radius:10px;padding:1px 7px;font-size:0.7rem;"></span>
   </button>
 </div>
 
 <!-- SCAN PAGE -->
 <div class="page active" id="page-scan">
   <div class="scan-wrap">
-
-    <div class="cam-box" id="cam-box">
+    <div class="cam-box">
       <div id="scanner-container"></div>
       <div class="cam-overlay" id="cam-overlay" style="display:none">
         <div class="scan-frame">
           <div class="scan-line"></div>
-          <div class="scan-corner tl"></div>
-          <div class="scan-corner tr"></div>
-          <div class="scan-corner bl"></div>
-          <div class="scan-corner br"></div>
+          <div class="scan-corner tl"></div><div class="scan-corner tr"></div>
+          <div class="scan-corner bl"></div><div class="scan-corner br"></div>
         </div>
       </div>
       <div class="cam-placeholder" id="cam-placeholder">
@@ -499,45 +288,27 @@
       </div>
       <div class="scan-flash" id="scan-flash"></div>
     </div>
-
     <div class="scan-controls">
-      <button class="btn-scan" id="btn-scan" onclick="toggleScan()">
-        <span>📷</span> เริ่มสแกน
-      </button>
+      <button class="btn-scan" id="btn-scan" onclick="toggleScan()"><span>📷</span> เริ่มสแกน</button>
       <button class="btn-manual" onclick="openManual()">⌨️ พิมพ์</button>
     </div>
-
     <div class="last-scan" id="last-scan">
       <div class="last-scan-label">🔍 สแกนล่าสุด</div>
       <div class="last-scan-body" id="last-scan-body"></div>
     </div>
-
     <div class="mini-stats">
-      <div class="mini-stat">
-        <div class="mini-stat-num stat-ok" id="mini-ok">0</div>
-        <div class="mini-stat-label">✅ ครบ</div>
-      </div>
-      <div class="mini-stat">
-        <div class="mini-stat-num stat-diff" id="mini-diff">0</div>
-        <div class="mini-stat-label">⚠️ ผิดปกติ</div>
-      </div>
-      <div class="mini-stat">
-        <div class="mini-stat-num stat-pending" id="mini-pending">0</div>
-        <div class="mini-stat-label">⏳ ยังไม่นับ</div>
-      </div>
+      <div class="mini-stat"><div class="mini-stat-num stat-ok" id="mini-ok">0</div><div class="mini-stat-label">✅ ครบ</div></div>
+      <div class="mini-stat"><div class="mini-stat-num stat-diff" id="mini-diff">0</div><div class="mini-stat-label">⚠️ ผิดปกติ</div></div>
+      <div class="mini-stat"><div class="mini-stat-num stat-pending" id="mini-pending">0</div><div class="mini-stat-label">⏳ ยังไม่นับ</div></div>
     </div>
-
     <div class="prog-wrap" id="prog-wrap">
       <div class="prog-top">
         <span class="prog-title" id="prog-title">นับไปแล้ว</span>
         <span class="prog-pct" id="prog-pct">0 / 0</span>
       </div>
-      <div class="prog-bar-bg">
-        <div class="prog-bar-fill" id="prog-bar" style="width:0%"></div>
-      </div>
+      <div class="prog-bar-bg"><div class="prog-bar-fill" id="prog-bar" style="width:0%"></div></div>
       <div class="prog-done-msg" id="prog-done-msg" onclick="showTab('summary')"></div>
     </div>
-
   </div>
 </div>
 
@@ -545,49 +316,37 @@
 <div class="page" id="page-summary">
   <div class="summary-wrap">
     <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-num stat-ok" id="stat-ok">0</div>
-        <div class="stat-label">✅ ตรง</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num stat-diff" id="stat-diff">0</div>
-        <div class="stat-label">⚠️ ผิดปกติ</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-num stat-pending" id="stat-pending">0</div>
-        <div class="stat-label">⏳ ยังไม่นับ</div>
-      </div>
+      <div class="stat-card"><div class="stat-num stat-ok" id="stat-ok">0</div><div class="stat-label">✅ ตรง</div></div>
+      <div class="stat-card"><div class="stat-num stat-diff" id="stat-diff">0</div><div class="stat-label">⚠️ ผิดปกติ</div></div>
+      <div class="stat-card"><div class="stat-num stat-pending" id="stat-pending">0</div><div class="stat-label">⏳ ยังไม่นับ</div></div>
     </div>
     <div class="section-label">รายการสินค้าทั้งหมด</div>
-    <!-- hint ใต้ label -->
-    <div class="section-hint"><span>✏️</span> แตะรายการเพื่อแก้ไขจำนวน</div>
+    <div class="section-hint"><span>✏️</span> แตะรายการเพื่อแก้ไขจำนวน / หมายเหตุ</div>
     <div class="item-list" id="item-list"></div>
-    <button class="btn-reset" onclick="resetAll()">🔄 รีเซ็ตการนับทั้งหมด</button>
+    <div class="action-row">
+      <button class="btn-export" onclick="exportCSV()">📤 Export CSV</button>
+      <button class="btn-reset" onclick="resetAll()">🔄 รีเซ็ต</button>
+    </div>
   </div>
 </div>
 
 <!-- MANUAL OVERLAY -->
-<div class="manual-overlay" id="manual-overlay" onclick="closeManualOutside(event)">
-  <div class="manual-sheet">
-    <div class="manual-handle"></div>
-    <div class="manual-title">⌨️ พิมพ์ Matcode</div>
-    <div class="manual-input-wrap">
-      <input type="text" class="manual-input" id="manual-input"
-             placeholder="เช่น MAT001" autocomplete="off" autocapitalize="characters"
-             onkeydown="if(event.key==='Enter') confirmManual()">
-    </div>
+<div class="overlay" id="manual-overlay" onclick="closeManualOutside(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">⌨️ พิมพ์ Matcode</div>
+    <input type="text" class="manual-input" id="manual-input"
+           placeholder="เช่น MAT001" autocomplete="off" autocapitalize="characters"
+           onkeydown="if(event.key==='Enter') confirmManual()">
     <button class="btn-confirm" onclick="confirmManual()">ยืนยัน</button>
   </div>
 </div>
 
 <!-- QTY OVERLAY -->
-<div class="qty-overlay" id="qty-overlay">
-  <div class="qty-sheet">
-    <div class="qty-handle"></div>
-
-    <!-- mode badge -->
+<div class="overlay" id="qty-overlay">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
     <div class="qty-mode-badge mode-add" id="qty-mode-badge">➕ เพิ่มจำนวน</div>
-
     <div class="qty-item-info">
       <div class="qty-item-icon">📦</div>
       <div>
@@ -609,6 +368,9 @@
       <button class="numpad-btn zero" onclick="numpad('0')">0</button>
       <button class="numpad-btn del" onclick="numpad('del')">⌫</button>
     </div>
+    <div class="note-label">📝 หมายเหตุ (ไม่บังคับ)</div>
+    <textarea class="note-textarea" id="note-textarea" rows="2"
+              placeholder="เช่น สินค้าถูกขายระหว่างนับ, บาร์โค้ดชำรุด..."></textarea>
     <div class="qty-confirm-row">
       <button class="btn-qty-cancel" onclick="closeQty()">ยกเลิก</button>
       <button class="btn-qty-ok" id="btn-qty-ok" onclick="confirmQty()">✅ ยืนยัน</button>
@@ -616,29 +378,51 @@
   </div>
 </div>
 
+<!-- IMPORT OVERLAY -->
+<div class="overlay" id="import-overlay" onclick="closeImportOutside(event)">
+  <div class="sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">📥 นำเข้าข้อมูลสินค้า (CSV)</div>
+    <div class="import-format">
+      รูปแบบไฟล์ CSV ต้องมีคอลัมน์:<br>
+      <code>matcode</code>, <code>name</code>, <code>expected</code><br><br>
+      ตัวอย่าง:<br>
+      <code>MAT001,น็อตหกเหลี่ยม M8,50</code><br>
+      <code>MAT002,สกรูหัวจม M6x20,100</code>
+    </div>
+    <div class="import-drop" id="import-drop"
+         onclick="document.getElementById('import-file-input').click()"
+         ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
+      <div class="import-drop-icon">📂</div>
+      <div class="import-drop-text">
+        <strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง<br>
+        <span style="font-size:0.75rem">รองรับ .csv และ .txt</span>
+      </div>
+    </div>
+    <input type="file" id="import-file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
+    <div class="import-preview" id="import-preview">
+      <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="import-count">0</span> รายการ)</div>
+      <div class="import-preview-list" id="import-preview-list"></div>
+    </div>
+    <button class="btn-import-confirm" id="btn-import-confirm" onclick="confirmImport()" disabled>
+      📥 นำเข้าข้อมูล
+    </button>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
 <script>
-// =================== DEMO DATA ===================
-const STOCK_DATA = [
-  { matcode: 'MAT001', name: 'น็อตหกเหลี่ยม M8',     expected: 50  },
-  { matcode: 'MAT002', name: 'สกรูหัวจม M6x20',        expected: 100 },
-  { matcode: 'MAT003', name: 'แหวนรอง สแตนเลส',        expected: 200 },
-  { matcode: 'MAT004', name: 'ท่อ PVC 1/2 นิ้ว',       expected: 30  },
-  { matcode: 'MAT005', name: 'สายไฟ THW 2.5mm',         expected: 15  },
-  { matcode: 'MAT006', name: 'หลอด LED 9W',             expected: 24  },
-  { matcode: 'MAT007', name: 'สวิตช์ 2 ทาง',            expected: 10  },
-  { matcode: 'MAT008', name: 'ปลั๊กตัวเมีย 3 ขา',       expected: 20  },
-];
-
-let counts = {};
-let scanning = false;
-let lastCode = '';
-let lastCodeTime = 0;
-let codeReader = null;
-
-STOCK_DATA.forEach(item => counts[item.matcode] = 0);
+// =================== STATE ===================
+let STOCK_DATA   = [];
+let counts       = {};
+let notes        = {};
+let scanning     = false;
+let lastCode     = '', lastCodeTime = 0;
+let codeReader   = null;
+let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
+let pendingImport = [];
 
 // =================== TABS ===================
 function showTab(t) {
@@ -650,45 +434,36 @@ function showTab(t) {
 }
 
 // =================== SCANNER ===================
-function toggleScan() {
-  if (scanning) stopScan();
-  else startScan();
-}
+function toggleScan() { scanning ? stopScan() : startScan(); }
 
 function startScan() {
+  if (STOCK_DATA.length === 0) { showToast('⚠️ กรุณานำเข้าข้อมูลสินค้าก่อน'); return; }
   const btn = document.getElementById('btn-scan');
   btn.disabled = true;
   btn.innerHTML = '<span>⏳</span> กำลังเปิดกล้อง...';
-
   const container = document.getElementById('scanner-container');
   container.innerHTML = '';
   const video = document.createElement('video');
   video.id = 'zxing-video';
   video.setAttribute('playsinline', 'true');
   container.appendChild(video);
-
   const hints = new Map();
-  const formats = [
+  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, [
     ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
     ZXing.BarcodeFormat.EAN_13,   ZXing.BarcodeFormat.EAN_8,
     ZXing.BarcodeFormat.UPC_A,    ZXing.BarcodeFormat.UPC_E,
     ZXing.BarcodeFormat.QR_CODE,  ZXing.BarcodeFormat.DATA_MATRIX,
-  ];
-  hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
+  ]);
   hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
-
   codeReader = new ZXing.BrowserMultiFormatReader(hints, 300);
-
   codeReader.decodeFromConstraints(
     { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
     'zxing-video',
-    (result, err) => {
+    (result) => {
       if (result) {
-        const code = result.getText();
-        const now = Date.now();
+        const code = result.getText(), now = Date.now();
         if (code === lastCode && now - lastCodeTime < 2000) return;
-        lastCode = code;
-        lastCodeTime = now;
+        lastCode = code; lastCodeTime = now;
         handleCode(code);
       }
     }
@@ -700,16 +475,12 @@ function startScan() {
     btn.innerHTML = '<span>⏹</span> หยุดสแกน';
     btn.classList.add('stop');
   }).catch(err => {
-    console.error('Camera error:', err);
     let msg = '❌ ไม่สามารถเปิดกล้องได้';
-    if (err && err.name === 'NotAllowedError') msg = '❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
-    else if (err && err.name === 'NotFoundError') msg = '❌ ไม่พบกล้องในอุปกรณ์นี้';
+    if (err?.name === 'NotAllowedError') msg = '❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
+    else if (err?.name === 'NotFoundError') msg = '❌ ไม่พบกล้องในอุปกรณ์นี้';
     showToast(msg);
-    container.innerHTML = '';
-    codeReader = null;
-    btn.disabled = false;
-    btn.innerHTML = '<span>📷</span> เริ่มสแกน';
-    btn.classList.remove('stop');
+    container.innerHTML = ''; codeReader = null;
+    btn.disabled = false; btn.innerHTML = '<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
   });
 }
 
@@ -720,170 +491,113 @@ function stopScan() {
   document.getElementById('cam-placeholder').style.display = 'flex';
   document.getElementById('scanner-container').innerHTML = '';
   const btn = document.getElementById('btn-scan');
-  btn.innerHTML = '<span>📷</span> เริ่มสแกน';
-  btn.classList.remove('stop');
+  btn.innerHTML = '<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
 }
 
 // =================== HANDLE CODE ===================
 function handleCode(code) {
   const flash = document.getElementById('scan-flash');
-  flash.classList.remove('show');
-  void flash.offsetWidth;
-  flash.classList.add('show');
-
+  flash.classList.remove('show'); void flash.offsetWidth; flash.classList.add('show');
   const item = STOCK_DATA.find(i => i.matcode === code);
-  if (!item) {
-    showLastScan({ code, found: false });
-    showToast('⚠️ ไม่พบ Matcode นี้ในระบบ');
-    return;
-  }
-  openQty(code, item, 'add'); // โหมด add เหมือนเดิม
+  if (!item) { showLastScan({ code, found: false }); showToast('⚠️ ไม่พบ Matcode นี้ในระบบ'); return; }
+  openQty(code, item, 'add');
 }
 
-function applyCount(code, item, qty, mode) {
-  if (mode === 'set') {
-    counts[code] = qty;           // ตั้งค่าใหม่
-  } else {
-    counts[code] = (counts[code] || 0) + qty; // บวกเพิ่ม
-  }
+function applyCount(code, item, qty, mode, note) {
+  counts[code] = mode === 'set' ? qty : (counts[code] || 0) + qty;
+  if (note && note.trim()) notes[code] = note.trim();
+  else if (mode === 'set') notes[code] = '';
 
   showLastScan({ code, item, count: counts[code], found: true });
-  updateProgress();
-  updateBadge();
+  updateProgress(); updateBadge();
   if (document.getElementById('page-summary').classList.contains('active')) renderSummary();
 
   const diff = counts[code] - item.expected;
-  const modeLabel = mode === 'set' ? '✏️ แก้ไขแล้ว —' : '📦';
   if (counts[code] === item.expected) showToast(`✅ ${item.name} — ครบแล้ว!`);
   else if (diff > 0) showToast(`⚠️ ${item.name} — เกิน ${diff} ชิ้น`);
-  else showToast(`${modeLabel} ${item.name} — ${counts[code]}/${item.expected}`);
+  else showToast(`${mode==='set'?'✏️':'📦'} ${item.name} — ${counts[code]}/${item.expected}`);
 }
 
 // =================== QTY POPUP ===================
-let qtyCode = null;
-let qtyItem = null;
-let qtyVal  = '';
-let qtyMode = 'add'; // 'add' | 'set'
-
 function openQty(code, item, mode = 'add') {
-  qtyCode = code;
-  qtyItem = item;
-  qtyVal  = '';
-  qtyMode = mode;
-
-  // ชื่อและ meta
+  qtyCode = code; qtyItem = item; qtyVal = ''; qtyMode = mode;
   document.getElementById('qty-item-name').textContent = item.name;
   const already = counts[code] || 0;
   document.getElementById('qty-item-meta').textContent =
-    mode === 'set'
-      ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}`
-      : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
-
-  // mode badge
+    mode === 'set' ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}`
+                   : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
+  document.getElementById('note-textarea').value = notes[code] || '';
   const badge = document.getElementById('qty-mode-badge');
   const display = document.getElementById('qty-display');
-  const okBtn   = document.getElementById('btn-qty-ok');
-
+  const okBtn = document.getElementById('btn-qty-ok');
   if (mode === 'set') {
-    badge.textContent  = '✏️ แก้ไขจำนวน';
-    badge.className    = 'qty-mode-badge mode-set';
-    display.classList.add('mode-set');
-    okBtn.textContent  = '✏️ บันทึก';
-    okBtn.className    = 'btn-qty-ok mode-set';
+    badge.textContent = '✏️ แก้ไขจำนวน'; badge.className = 'qty-mode-badge mode-set';
+    display.classList.add('mode-set'); okBtn.textContent = '✏️ บันทึก'; okBtn.className = 'btn-qty-ok mode-set';
   } else {
-    badge.textContent  = '➕ เพิ่มจำนวน';
-    badge.className    = 'qty-mode-badge mode-add';
-    display.classList.remove('mode-set');
-    okBtn.textContent  = '✅ ยืนยัน';
-    okBtn.className    = 'btn-qty-ok';
+    badge.textContent = '➕ เพิ่มจำนวน'; badge.className = 'qty-mode-badge mode-add';
+    display.classList.remove('mode-set'); okBtn.textContent = '✅ ยืนยัน'; okBtn.className = 'btn-qty-ok';
   }
-
   updateQtyDisplay();
   document.getElementById('qty-overlay').classList.add('show');
 }
 
 function closeQty() {
   document.getElementById('qty-overlay').classList.remove('show');
-  qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add';
-  lastCode = ''; // ให้สแกนซ้ำได้หลังกดยกเลิก
+  qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add'; lastCode = '';
 }
 
 function numpad(key) {
-  if (key === 'del') {
-    qtyVal = qtyVal.slice(0, -1);
-  } else {
-    if (qtyVal === '0') qtyVal = key;
-    else if (qtyVal.length >= 5) return;
-    else qtyVal += key;
-  }
+  if (key === 'del') qtyVal = qtyVal.slice(0, -1);
+  else { if (qtyVal === '0') qtyVal = key; else if (qtyVal.length >= 5) return; else qtyVal += key; }
   updateQtyDisplay();
 }
 
 function updateQtyDisplay() {
   const el = document.getElementById('qty-display');
-  const n  = parseInt(qtyVal) || 0;
+  const n = parseInt(qtyVal) || 0;
   el.textContent = n === 0 ? '0' : n.toLocaleString();
   el.classList.toggle('has-val', n > 0);
-
-  // โหมด set: อนุญาตให้กรอก 0 ได้ (เพื่อล้างค่า)
-  const okBtn = document.getElementById('btn-qty-ok');
-  if (qtyMode === 'set') {
-    okBtn.disabled = qtyVal === ''; // ต้องกดตัวเลขอย่างน้อยหนึ่งครั้ง
-  } else {
-    okBtn.disabled = n <= 0;
-  }
+  document.getElementById('btn-qty-ok').disabled = qtyMode === 'set' ? qtyVal === '' : n <= 0;
 }
 
 function confirmQty() {
-  const qty  = parseInt(qtyVal) || 0;
-  const code = qtyCode;
-  const item = qtyItem;
-  const mode = qtyMode;
-  if (mode !== 'set' && qty <= 0) return;
-  if (mode === 'set' && qtyVal === '') return;
+  const qty = parseInt(qtyVal) || 0;
+  if (qtyMode !== 'set' && qty <= 0) return;
+  if (qtyMode === 'set' && qtyVal === '') return;
+  const note = document.getElementById('note-textarea').value;
+  const [code, item, mode] = [qtyCode, qtyItem, qtyMode];
   closeQty();
-  applyCount(code, item, qty, mode);
+  applyCount(code, item, qty, mode, note);
 }
 
-// =================== EDIT FROM SUMMARY ===================
-// เปิด popup ในโหมด 'set' (ตั้งค่าใหม่)
 function editCount(matcode) {
   const item = STOCK_DATA.find(i => i.matcode === matcode);
-  if (!item) return;
-  openQty(matcode, item, 'set');
+  if (item) openQty(matcode, item, 'set');
 }
 
+// =================== LAST SCAN ===================
 function showLastScan({ code, item, count, found }) {
-  const el   = document.getElementById('last-scan');
+  const el = document.getElementById('last-scan');
   const body = document.getElementById('last-scan-body');
   el.classList.add('show');
-
   if (!found) {
-    body.innerHTML = `
-      <div class="last-scan-icon icon-err">❓</div>
+    body.innerHTML = `<div class="last-scan-icon icon-err">❓</div>
       <div class="last-scan-info">
         <div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div>
         <div class="last-scan-code">${code}</div>
       </div>`;
     return;
   }
-
   const diff = count - item.expected;
   let iconClass, countClass, tag;
-  if (count === item.expected) {
-    iconClass = 'icon-ok';   countClass = 'count-ok';   tag = `<span class="tag tag-ok">✅ ครบ</span>`;
-  } else if (diff > 0) {
-    iconClass = 'icon-over'; countClass = 'count-over'; tag = `<span class="tag tag-over">⚠️ เกิน ${diff}</span>`;
-  } else {
-    iconClass = 'icon-new';  countClass = 'count-new';  tag = `<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`;
-  }
-
+  if (count === item.expected)    { iconClass='icon-ok';   countClass='count-ok';   tag=`<span class="tag tag-ok">✅ ครบ</span>`; }
+  else if (diff > 0)              { iconClass='icon-over'; countClass='count-over'; tag=`<span class="tag tag-over">⚠️ เกิน ${diff}</span>`; }
+  else                            { iconClass='icon-new';  countClass='count-new';  tag=`<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`; }
   body.innerHTML = `
     <div class="last-scan-icon ${iconClass}">📦</div>
     <div class="last-scan-info">
-      <div class="last-scan-name">${item.name}</div>
-      <div class="last-scan-code">${code}</div>
-      ${tag}
+      <div class="last-scan-name">${escHtml(item.name)}</div>
+      <div class="last-scan-code">${code}</div>${tag}
     </div>
     <div class="last-scan-count">
       <div class="count-num ${countClass}">${count}</div>
@@ -891,62 +605,57 @@ function showLastScan({ code, item, count, found }) {
     </div>`;
 }
 
-// =================== MANUAL INPUT ===================
+// =================== MANUAL ===================
 function openManual() {
   document.getElementById('manual-overlay').classList.add('show');
   setTimeout(() => document.getElementById('manual-input').focus(), 300);
 }
-function closeManual() {
-  document.getElementById('manual-overlay').classList.remove('show');
-  document.getElementById('manual-input').value = '';
-}
-function closeManualOutside(e) {
-  if (e.target === document.getElementById('manual-overlay')) closeManual();
-}
+function closeManual() { document.getElementById('manual-overlay').classList.remove('show'); document.getElementById('manual-input').value = ''; }
+function closeManualOutside(e) { if (e.target === document.getElementById('manual-overlay')) closeManual(); }
 function confirmManual() {
   const val = document.getElementById('manual-input').value.trim().toUpperCase();
   if (!val) return;
-  closeManual();
-  handleCode(val);
+  closeManual(); handleCode(val);
 }
 
 // =================== SUMMARY ===================
 function renderSummary() {
+  if (STOCK_DATA.length === 0) {
+    ['stat-ok','stat-diff','stat-pending'].forEach(id => document.getElementById(id).textContent = 0);
+    document.getElementById('item-list').innerHTML = `
+      <div class="empty-state">
+        <div class="es-icon">📂</div>
+        <div class="es-title">ยังไม่มีข้อมูลสินค้า</div>
+        <div class="es-sub">กดปุ่ม "📥 นำเข้า CSV" เพื่อโหลดรายการสินค้า</div>
+      </div>`;
+    return;
+  }
   let ok = 0, diff = 0, pending = 0;
   STOCK_DATA.forEach(item => {
     const c = counts[item.matcode] || 0;
-    if (c === 0) pending++;
-    else if (c === item.expected) ok++;
-    else diff++;
+    if (c === 0) pending++; else if (c === item.expected) ok++; else diff++;
   });
   document.getElementById('stat-ok').textContent      = ok;
   document.getElementById('stat-diff').textContent    = diff;
   document.getElementById('stat-pending').textContent = pending;
-
-  const list = document.getElementById('item-list');
-  list.innerHTML = STOCK_DATA.map(item => {
+  document.getElementById('item-list').innerHTML = STOCK_DATA.map(item => {
     const c = counts[item.matcode] || 0;
-    let statusClass, tagHtml, countColor;
-    if (c === 0) {
-      statusClass = 's-pending'; tagHtml = `<span class="tag tag-pending">⏳ ยังไม่นับ</span>`; countColor = 'color:var(--muted)';
-    } else if (c === item.expected) {
-      statusClass = 's-ok';    tagHtml = `<span class="tag tag-ok">✅ ครบ</span>`;            countColor = 'color:var(--green)';
-    } else if (c > item.expected) {
-      statusClass = 's-over';  tagHtml = `<span class="tag tag-over">⚠️ เกิน ${c - item.expected}</span>`; countColor = 'color:var(--yellow)';
-    } else {
-      statusClass = 's-short'; tagHtml = `<span class="tag tag-short">❌ ขาด ${item.expected - c}</span>`;  countColor = 'color:var(--red)';
-    }
-
-    return `
-    <div class="item-card" onclick="editCount('${item.matcode}')">
-      <div class="item-status ${statusClass}"></div>
+    const note = notes[item.matcode] || '';
+    let sc, tagHtml, cc;
+    if (c === 0)               { sc='s-pending'; tagHtml=`<span class="tag tag-pending">⏳ ยังไม่นับ</span>`; cc='color:var(--muted)'; }
+    else if (c===item.expected){ sc='s-ok';      tagHtml=`<span class="tag tag-ok">✅ ครบ</span>`;            cc='color:var(--green)'; }
+    else if (c>item.expected)  { sc='s-over';    tagHtml=`<span class="tag tag-over">⚠️ เกิน ${c-item.expected}</span>`; cc='color:var(--yellow)'; }
+    else                       { sc='s-short';   tagHtml=`<span class="tag tag-short">❌ ขาด ${item.expected-c}</span>`;  cc='color:var(--red)'; }
+    const noteHtml = note ? `<div class="item-note-text">📝 ${escHtml(note)}</div>` : '';
+    return `<div class="item-card" onclick="editCount('${item.matcode}')">
+      <div class="item-status ${sc}"></div>
       <div class="item-info">
-        <div class="item-name">${item.name}</div>
+        <div class="item-name">${escHtml(item.name)}</div>
         <div class="item-code">${item.matcode}</div>
-        ${tagHtml}
+        ${tagHtml}${noteHtml}
       </div>
       <div class="item-right">
-        <div class="item-count" style="${countColor}">${c}</div>
+        <div class="item-count" style="${cc}">${c}</div>
         <div class="item-expected">เป้า: ${item.expected}</div>
       </div>
       <div class="item-edit-btn">✏️</div>
@@ -955,84 +664,160 @@ function renderSummary() {
 }
 
 function updateProgress() {
+  if (STOCK_DATA.length === 0) {
+    ['mini-ok','mini-diff','mini-pending'].forEach(id => document.getElementById(id).textContent = 0);
+    document.getElementById('prog-pct').textContent = '0 / 0 Matcode';
+    document.getElementById('prog-bar').style.width = '0%';
+    document.getElementById('prog-done-msg').classList.remove('show');
+    return;
+  }
   let ok = 0, diff = 0, pending = 0;
   STOCK_DATA.forEach(item => {
     const c = counts[item.matcode] || 0;
-    if (c === 0) pending++;
-    else if (c === item.expected) ok++;
-    else diff++;
+    if (c === 0) pending++; else if (c === item.expected) ok++; else diff++;
   });
   document.getElementById('mini-ok').textContent      = ok;
   document.getElementById('mini-diff').textContent    = diff;
   document.getElementById('mini-pending').textContent = pending;
-
-  const total   = STOCK_DATA.length;
-  const counted = total - pending;
-  const pct     = total ? Math.round(counted / total * 100) : 0;
-
-  const wrap   = document.getElementById('prog-wrap');
-  const bar    = document.getElementById('prog-bar');
-  const msg    = document.getElementById('prog-done-msg');
-  const pctEl  = document.getElementById('prog-pct');
+  const total = STOCK_DATA.length, counted = total - pending;
+  const pct = total ? Math.round(counted / total * 100) : 0;
+  const wrap = document.getElementById('prog-wrap');
+  const bar  = document.getElementById('prog-bar');
+  const msg  = document.getElementById('prog-done-msg');
+  const pctEl   = document.getElementById('prog-pct');
   const titleEl = document.getElementById('prog-title');
-
-  pctEl.textContent  = counted + ' / ' + total + ' Matcode';
-  bar.style.width    = pct + '%';
-
-  wrap.classList.remove('state-warn', 'state-ok');
-  bar.classList.remove('fill-warn', 'fill-ok');
-  msg.classList.remove('show', 'msg-warn', 'msg-ok');
-
+  pctEl.textContent = `${counted} / ${total} Matcode`;
+  bar.style.width   = pct + '%';
+  wrap.classList.remove('state-warn','state-ok');
+  bar.classList.remove('fill-warn','fill-ok');
+  msg.classList.remove('show','msg-warn','msg-ok');
   if (counted < total) {
-    titleEl.textContent  = 'นับไปแล้ว';
-    pctEl.style.color    = 'var(--accent)';
+    titleEl.textContent = 'นับไปแล้ว'; pctEl.style.color = 'var(--accent)';
   } else if (diff > 0) {
-    wrap.classList.add('state-warn');
-    bar.classList.add('fill-warn');
-    titleEl.textContent  = 'นับครบแล้ว';
-    pctEl.style.color    = 'var(--yellow)';
-    msg.classList.add('show', 'msg-warn');
-    msg.innerHTML        = '⚠️ พบ ' + diff + ' Matcode ผิดปกติ — แตะเพื่อดูสรุป';
+    wrap.classList.add('state-warn'); bar.classList.add('fill-warn');
+    titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--yellow)';
+    msg.classList.add('show','msg-warn');
+    msg.innerHTML = `⚠️ พบ ${diff} Matcode ผิดปกติ — แตะเพื่อดูสรุป`;
   } else {
-    wrap.classList.add('state-ok');
-    bar.classList.add('fill-ok');
-    titleEl.textContent  = 'นับครบแล้ว';
-    pctEl.style.color    = 'var(--green)';
-    msg.classList.add('show', 'msg-ok');
-    msg.innerHTML        = '✅ ครบและตรงทั้งหมด!';
+    wrap.classList.add('state-ok'); bar.classList.add('fill-ok');
+    titleEl.textContent = 'นับครบแล้ว'; pctEl.style.color = 'var(--green)';
+    msg.classList.add('show','msg-ok'); msg.innerHTML = '✅ ครบและตรงทั้งหมด!';
   }
 }
 
 function updateBadge() {
   const counted = STOCK_DATA.filter(i => (counts[i.matcode] || 0) > 0).length;
-  const badge   = document.getElementById('tab-badge');
+  const badge = document.getElementById('tab-badge');
   if (counted > 0) { badge.style.display = ''; badge.textContent = counted; }
   else badge.style.display = 'none';
 }
 
 function resetAll() {
   if (!confirm('รีเซ็ตการนับทั้งหมดใช่ไหม?')) return;
-  STOCK_DATA.forEach(item => counts[item.matcode] = 0);
+  STOCK_DATA.forEach(item => { counts[item.matcode] = 0; notes[item.matcode] = ''; });
   document.getElementById('last-scan').classList.remove('show');
-  updateProgress();
-  updateBadge();
-  renderSummary();
+  updateProgress(); updateBadge(); renderSummary();
   showToast('🔄 รีเซ็ตเรียบร้อยแล้ว');
 }
 
-// =================== TOAST ===================
+// =================== IMPORT CSV ===================
+function openImport() {
+  pendingImport = [];
+  document.getElementById('import-preview').classList.remove('show');
+  document.getElementById('btn-import-confirm').disabled = true;
+  document.getElementById('import-file-input').value = '';
+  document.getElementById('import-overlay').classList.add('show');
+}
+function closeImport() { document.getElementById('import-overlay').classList.remove('show'); }
+function closeImportOutside(e) { if (e.target === document.getElementById('import-overlay')) closeImport(); }
+function dragOver(e)  { e.preventDefault(); document.getElementById('import-drop').classList.add('drag-over'); }
+function dragLeave()  { document.getElementById('import-drop').classList.remove('drag-over'); }
+function dropFile(e)  { e.preventDefault(); dragLeave(); if (e.dataTransfer.files[0]) parseCSVFile(e.dataTransfer.files[0]); }
+function handleFileSelect(e) { if (e.target.files[0]) parseCSVFile(e.target.files[0]); }
+
+function parseCSVFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const lines = e.target.result.split(/\r?\n/).map(l => l.trim()).filter(l => l);
+    const parsed = [];
+    let startIdx = 0;
+    // ข้าม header ถ้าคอลัมน์ที่ 3 ไม่ใช่ตัวเลข
+    if (lines[0] && isNaN(parseInt(lines[0].split(',').pop()))) startIdx = 1;
+    for (let i = startIdx; i < lines.length; i++) {
+      const parts = lines[i].split(',');
+      if (parts.length < 3) continue;
+      const matcode  = parts[0].trim().toUpperCase();
+      const expected = parseInt(parts[parts.length - 1].trim());
+      const name     = parts.slice(1, parts.length - 1).join(',').trim().replace(/^"|"$/g, '');
+      if (!matcode || !name || isNaN(expected)) continue;
+      parsed.push({ matcode, name, expected });
+    }
+    if (parsed.length === 0) { showToast('❌ ไม่พบข้อมูลที่ถูกต้องในไฟล์'); return; }
+    pendingImport = parsed;
+    document.getElementById('import-count').textContent = parsed.length;
+    document.getElementById('import-preview-list').innerHTML =
+      parsed.slice(0, 5).map(p =>
+        `<div class="import-preview-item">
+          <div><span class="icode">${p.matcode}</span> ${escHtml(p.name)}</div>
+          <span class="iexp">เป้า ${p.expected}</span>
+        </div>`
+      ).join('') +
+      (parsed.length > 5 ? `<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length - 5} รายการ</div>` : '');
+    document.getElementById('import-preview').classList.add('show');
+    document.getElementById('btn-import-confirm').disabled = false;
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function confirmImport() {
+  if (!pendingImport.length) return;
+  STOCK_DATA = pendingImport;
+  counts = {}; notes = {};
+  STOCK_DATA.forEach(item => { counts[item.matcode] = 0; notes[item.matcode] = ''; });
+  document.getElementById('header-sub').textContent = `v1.8 · ${STOCK_DATA.length} รายการ`;
+  closeImport();
+  document.getElementById('last-scan').classList.remove('show');
+  updateProgress(); updateBadge(); renderSummary();
+  showToast(`✅ นำเข้าสำเร็จ ${STOCK_DATA.length} รายการ`);
+}
+
+// =================== EXPORT CSV ===================
+function exportCSV() {
+  if (STOCK_DATA.length === 0) { showToast('⚠️ ไม่มีข้อมูลสำหรับ Export'); return; }
+  const now = new Date();
+  const stamp = `${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
+  const rows = [
+    ['matcode','name','expected','counted','difference','status','note'],
+    ...STOCK_DATA.map(item => {
+      const c    = counts[item.matcode] || 0;
+      const diff = c - item.expected;
+      const note = notes[item.matcode] || '';
+      const status = c === 0 ? 'ยังไม่นับ' : c === item.expected ? 'ตรง' : diff > 0 ? `เกิน ${diff}` : `ขาด ${Math.abs(diff)}`;
+      return [item.matcode, `"${item.name}"`, item.expected, c, diff, status, `"${note}"`];
+    })
+  ];
+  const csv  = '\uFEFF' + rows.map(r => r.join(',')).join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url; a.download = `stock_count_${stamp}.csv`; a.click();
+  URL.revokeObjectURL(url);
+  showToast('📤 Export เรียบร้อยแล้ว');
+}
+
+// =================== UTILS ===================
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
 let toastTimer;
 function showToast(msg) {
   const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
+  el.textContent = msg; el.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => el.classList.remove('show'), 2500);
 }
 
 // Init
-updateProgress();
-updateBadge();
+updateProgress(); updateBadge(); renderSummary();
 </script>
 </body>
 </html>

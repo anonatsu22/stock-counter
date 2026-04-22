@@ -76,7 +76,6 @@
   /* ===== SCAN PAGE ===== */
   .scan-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
 
-  /* Camera */
   .cam-box {
     position: relative; border-radius: 20px; overflow: hidden;
     background: #000; aspect-ratio: 4/3;
@@ -84,15 +83,8 @@
     box-shadow: 0 0 40px rgba(0,102,255,0.15);
   }
 
-  #scanner-container {
-    width: 100%; height: 100%;
-  }
-
-  #scanner-container video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+  #scanner-container { width: 100%; height: 100%; }
+  #scanner-container video { width: 100%; height: 100%; object-fit: cover; }
 
   .cam-overlay {
     position: absolute; inset: 0; pointer-events: none;
@@ -143,7 +135,6 @@
   .scan-flash.show { opacity: 1; animation: flashOut 0.4s ease forwards; }
   @keyframes flashOut { 0%{opacity:1} 100%{opacity:0} }
 
-  /* Scan controls */
   .scan-controls { display: flex; gap: 10px; }
 
   .btn-scan {
@@ -168,7 +159,6 @@
   }
   .btn-manual:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 
-  /* Last scan card */
   .last-scan {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 16px; padding: 14px 16px; display: none;
@@ -199,7 +189,6 @@
   .count-err  { color: var(--red); }
   .count-new  { color: var(--accent); }
 
-  /* Manual input overlay */
   .manual-overlay {
     position: fixed; inset: 0; z-index: 200;
     background: rgba(0,0,0,0.7); backdrop-filter: blur(6px);
@@ -254,13 +243,41 @@
     font-size: 0.72rem; color: var(--muted); font-family: var(--mono);
     letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px;
   }
+
+  /* hint ใต้ section label */
+  .section-hint {
+    font-size: 0.72rem; color: var(--muted);
+    padding: 0 2px; margin-top: -8px;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .section-hint span { opacity: 0.6; }
+
   .item-list { display: flex; flex-direction: column; gap: 8px; }
   .item-card {
     background: var(--surface); border: 1px solid var(--border);
     border-radius: 14px; padding: 12px 14px;
-    display: flex; align-items: center; gap: 12px; transition: border-color 0.2s;
+    display: flex; align-items: center; gap: 12px;
+    transition: border-color 0.2s, background 0.2s;
+    /* ---- เพิ่ม: ทำให้กดได้ ---- */
+    cursor: pointer; user-select: none;
   }
-  .item-card:hover { border-color: rgba(255,255,255,0.14); }
+  .item-card:hover { border-color: rgba(255,255,255,0.14); background: var(--surface2); }
+  .item-card:active { transform: scale(0.985); }
+
+  /* ปุ่มดินสอด้านขวา */
+  .item-edit-btn {
+    flex-shrink: 0; width: 32px; height: 32px; border-radius: 8px;
+    background: var(--surface3); border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.85rem; color: var(--muted);
+    transition: background 0.2s, color 0.2s;
+  }
+  .item-card:hover .item-edit-btn {
+    background: rgba(0,212,255,0.12);
+    border-color: rgba(0,212,255,0.25);
+    color: var(--accent);
+  }
+
   .item-status { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
   .s-ok      { background: var(--green); box-shadow: 0 0 6px var(--green); }
   .s-over    { background: var(--yellow); box-shadow: 0 0 6px var(--yellow); }
@@ -308,6 +325,23 @@
     width: 40px; height: 4px; border-radius: 2px;
     background: var(--surface3); margin: 0 auto 16px;
   }
+
+  /* ---- เพิ่ม: โหมด badge บนหัว popup ---- */
+  .qty-mode-badge {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 4px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 600;
+    font-family: var(--mono); margin-bottom: 10px;
+    transition: background 0.3s, color 0.3s, border-color 0.3s;
+  }
+  .qty-mode-badge.mode-add {
+    background: rgba(0,212,255,0.12); color: var(--accent);
+    border: 1px solid rgba(0,212,255,0.25);
+  }
+  .qty-mode-badge.mode-set {
+    background: rgba(255,204,0,0.12); color: var(--yellow);
+    border: 1px solid rgba(255,204,0,0.3);
+  }
+
   .qty-item-info {
     display: flex; align-items: center; gap: 12px;
     background: var(--surface2); border-radius: 14px;
@@ -326,9 +360,13 @@
     font-family: var(--mono); font-size: 2rem; font-weight: 700;
     color: var(--accent); text-align: center; margin-bottom: 12px;
     min-height: 66px; display: flex; align-items: center; justify-content: center;
-    transition: border-color 0.2s;
+    transition: border-color 0.2s, color 0.3s;
   }
   .qty-display.has-val { border-color: rgba(0,212,255,0.3); }
+  /* โหมดแก้ไข: display เป็นสีเหลือง */
+  .qty-display.mode-set { color: var(--yellow); }
+  .qty-display.mode-set.has-val { border-color: rgba(255,204,0,0.3); }
+
   .numpad {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 12px;
   }
@@ -357,6 +395,11 @@
   }
   .btn-qty-ok:hover { opacity: 0.9; }
   .btn-qty-ok:disabled { opacity: 0.4; cursor: not-allowed; }
+  /* โหมดแก้ไข: ปุ่ม ok เป็นสีเหลือง */
+  .btn-qty-ok.mode-set {
+    background: linear-gradient(135deg, #cc8800, var(--yellow));
+    color: #000;
+  }
 
   /* Toast */
   .toast {
@@ -370,7 +413,6 @@
   }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-  /* Progress bar */
   .mini-stats {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   }
@@ -386,14 +428,8 @@
     border-radius: 14px; padding: 12px 14px;
     transition: border-color 0.4s, background 0.4s;
   }
-  .prog-wrap.state-warn {
-    border-color: rgba(255,204,0,0.35);
-    background: rgba(255,204,0,0.05);
-  }
-  .prog-wrap.state-ok {
-    border-color: rgba(0,255,136,0.35);
-    background: rgba(0,255,136,0.05);
-  }
+  .prog-wrap.state-warn { border-color: rgba(255,204,0,0.35); background: rgba(255,204,0,0.05); }
+  .prog-wrap.state-ok   { border-color: rgba(0,255,136,0.35);  background: rgba(0,255,136,0.05); }
   .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
   .prog-title { font-size: 0.78rem; color: var(--muted); transition: color 0.3s; }
   .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); transition: color 0.3s; }
@@ -409,19 +445,12 @@
   .prog-done-msg {
     display: none; align-items: center; justify-content: center; gap: 8px;
     font-size: 0.82rem; font-weight: 600; margin-top: 8px;
-    padding: 8px 12px; border-radius: 10px; cursor: pointer;
-    transition: opacity 0.2s;
+    padding: 8px 12px; border-radius: 10px; cursor: pointer; transition: opacity 0.2s;
   }
   .prog-done-msg:hover { opacity: 0.8; }
   .prog-done-msg.show { display: flex; }
-  .prog-done-msg.msg-warn {
-    background: rgba(255,204,0,0.12); color: var(--yellow);
-    border: 1px solid rgba(255,204,0,0.25);
-  }
-  .prog-done-msg.msg-ok {
-    background: rgba(0,255,136,0.1); color: var(--green);
-    border: 1px solid rgba(0,255,136,0.2);
-  }
+  .prog-done-msg.msg-warn { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.25); }
+  .prog-done-msg.msg-ok   { background: rgba(0,255,136,0.1);  color: var(--green);  border: 1px solid rgba(0,255,136,0.2);  }
 </style>
 </head>
 <body>
@@ -432,7 +461,7 @@
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub">v1.6 · DEMO</div>
+      <div class="header-sub">v1.7 · DEMO</div>
     </div>
   </div>
   <div class="badge-demo">⚡ DEMO</div>
@@ -530,6 +559,8 @@
       </div>
     </div>
     <div class="section-label">รายการสินค้าทั้งหมด</div>
+    <!-- hint ใต้ label -->
+    <div class="section-hint"><span>✏️</span> แตะรายการเพื่อแก้ไขจำนวน</div>
     <div class="item-list" id="item-list"></div>
     <button class="btn-reset" onclick="resetAll()">🔄 รีเซ็ตการนับทั้งหมด</button>
   </div>
@@ -553,6 +584,10 @@
 <div class="qty-overlay" id="qty-overlay">
   <div class="qty-sheet">
     <div class="qty-handle"></div>
+
+    <!-- mode badge -->
+    <div class="qty-mode-badge mode-add" id="qty-mode-badge">➕ เพิ่มจำนวน</div>
+
     <div class="qty-item-info">
       <div class="qty-item-icon">📦</div>
       <div>
@@ -597,7 +632,6 @@ const STOCK_DATA = [
   { matcode: 'MAT008', name: 'ปลั๊กตัวเมีย 3 ขา',       expected: 20  },
 ];
 
-// State
 let counts = {};
 let scanning = false;
 let lastCode = '';
@@ -615,7 +649,7 @@ function showTab(t) {
   if (t === 'summary') renderSummary();
 }
 
-// =================== SCANNER (ZXing) ===================
+// =================== SCANNER ===================
 function toggleScan() {
   if (scanning) stopScan();
   else startScan();
@@ -626,29 +660,24 @@ function startScan() {
   btn.disabled = true;
   btn.innerHTML = '<span>⏳</span> กำลังเปิดกล้อง...';
 
-  // สร้าง video element
   const container = document.getElementById('scanner-container');
   container.innerHTML = '';
   const video = document.createElement('video');
   video.id = 'zxing-video';
-  video.setAttribute('playsinline', 'true'); // สำคัญมากสำหรับ iOS
+  video.setAttribute('playsinline', 'true');
   container.appendChild(video);
 
   const hints = new Map();
   const formats = [
-    ZXing.BarcodeFormat.CODE_128,
-    ZXing.BarcodeFormat.CODE_39,
-    ZXing.BarcodeFormat.EAN_13,
-    ZXing.BarcodeFormat.EAN_8,
-    ZXing.BarcodeFormat.UPC_A,
-    ZXing.BarcodeFormat.UPC_E,
-    ZXing.BarcodeFormat.QR_CODE,
-    ZXing.BarcodeFormat.DATA_MATRIX,
+    ZXing.BarcodeFormat.CODE_128, ZXing.BarcodeFormat.CODE_39,
+    ZXing.BarcodeFormat.EAN_13,   ZXing.BarcodeFormat.EAN_8,
+    ZXing.BarcodeFormat.UPC_A,    ZXing.BarcodeFormat.UPC_E,
+    ZXing.BarcodeFormat.QR_CODE,  ZXing.BarcodeFormat.DATA_MATRIX,
   ];
   hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS, formats);
   hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
 
-  codeReader = new ZXing.BrowserMultiFormatReader(hints, 300); // scan ทุก 300ms
+  codeReader = new ZXing.BrowserMultiFormatReader(hints, 300);
 
   codeReader.decodeFromConstraints(
     { video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } },
@@ -662,7 +691,6 @@ function startScan() {
         lastCodeTime = now;
         handleCode(code);
       }
-      // err ที่เป็น NotFoundException คือปกติ (กำลังหา barcode อยู่) ไม่ต้องทำอะไร
     }
   ).then(() => {
     scanning = true;
@@ -674,11 +702,8 @@ function startScan() {
   }).catch(err => {
     console.error('Camera error:', err);
     let msg = '❌ ไม่สามารถเปิดกล้องได้';
-    if (err && err.name === 'NotAllowedError') {
-      msg = '❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
-    } else if (err && err.name === 'NotFoundError') {
-      msg = '❌ ไม่พบกล้องในอุปกรณ์นี้';
-    }
+    if (err && err.name === 'NotAllowedError') msg = '❌ กรุณาอนุญาตการเข้าถึงกล้องก่อน';
+    else if (err && err.name === 'NotFoundError') msg = '❌ ไม่พบกล้องในอุปกรณ์นี้';
     showToast(msg);
     container.innerHTML = '';
     codeReader = null;
@@ -689,15 +714,11 @@ function startScan() {
 }
 
 function stopScan() {
-  if (codeReader) {
-    codeReader.reset();
-    codeReader = null;
-  }
+  if (codeReader) { codeReader.reset(); codeReader = null; }
   scanning = false;
   document.getElementById('cam-overlay').style.display = 'none';
   document.getElementById('cam-placeholder').style.display = 'flex';
   document.getElementById('scanner-container').innerHTML = '';
-
   const btn = document.getElementById('btn-scan');
   btn.innerHTML = '<span>📷</span> เริ่มสแกน';
   btn.classList.remove('stop');
@@ -711,53 +732,79 @@ function handleCode(code) {
   flash.classList.add('show');
 
   const item = STOCK_DATA.find(i => i.matcode === code);
-
   if (!item) {
     showLastScan({ code, found: false });
     showToast('⚠️ ไม่พบ Matcode นี้ในระบบ');
     return;
   }
-
-  // เปิด popup กรอกจำนวนแทนการบวก 1
-  openQty(code, item);
+  openQty(code, item, 'add'); // โหมด add เหมือนเดิม
 }
 
-function applyCount(code, item, qty) {
-  counts[code] = (counts[code] || 0) + qty;
+function applyCount(code, item, qty, mode) {
+  if (mode === 'set') {
+    counts[code] = qty;           // ตั้งค่าใหม่
+  } else {
+    counts[code] = (counts[code] || 0) + qty; // บวกเพิ่ม
+  }
+
   showLastScan({ code, item, count: counts[code], found: true });
   updateProgress();
   updateBadge();
 
   const diff = counts[code] - item.expected;
+  const modeLabel = mode === 'set' ? '✏️ แก้ไขแล้ว —' : '📦';
   if (counts[code] === item.expected) showToast(`✅ ${item.name} — ครบแล้ว!`);
   else if (diff > 0) showToast(`⚠️ ${item.name} — เกิน ${diff} ชิ้น`);
-  else showToast(`📦 ${item.name} — นับแล้ว ${counts[code]}/${item.expected}`);
+  else showToast(`${modeLabel} ${item.name} — ${counts[code]}/${item.expected}`);
 }
 
 // =================== QTY POPUP ===================
 let qtyCode = null;
 let qtyItem = null;
-let qtyVal = '';
+let qtyVal  = '';
+let qtyMode = 'add'; // 'add' | 'set'
 
-function openQty(code, item) {
+function openQty(code, item, mode = 'add') {
   qtyCode = code;
   qtyItem = item;
-  qtyVal = '';
+  qtyVal  = '';
+  qtyMode = mode;
 
+  // ชื่อและ meta
   document.getElementById('qty-item-name').textContent = item.name;
   const already = counts[code] || 0;
   document.getElementById('qty-item-meta').textContent =
-    `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
-  updateQtyDisplay();
+    mode === 'set'
+      ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}`
+      : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
 
+  // mode badge
+  const badge = document.getElementById('qty-mode-badge');
+  const display = document.getElementById('qty-display');
+  const okBtn   = document.getElementById('btn-qty-ok');
+
+  if (mode === 'set') {
+    badge.textContent  = '✏️ แก้ไขจำนวน';
+    badge.className    = 'qty-mode-badge mode-set';
+    display.classList.add('mode-set');
+    okBtn.textContent  = '✏️ บันทึก';
+    okBtn.className    = 'btn-qty-ok mode-set';
+  } else {
+    badge.textContent  = '➕ เพิ่มจำนวน';
+    badge.className    = 'qty-mode-badge mode-add';
+    display.classList.remove('mode-set');
+    okBtn.textContent  = '✅ ยืนยัน';
+    okBtn.className    = 'btn-qty-ok';
+  }
+
+  updateQtyDisplay();
   document.getElementById('qty-overlay').classList.add('show');
 }
 
 function closeQty() {
   document.getElementById('qty-overlay').classList.remove('show');
-  qtyCode = null; qtyItem = null; qtyVal = '';
-  // รีเซ็ต debounce ให้สแกนซ้ำได้ถ้ากด ยกเลิก
-  lastCode = '';
+  qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add';
+  lastCode = ''; // ให้สแกนซ้ำได้หลังกดยกเลิก
 }
 
 function numpad(key) {
@@ -765,7 +812,7 @@ function numpad(key) {
     qtyVal = qtyVal.slice(0, -1);
   } else {
     if (qtyVal === '0') qtyVal = key;
-    else if (qtyVal.length >= 5) return; // จำกัด 5 หลัก
+    else if (qtyVal.length >= 5) return;
     else qtyVal += key;
   }
   updateQtyDisplay();
@@ -773,24 +820,40 @@ function numpad(key) {
 
 function updateQtyDisplay() {
   const el = document.getElementById('qty-display');
-  const n = parseInt(qtyVal) || 0;
+  const n  = parseInt(qtyVal) || 0;
   el.textContent = n === 0 ? '0' : n.toLocaleString();
   el.classList.toggle('has-val', n > 0);
-  document.getElementById('btn-qty-ok').disabled = n <= 0;
+
+  // โหมด set: อนุญาตให้กรอก 0 ได้ (เพื่อล้างค่า)
+  const okBtn = document.getElementById('btn-qty-ok');
+  if (qtyMode === 'set') {
+    okBtn.disabled = qtyVal === ''; // ต้องกดตัวเลขอย่างน้อยหนึ่งครั้ง
+  } else {
+    okBtn.disabled = n <= 0;
+  }
 }
 
 function confirmQty() {
-  const qty = parseInt(qtyVal) || 0;
-  if (qty <= 0) return;
-  // บันทึกค่าไว้ก่อน เพราะ closeQty() จะล้าง qtyCode/qtyItem
+  const qty  = parseInt(qtyVal) || 0;
   const code = qtyCode;
   const item = qtyItem;
+  const mode = qtyMode;
+  if (mode !== 'set' && qty <= 0) return;
+  if (mode === 'set' && qtyVal === '') return;
   closeQty();
-  applyCount(code, item, qty);
+  applyCount(code, item, qty, mode);
+}
+
+// =================== EDIT FROM SUMMARY ===================
+// เปิด popup ในโหมด 'set' (ตั้งค่าใหม่)
+function editCount(matcode) {
+  const item = STOCK_DATA.find(i => i.matcode === matcode);
+  if (!item) return;
+  openQty(matcode, item, 'set');
 }
 
 function showLastScan({ code, item, count, found }) {
-  const el = document.getElementById('last-scan');
+  const el   = document.getElementById('last-scan');
   const body = document.getElementById('last-scan-body');
   el.classList.add('show');
 
@@ -807,11 +870,11 @@ function showLastScan({ code, item, count, found }) {
   const diff = count - item.expected;
   let iconClass, countClass, tag;
   if (count === item.expected) {
-    iconClass = 'icon-ok'; countClass = 'count-ok'; tag = `<span class="tag tag-ok">✅ ครบ</span>`;
+    iconClass = 'icon-ok';   countClass = 'count-ok';   tag = `<span class="tag tag-ok">✅ ครบ</span>`;
   } else if (diff > 0) {
     iconClass = 'icon-over'; countClass = 'count-over'; tag = `<span class="tag tag-over">⚠️ เกิน ${diff}</span>`;
   } else {
-    iconClass = 'icon-new'; countClass = 'count-new'; tag = `<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`;
+    iconClass = 'icon-new';  countClass = 'count-new';  tag = `<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`;
   }
 
   body.innerHTML = `
@@ -832,16 +895,13 @@ function openManual() {
   document.getElementById('manual-overlay').classList.add('show');
   setTimeout(() => document.getElementById('manual-input').focus(), 300);
 }
-
 function closeManual() {
   document.getElementById('manual-overlay').classList.remove('show');
   document.getElementById('manual-input').value = '';
 }
-
 function closeManualOutside(e) {
   if (e.target === document.getElementById('manual-overlay')) closeManual();
 }
-
 function confirmManual() {
   const val = document.getElementById('manual-input').value.trim().toUpperCase();
   if (!val) return;
@@ -858,8 +918,8 @@ function renderSummary() {
     else if (c === item.expected) ok++;
     else diff++;
   });
-  document.getElementById('stat-ok').textContent = ok;
-  document.getElementById('stat-diff').textContent = diff;
+  document.getElementById('stat-ok').textContent      = ok;
+  document.getElementById('stat-diff').textContent    = diff;
   document.getElementById('stat-pending').textContent = pending;
 
   const list = document.getElementById('item-list');
@@ -869,15 +929,15 @@ function renderSummary() {
     if (c === 0) {
       statusClass = 's-pending'; tagHtml = `<span class="tag tag-pending">⏳ ยังไม่นับ</span>`; countColor = 'color:var(--muted)';
     } else if (c === item.expected) {
-      statusClass = 's-ok'; tagHtml = `<span class="tag tag-ok">✅ ครบ</span>`; countColor = 'color:var(--green)';
+      statusClass = 's-ok';    tagHtml = `<span class="tag tag-ok">✅ ครบ</span>`;            countColor = 'color:var(--green)';
     } else if (c > item.expected) {
-      statusClass = 's-over'; tagHtml = `<span class="tag tag-over">⚠️ เกิน ${c - item.expected}</span>`; countColor = 'color:var(--yellow)';
+      statusClass = 's-over';  tagHtml = `<span class="tag tag-over">⚠️ เกิน ${c - item.expected}</span>`; countColor = 'color:var(--yellow)';
     } else {
-      statusClass = 's-short'; tagHtml = `<span class="tag tag-short">❌ ขาด ${item.expected - c}</span>`; countColor = 'color:var(--red)';
+      statusClass = 's-short'; tagHtml = `<span class="tag tag-short">❌ ขาด ${item.expected - c}</span>`;  countColor = 'color:var(--red)';
     }
 
     return `
-    <div class="item-card">
+    <div class="item-card" onclick="editCount('${item.matcode}')">
       <div class="item-status ${statusClass}"></div>
       <div class="item-info">
         <div class="item-name">${item.name}</div>
@@ -888,6 +948,7 @@ function renderSummary() {
         <div class="item-count" style="${countColor}">${c}</div>
         <div class="item-expected">เป้า: ${item.expected}</div>
       </div>
+      <div class="item-edit-btn">✏️</div>
     </div>`;
   }).join('');
 }
@@ -900,54 +961,50 @@ function updateProgress() {
     else if (c === item.expected) ok++;
     else diff++;
   });
-  document.getElementById('mini-ok').textContent = ok;
-  document.getElementById('mini-diff').textContent = diff;
+  document.getElementById('mini-ok').textContent      = ok;
+  document.getElementById('mini-diff').textContent    = diff;
   document.getElementById('mini-pending').textContent = pending;
 
-  const total = STOCK_DATA.length;
-  const counted = total - pending; // Matcode ที่กรอกแล้ว (ไม่ว่าจะครบหรือไม่)
-  const pct = total ? Math.round(counted / total * 100) : 0;
+  const total   = STOCK_DATA.length;
+  const counted = total - pending;
+  const pct     = total ? Math.round(counted / total * 100) : 0;
 
-  const wrap = document.getElementById('prog-wrap');
-  const bar  = document.getElementById('prog-bar');
-  const msg  = document.getElementById('prog-done-msg');
-  const pctEl = document.getElementById('prog-pct');
+  const wrap   = document.getElementById('prog-wrap');
+  const bar    = document.getElementById('prog-bar');
+  const msg    = document.getElementById('prog-done-msg');
+  const pctEl  = document.getElementById('prog-pct');
   const titleEl = document.getElementById('prog-title');
 
-  pctEl.textContent = counted + ' / ' + total + ' Matcode';
-  bar.style.width = pct + '%';
+  pctEl.textContent  = counted + ' / ' + total + ' Matcode';
+  bar.style.width    = pct + '%';
 
-  // รีเซ็ต state ก่อน
   wrap.classList.remove('state-warn', 'state-ok');
   bar.classList.remove('fill-warn', 'fill-ok');
   msg.classList.remove('show', 'msg-warn', 'msg-ok');
 
   if (counted < total) {
-    // ยังนับไม่ครบ — แสดงปกติ
-    titleEl.textContent = 'นับไปแล้ว';
-    pctEl.style.color = 'var(--accent)';
+    titleEl.textContent  = 'นับไปแล้ว';
+    pctEl.style.color    = 'var(--accent)';
   } else if (diff > 0) {
-    // นับครบแล้ว แต่มีผิดปกติ
     wrap.classList.add('state-warn');
     bar.classList.add('fill-warn');
-    titleEl.textContent = 'นับครบแล้ว';
-    pctEl.style.color = 'var(--yellow)';
+    titleEl.textContent  = 'นับครบแล้ว';
+    pctEl.style.color    = 'var(--yellow)';
     msg.classList.add('show', 'msg-warn');
-    msg.innerHTML = '⚠️ พบ ' + diff + ' Matcode ผิดปกติ — แตะเพื่อดูสรุป';
+    msg.innerHTML        = '⚠️ พบ ' + diff + ' Matcode ผิดปกติ — แตะเพื่อดูสรุป';
   } else {
-    // นับครบและตรงทั้งหมด
     wrap.classList.add('state-ok');
     bar.classList.add('fill-ok');
-    titleEl.textContent = 'นับครบแล้ว';
-    pctEl.style.color = 'var(--green)';
+    titleEl.textContent  = 'นับครบแล้ว';
+    pctEl.style.color    = 'var(--green)';
     msg.classList.add('show', 'msg-ok');
-    msg.innerHTML = '✅ ครบและตรงทั้งหมด!';
+    msg.innerHTML        = '✅ ครบและตรงทั้งหมด!';
   }
 }
 
 function updateBadge() {
   const counted = STOCK_DATA.filter(i => (counts[i.matcode] || 0) > 0).length;
-  const badge = document.getElementById('tab-badge');
+  const badge   = document.getElementById('tab-badge');
   if (counted > 0) { badge.style.display = ''; badge.textContent = counted; }
   else badge.style.display = 'none';
 }

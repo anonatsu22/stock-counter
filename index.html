@@ -719,8 +719,11 @@ function updateQtyDisplay() {
 function confirmQty() {
   const qty = parseInt(qtyVal) || 0;
   if (qty <= 0) return;
+  // บันทึกค่าไว้ก่อน เพราะ closeQty() จะล้าง qtyCode/qtyItem
+  const code = qtyCode;
+  const item = qtyItem;
   closeQty();
-  applyCount(qtyCode, qtyItem, qty);
+  applyCount(code, item, qty);
 }
 
 function showLastScan({ code, item, count, found }) {

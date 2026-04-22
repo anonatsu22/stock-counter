@@ -380,6 +380,48 @@
   }
   .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
   .mini-stat-label { font-size: 0.68rem; color: var(--muted); margin-top: 4px; }
+
+  .prog-wrap {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 12px 14px;
+    transition: border-color 0.4s, background 0.4s;
+  }
+  .prog-wrap.state-warn {
+    border-color: rgba(255,204,0,0.35);
+    background: rgba(255,204,0,0.05);
+  }
+  .prog-wrap.state-ok {
+    border-color: rgba(0,255,136,0.35);
+    background: rgba(0,255,136,0.05);
+  }
+  .prog-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .prog-title { font-size: 0.78rem; color: var(--muted); transition: color 0.3s; }
+  .prog-pct { font-family: var(--mono); font-size: 0.88rem; font-weight: 700; color: var(--accent); transition: color 0.3s; }
+  .prog-bar-bg { height: 8px; background: var(--surface3); border-radius: 4px; overflow: hidden; }
+  .prog-bar-fill {
+    height: 100%; border-radius: 4px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    transition: width 0.5s cubic-bezier(0.22,1,0.36,1), background 0.4s;
+  }
+  .prog-bar-fill.fill-warn { background: linear-gradient(90deg, #cc8800, var(--yellow)); }
+  .prog-bar-fill.fill-ok   { background: linear-gradient(90deg, #00aa55, var(--green)); }
+
+  .prog-done-msg {
+    display: none; align-items: center; justify-content: center; gap: 8px;
+    font-size: 0.82rem; font-weight: 600; margin-top: 8px;
+    padding: 8px 12px; border-radius: 10px; cursor: pointer;
+    transition: opacity 0.2s;
+  }
+  .prog-done-msg:hover { opacity: 0.8; }
+  .prog-done-msg.show { display: flex; }
+  .prog-done-msg.msg-warn {
+    background: rgba(255,204,0,0.12); color: var(--yellow);
+    border: 1px solid rgba(255,204,0,0.25);
+  }
+  .prog-done-msg.msg-ok {
+    background: rgba(0,255,136,0.1); color: var(--green);
+    border: 1px solid rgba(0,255,136,0.2);
+  }
 </style>
 </head>
 <body>
@@ -390,7 +432,7 @@
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub">v1.4 · DEMO</div>
+      <div class="header-sub">v1.6 · DEMO</div>
     </div>
   </div>
   <div class="badge-demo">⚡ DEMO</div>
@@ -454,6 +496,17 @@
         <div class="mini-stat-num stat-pending" id="mini-pending">0</div>
         <div class="mini-stat-label">⏳ ยังไม่นับ</div>
       </div>
+    </div>
+
+    <div class="prog-wrap" id="prog-wrap">
+      <div class="prog-top">
+        <span class="prog-title" id="prog-title">นับไปแล้ว</span>
+        <span class="prog-pct" id="prog-pct">0 / 0</span>
+      </div>
+      <div class="prog-bar-bg">
+        <div class="prog-bar-fill" id="prog-bar" style="width:0%"></div>
+      </div>
+      <div class="prog-done-msg" id="prog-done-msg" onclick="showTab('summary')"></div>
     </div>
 
   </div>
@@ -850,6 +903,46 @@ function updateProgress() {
   document.getElementById('mini-ok').textContent = ok;
   document.getElementById('mini-diff').textContent = diff;
   document.getElementById('mini-pending').textContent = pending;
+
+  const total = STOCK_DATA.length;
+  const counted = total - pending; // Matcode ที่กรอกแล้ว (ไม่ว่าจะครบหรือไม่)
+  const pct = total ? Math.round(counted / total * 100) : 0;
+
+  const wrap = document.getElementById('prog-wrap');
+  const bar  = document.getElementById('prog-bar');
+  const msg  = document.getElementById('prog-done-msg');
+  const pctEl = document.getElementById('prog-pct');
+  const titleEl = document.getElementById('prog-title');
+
+  pctEl.textContent = counted + ' / ' + total + ' Matcode';
+  bar.style.width = pct + '%';
+
+  // รีเซ็ต state ก่อน
+  wrap.classList.remove('state-warn', 'state-ok');
+  bar.classList.remove('fill-warn', 'fill-ok');
+  msg.classList.remove('show', 'msg-warn', 'msg-ok');
+
+  if (counted < total) {
+    // ยังนับไม่ครบ — แสดงปกติ
+    titleEl.textContent = 'นับไปแล้ว';
+    pctEl.style.color = 'var(--accent)';
+  } else if (diff > 0) {
+    // นับครบแล้ว แต่มีผิดปกติ
+    wrap.classList.add('state-warn');
+    bar.classList.add('fill-warn');
+    titleEl.textContent = 'นับครบแล้ว';
+    pctEl.style.color = 'var(--yellow)';
+    msg.classList.add('show', 'msg-warn');
+    msg.innerHTML = '⚠️ พบ ' + diff + ' Matcode ผิดปกติ — แตะเพื่อดูสรุป';
+  } else {
+    // นับครบและตรงทั้งหมด
+    wrap.classList.add('state-ok');
+    bar.classList.add('fill-ok');
+    titleEl.textContent = 'นับครบแล้ว';
+    pctEl.style.color = 'var(--green)';
+    msg.classList.add('show', 'msg-ok');
+    msg.innerHTML = '✅ ครบและตรงทั้งหมด!';
+  }
 }
 
 function updateBadge() {

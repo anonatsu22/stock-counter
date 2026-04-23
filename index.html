@@ -29,16 +29,11 @@
   .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
   .sync-dot.spin { animation: spin 0.7s linear infinite; border-radius: 0; background: none; border: 2px solid currentColor; border-top-color: transparent; }
   @keyframes spin { to { transform: rotate(360deg); } }
-
-  /* ── Live badge ── */
   .live-badge { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: livePulse 2s ease-in-out infinite; }
   @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
-
-  /* ── Refresh flash overlay ── */
   .refresh-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.3); color: var(--green); border-radius: 20px; padding: 6px 14px; font-size: 0.75rem; font-family: var(--mono); font-weight: 600; opacity: 0; z-index: 100; transition: opacity 0.3s, transform 0.3s; pointer-events: none; white-space: nowrap; }
   .refresh-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
   .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
   .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
@@ -188,7 +183,6 @@
   <div class="loading-text" id="loading-text">กำลังโหลดข้อมูลจาก Google Sheet...</div>
 </div>
 
-<!-- Refresh toast (แจ้งเมื่อมีการอัปเดตจากเครื่องอื่น) -->
 <div class="refresh-toast" id="refresh-toast">🔄 อัปเดตจากเครื่องอื่น</div>
 
 <div class="header">
@@ -200,7 +194,6 @@
     </div>
   </div>
   <div class="header-right">
-    <!-- Live badge แสดงตลอด -->
     <div class="live-badge" id="live-badge" style="display:none">
       <div class="live-dot"></div>
       <span>LIVE</span>
@@ -317,21 +310,18 @@
 // ============================================================
 // ✅ ใส่ URL Apps Script ที่ได้จาก Deploy ตรงนี้
 // ============================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFnjPD7Cs6ES8OhnzzvAIDCL6BEJHsc9pGITb0yHJ0peozxRUfhXmZasDvwh2x4UuxA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/XXXXXXX/exec';
 // ============================================================
 
-// ── Polling interval (มิลลิวินาที) ──────────────────────────
-// 15000 = ดึงข้อมูลใหม่ทุก 15 วินาที ปรับได้ตามต้องการ
 const POLL_INTERVAL_MS = 15000;
-// ────────────────────────────────────────────────────────────
 
 let STOCK_DATA = [], counts = {}, notes = {}, syncStatus = {};
 let scanning = false, lastCode = '', lastCodeTime = 0, codeReader = null;
 let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
 let pollTimer = null;
-let isPendingSync = false; // กำลังรอ POST อยู่ ไม่ควร poll ทับ
+let isPendingSync = false;
 
-// ── โหลด STOCK_DATA + ผลการนับจาก Google Sheet ────────────
+// ── โหลดข้อมูล ──────────────────────────────────────────
 async function loadStockData(isInitial = true) {
   const sub = document.getElementById('header-sub');
   const loadingText = document.getElementById('loading-text');
@@ -344,50 +334,60 @@ async function loadStockData(isInitial = true) {
     const json = await res.json();
     if (!json.ok || !json.data || !json.data.length) throw new Error('no data');
 
-    // ── ตรวจว่ามีการเปลี่ยนแปลงจากเครื่องอื่นไหม ──
+    // ✅ ตรวจการเปลี่ยนแปลงจากเครื่องอื่น — เช็คทั้ง count และ note
     const changedCodes = [];
     if (!isInitial) {
       json.data.forEach(item => {
-        const incoming = item.count !== undefined && item.count !== '' ? Number(item.count) : 0;
-        const current = counts[item.matcode] || 0;
-        if (incoming !== current) changedCodes.push(item.matcode);
+        const incomingCount = item.count !== undefined && item.count !== '' ? Number(item.count) : 0;
+        const currentCount = counts[item.matcode] || 0;
+        const incomingNote = item.note !== undefined ? String(item.note) : '';
+        const currentNote = notes[item.matcode] || '';
+        if (incomingCount !== currentCount || incomingNote !== currentNote) {
+          changedCodes.push(item.matcode);
+        }
       });
     }
 
     STOCK_DATA = json.data;
 
-    // ── คืนค่าทั้งหมดจาก Sheet ──
+    // ✅ คืนค่าทั้งหมดจาก Sheet — ลบ note เมื่อค่าว่างด้วย
     let restored = 0;
     STOCK_DATA.forEach(item => {
       if (item.count !== undefined && item.count !== '') {
         counts[item.matcode] = Number(item.count);
         if (counts[item.matcode] > 0) restored++;
       }
+      // ✅ แก้ไข: note ว่างจาก Sheet ต้องลบค่าเก่าออก
       if (item.note !== undefined && item.note !== '') {
         notes[item.matcode] = String(item.note);
+      } else if (item.note !== undefined) {
+        delete notes[item.matcode];
       }
     });
 
     if (isInitial) {
       const restoredMsg = restored > 0 ? ` · คืนค่า ${restored} รายการ` : '';
-      sub.textContent = `v3.0 · ${STOCK_DATA.length} รายการ${restoredMsg}`;
+      sub.textContent = `v3.1 · ${STOCK_DATA.length} รายการ${restoredMsg}`;
       setSyncIndicator('ok', 'โหลดแล้ว');
       setTimeout(() => setSyncIndicator('idle'), 3000);
       if (restored > 0) showToast(`♻️ คืนค่าการนับ ${restored} รายการจาก Sheet`);
       else showToast(`✅ โหลดสินค้า ${STOCK_DATA.length} รายการ`);
       document.getElementById('live-badge').style.display = 'flex';
-      startPolling(); // เริ่ม polling หลังโหลดสำเร็จครั้งแรก
+      startPolling();
     } else {
-      // ── Poll สำเร็จ: ถ้ามีของเปลี่ยน แจ้งผู้ใช้ ──
+      // ✅ Poll สำเร็จ: แจ้งเฉพาะรายการที่เปลี่ยน (ทั้ง count หรือ note)
       if (changedCodes.length > 0) {
-        showRefreshToast(`🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`);
+        const desc = changedCodes.length === 1
+          ? `🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`
+          : `🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`;
+        showRefreshToast(desc);
         highlightUpdatedCards(changedCodes);
       }
     }
 
   } catch (e) {
     if (isInitial) {
-      sub.textContent = 'v3.0 · โหลดไม่ได้';
+      sub.textContent = 'v3.1 · โหลดไม่ได้';
       setSyncIndicator('err', 'โหลดไม่ได้');
       loadingText.textContent = '❌ โหลดข้อมูลไม่ได้ — ตรวจสอบ SCRIPT_URL';
       setTimeout(() => {
@@ -395,23 +395,22 @@ async function loadStockData(isInitial = true) {
       }, 2000);
       showToast('❌ โหลดข้อมูลจาก Sheet ไม่ได้');
     }
-    // poll fail: ไม่แสดง error ซ้ำ เพียงรอรอบถัดไป
   }
 
   if (isInitial) document.getElementById('loading-overlay').classList.add('hide');
   updateProgress(); updateBadge(); renderSummary();
 }
 
-// ── Polling: ดึงข้อมูลซ้ำทุก POLL_INTERVAL_MS ─────────────
+// ── Polling ───────────────────────────────────────────────
 function startPolling() {
   if (pollTimer) clearInterval(pollTimer);
   pollTimer = setInterval(async () => {
-    if (isPendingSync) return; // รอให้ sync ของตัวเองเสร็จก่อน
+    if (isPendingSync) return;
     await loadStockData(false);
   }, POLL_INTERVAL_MS);
 }
 
-// ── แสดง toast เล็กๆ บนหัว (แจ้ง refresh) ────────────────
+// ── Refresh toast ─────────────────────────────────────────
 let refreshToastTimer;
 function showRefreshToast(msg) {
   const el = document.getElementById('refresh-toast');
@@ -421,19 +420,19 @@ function showRefreshToast(msg) {
   refreshToastTimer = setTimeout(() => el.classList.remove('show'), 3000);
 }
 
-// ── Highlight รายการที่เพิ่งเปลี่ยนในหน้าสรุป ────────────
+// ── Highlight รายการที่เปลี่ยน ────────────────────────────
 function highlightUpdatedCards(codes) {
   codes.forEach(code => {
     const card = document.querySelector(`[data-matcode="${code}"]`);
     if (card) {
       card.classList.remove('updated');
-      void card.offsetWidth; // reflow
+      void card.offsetWidth;
       card.classList.add('updated');
     }
   });
 }
 
-// ── Sync ผลการนับไป Google Sheet ──────────────────────────
+// ── Sync ไป Sheet ────────────────────────────────────────
 async function syncToSheet(matcode) {
   if (!SCRIPT_URL || SCRIPT_URL.includes('XXXXXXX')) return;
   const item = STOCK_DATA.find(i => i.matcode === matcode);
@@ -565,12 +564,12 @@ function editCount(matcode) { const item = STOCK_DATA.find(i => i.matcode === ma
 
 function showLastScan({ code, item, count, found }) {
   const el = document.getElementById('last-scan'), body = document.getElementById('last-scan-body'); el.classList.add('show');
-  if (!found) { body.innerHTML = `<div class="last-scan-icon icon-err">❓</div><div class="last-scan-info"><div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div><div class="last-scan-code">${code}</div></div>`; return; }
+  if (!found) { body.innerHTML = `<div class="last-scan-icon icon-err">❓</div><div class="last-scan-info"><div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div><div class="last-scan-code">${escHtml(code)}</div></div>`; return; }
   const diff = count - item.expected; let iconClass, countClass, tag;
   if (count === item.expected) { iconClass = 'icon-ok'; countClass = 'count-ok'; tag = `<span class="tag tag-ok">✅ ครบ</span>`; }
   else if (diff > 0) { iconClass = 'icon-over'; countClass = 'count-over'; tag = `<span class="tag tag-over">⚠️ เกิน ${diff}</span>`; }
   else { iconClass = 'icon-new'; countClass = 'count-new'; tag = `<span class="tag tag-pending">📦 ขาด ${Math.abs(diff)}</span>`; }
-  body.innerHTML = `<div class="last-scan-icon ${iconClass}">📦</div><div class="last-scan-info"><div class="last-scan-name">${escHtml(item.name)}</div><div class="last-scan-code">${code}</div>${tag}</div><div class="last-scan-count"><div class="count-num ${countClass}">${count}</div><div class="count-of">จาก ${item.expected}</div></div>`;
+  body.innerHTML = `<div class="last-scan-icon ${iconClass}">📦</div><div class="last-scan-info"><div class="last-scan-name">${escHtml(item.name)}</div><div class="last-scan-code">${escHtml(code)}</div>${tag}</div><div class="last-scan-count"><div class="count-num ${countClass}">${count}</div><div class="count-of">จาก ${item.expected}</div></div>`;
 }
 
 function openManual() { document.getElementById('manual-overlay').classList.add('show'); setTimeout(() => document.getElementById('manual-input').focus(), 300); }
@@ -596,7 +595,7 @@ function renderSummary() {
     else if (c > item.expected) { sc = 's-over'; tagHtml = `<span class="tag tag-over">⚠️ เกิน ${c - item.expected}</span>`; cc = 'color:var(--yellow)'; }
     else { sc = 's-short'; tagHtml = `<span class="tag tag-short">❌ ขาด ${item.expected - c}</span>`; cc = 'color:var(--red)'; }
     const noteHtml = note ? `<div class="item-note-text">📝 ${escHtml(note)}</div>` : '';
-    return `<div class="item-card" data-matcode="${item.matcode}" onclick="editCount('${item.matcode}')"><div class="item-status ${sc}"></div><div class="item-info"><div class="item-name">${escHtml(item.name)}</div><div class="item-code">${item.matcode}</div>${tagHtml}${noteHtml}</div><div class="item-right"><div class="item-count" style="${cc}">${c}</div><div class="item-expected">เป้า: ${item.expected}</div></div>${syncIcon ? `<div class="item-sync-icon">${syncIcon}</div>` : ''}</div>`;
+    return `<div class="item-card" data-matcode="${item.matcode}" onclick="editCount('${item.matcode}')"><div class="item-status ${sc}"></div><div class="item-info"><div class="item-name">${escHtml(item.name)}</div><div class="item-code">${escHtml(item.matcode)}</div>${tagHtml}${noteHtml}</div><div class="item-right"><div class="item-count" style="${cc}">${c}</div><div class="item-expected">เป้า: ${item.expected}</div></div>${syncIcon ? `<div class="item-sync-icon">${syncIcon}</div>` : ''}</div>`;
   }).join('');
 }
 
@@ -629,19 +628,17 @@ function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt
 let toastTimer;
 function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2500); }
 
-// ── หยุด polling เมื่อ tab/window ไม่ active (ประหยัด request) ──
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
   } else {
     if (STOCK_DATA.length) {
-      loadStockData(false); // โหลดทันทีเมื่อกลับมา
+      loadStockData(false);
       startPolling();
     }
   }
 });
 
-// ── เริ่มต้น ──────────────────────────────────────────────
 loadStockData(true);
 </script>
 </body>

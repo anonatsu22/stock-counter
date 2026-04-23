@@ -165,15 +165,28 @@
   .empty-state .es-icon { font-size: 3rem; margin-bottom: 12px; }
   .empty-state .es-title { font-size: 0.95rem; font-weight: 600; color: var(--text); margin-bottom: 6px; }
   .empty-state .es-sub { font-size: 0.82rem; }
+
+  /* Loading overlay */
+  .loading-overlay { position: fixed; inset: 0; z-index: 400; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; transition: opacity 0.4s; }
+  .loading-overlay.hide { opacity: 0; pointer-events: none; }
+  .loading-spinner { width: 48px; height: 48px; border: 3px solid var(--surface3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+  .loading-text { font-family: var(--mono); font-size: 0.82rem; color: var(--muted); }
 </style>
 </head>
 <body>
+
+<!-- Loading screen -->
+<div class="loading-overlay" id="loading-overlay">
+  <div class="loading-spinner"></div>
+  <div class="loading-text" id="loading-text">กำลังโหลดข้อมูลจาก Google Sheet...</div>
+</div>
+
 <div class="header">
   <div class="header-left">
     <div class="logo">📦</div>
     <div>
       <div class="header-title">Stock Counter</div>
-      <div class="header-sub" id="header-sub">v3.0 · ไม่มีข้อมูล</div>
+      <div class="header-sub" id="header-sub">กำลังโหลด...</div>
     </div>
   </div>
   <div class="header-right">
@@ -282,25 +295,74 @@
 </div>
 <div class="toast" id="toast"></div>
 <script>
-let STOCK_DATA=[],counts={},notes={},syncStatus={},scanning=false,lastCode='',lastCodeTime=0,codeReader=null;
-let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add',SCRIPT_URL='';
+// ============================================================
+// ✅ ใส่ URL Apps Script ที่ได้จาก Deploy ตรงนี้
+// ============================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/XXXXXXX/exec';
+// ============================================================
 
-async function syncToSheet(matcode){
-  if(!SCRIPT_URL)return;
-  const item=STOCK_DATA.find(i=>i.matcode===matcode); if(!item)return;
-  const count=counts[matcode]||0, remark=notes[matcode]||'', diff=count-item.expected;
-  const status=count===0?'ยังไม่นับ':count===item.expected?'ตรง':diff>0?`เกิน ${diff}`:`ขาด ${Math.abs(diff)}`;
-  setSyncIndicator('syncing','กำลัง sync...'); syncStatus[matcode]='pending';
-  try{
-    await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({material:matcode,count,remark,status,difference:diff}),mode:'no-cors'});
-    syncStatus[matcode]='ok'; setSyncIndicator('ok','sync แล้ว'); setTimeout(()=>setSyncIndicator('idle'),3000);
-  }catch(e){
-    syncStatus[matcode]='err'; setSyncIndicator('err','sync ไม่ได้'); setTimeout(()=>setSyncIndicator('idle'),5000);
+let STOCK_DATA=[],counts={},notes={},syncStatus={},scanning=false,lastCode='',lastCodeTime=0,codeReader=null;
+let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add';
+
+// ── โหลด STOCK_DATA จาก Google Sheet ──────────────────────
+async function loadStockData() {
+  const sub = document.getElementById('header-sub');
+  const loadingText = document.getElementById('loading-text');
+  sub.textContent = 'กำลังโหลด...';
+  setSyncIndicator('syncing', 'กำลังโหลด...');
+  try {
+    const res = await fetch(SCRIPT_URL + '?t=' + Date.now());
+    const json = await res.json();
+    if (!json.ok || !json.data || !json.data.length) throw new Error('no data');
+    STOCK_DATA = json.data;
+    sub.textContent = `v3.0 · ${STOCK_DATA.length} รายการ`;
+    setSyncIndicator('ok', 'โหลดแล้ว');
+    setTimeout(() => setSyncIndicator('idle'), 3000);
+    showToast(`✅ โหลดสินค้า ${STOCK_DATA.length} รายการ`);
+  } catch(e) {
+    sub.textContent = 'v3.0 · โหลดไม่ได้';
+    setSyncIndicator('err', 'โหลดไม่ได้');
+    loadingText.textContent = '❌ โหลดข้อมูลไม่ได้ — ตรวจสอบ SCRIPT_URL';
+    setTimeout(() => {
+      document.getElementById('loading-overlay').classList.add('hide');
+    }, 2000);
+    showToast('❌ โหลดข้อมูลจาก Sheet ไม่ได้');
   }
-  if(document.getElementById('page-summary').classList.contains('active'))renderSummary();
+  // ซ่อน loading screen
+  document.getElementById('loading-overlay').classList.add('hide');
+  updateProgress(); updateBadge(); renderSummary();
 }
 
-function setSyncIndicator(state,text=''){
+// ── Sync ผลการนับไป Google Sheet ──────────────────────────
+async function syncToSheet(matcode) {
+  if (!SCRIPT_URL || SCRIPT_URL.includes('XXXXXXX')) return;
+  const item = STOCK_DATA.find(i => i.matcode === matcode);
+  if (!item) return;
+  const count = counts[matcode] || 0;
+  const remark = notes[matcode] || '';
+  const diff = count - item.expected;
+  const status = count === 0 ? 'ยังไม่นับ' : count === item.expected ? 'ตรง' : diff > 0 ? `เกิน ${diff}` : `ขาด ${Math.abs(diff)}`;
+  setSyncIndicator('syncing', 'กำลัง sync...');
+  syncStatus[matcode] = 'pending';
+  try {
+    await fetch(SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ material: matcode, count, remark, status, difference: diff, expected: item.expected }),
+      mode: 'no-cors'
+    });
+    syncStatus[matcode] = 'ok';
+    setSyncIndicator('ok', 'sync แล้ว');
+    setTimeout(() => setSyncIndicator('idle'), 3000);
+  } catch(e) {
+    syncStatus[matcode] = 'err';
+    setSyncIndicator('err', 'sync ไม่ได้');
+    setTimeout(() => setSyncIndicator('idle'), 5000);
+  }
+  if (document.getElementById('page-summary').classList.contains('active')) renderSummary();
+}
+
+function setSyncIndicator(state, text='') {
   const el=document.getElementById('sync-indicator'),dot=document.getElementById('sync-dot'),txt=document.getElementById('sync-text');
   el.className='sync-indicator '+state; txt.textContent=text;
   dot.className=state==='syncing'?'sync-dot spin':'sync-dot';
@@ -317,7 +379,7 @@ function showTab(t){
 function toggleScan(){scanning?stopScan():startScan();}
 
 function startScan(){
-  if(!STOCK_DATA.length){showToast('⚠️ กรุณานำเข้าข้อมูลก่อน');return;}
+  if(!STOCK_DATA.length){showToast('⚠️ กรุณารอโหลดข้อมูลก่อน');return;}
   const btn=document.getElementById('btn-scan'); btn.disabled=true; btn.innerHTML='<span>⏳</span> กำลังเปิดกล้อง...';
   const container=document.getElementById('scanner-container'); container.innerHTML='';
   const video=document.createElement('video'); video.id='zxing-video'; video.setAttribute('playsinline','true'); container.appendChild(video);
@@ -414,7 +476,7 @@ function closeManualOutside(e){if(e.target===document.getElementById('manual-ove
 function confirmManual(){const val=document.getElementById('manual-input').value.trim().toUpperCase();if(!val)return;closeManual();handleCode(val);}
 
 function renderSummary(){
-  if(!STOCK_DATA.length){['stat-ok','stat-diff','stat-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('item-list').innerHTML=`<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">ยังไม่มีข้อมูลสินค้า</div><div class="es-sub">กรุณานำเข้าข้อมูลผ่านระบบภายนอก</div></div>`;return;}
+  if(!STOCK_DATA.length){['stat-ok','stat-diff','stat-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('item-list').innerHTML=`<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">ยังไม่มีข้อมูลสินค้า</div><div class="es-sub">กรุณาตั้งค่า SCRIPT_URL ในโค้ด</div></div>`;return;}
   let ok=0,diff=0,pending=0;
   STOCK_DATA.forEach(item=>{const c=counts[item.matcode]||0;if(c===0)pending++;else if(c===item.expected)ok++;else diff++;});
   document.getElementById('stat-ok').textContent=ok; document.getElementById('stat-diff').textContent=diff; document.getElementById('stat-pending').textContent=pending;
@@ -461,7 +523,8 @@ function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').
 let toastTimer;
 function showToast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2500);}
 
-updateProgress(); updateBadge(); renderSummary();
+// ── เริ่มต้น: โหลดข้อมูลจาก Google Sheet ──────────────────
+loadStockData();
 </script>
 </body>
 </html>

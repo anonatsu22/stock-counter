@@ -298,13 +298,13 @@
 // ============================================================
 // ✅ ใส่ URL Apps Script ที่ได้จาก Deploy ตรงนี้
 // ============================================================
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFnjPD7Cs6ES8OhnzzvAIDCL6BEJHsc9pGITb0yHJ0peozxRUfhXmZasDvwh2x4UuxA/exec';
+const SCRIPT_URL = 'https://script.google.com/macros/s/XXXXXXX/exec';
 // ============================================================
 
 let STOCK_DATA=[],counts={},notes={},syncStatus={},scanning=false,lastCode='',lastCodeTime=0,codeReader=null;
 let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add';
 
-// ── โหลด STOCK_DATA จาก Google Sheet ──────────────────────
+// ── โหลด STOCK_DATA + ผลการนับจาก Google Sheet ────────────
 async function loadStockData() {
   const sub = document.getElementById('header-sub');
   const loadingText = document.getElementById('loading-text');
@@ -314,11 +314,27 @@ async function loadStockData() {
     const res = await fetch(SCRIPT_URL + '?t=' + Date.now());
     const json = await res.json();
     if (!json.ok || !json.data || !json.data.length) throw new Error('no data');
+
     STOCK_DATA = json.data;
-    sub.textContent = `v3.0 · ${STOCK_DATA.length} รายการ`;
+
+    // ── คืนค่าผลการนับจากคอลัมน์ D และ E ──
+    let restored = 0;
+    STOCK_DATA.forEach(item => {
+      if (item.count !== undefined && item.count !== '') {
+        counts[item.matcode] = Number(item.count);
+        if (counts[item.matcode] > 0) restored++;
+      }
+      if (item.note !== undefined && item.note !== '') {
+        notes[item.matcode] = String(item.note);
+      }
+    });
+
+    const restoredMsg = restored > 0 ? ` · คืนค่า ${restored} รายการ` : '';
+    sub.textContent = `v3.0 · ${STOCK_DATA.length} รายการ${restoredMsg}`;
     setSyncIndicator('ok', 'โหลดแล้ว');
     setTimeout(() => setSyncIndicator('idle'), 3000);
-    showToast(`✅ โหลดสินค้า ${STOCK_DATA.length} รายการ`);
+    if (restored > 0) showToast(`♻️ คืนค่าการนับ ${restored} รายการจาก Sheet`);
+    else showToast(`✅ โหลดสินค้า ${STOCK_DATA.length} รายการ`);
   } catch(e) {
     sub.textContent = 'v3.0 · โหลดไม่ได้';
     setSyncIndicator('err', 'โหลดไม่ได้');
@@ -328,7 +344,6 @@ async function loadStockData() {
     }, 2000);
     showToast('❌ โหลดข้อมูลจาก Sheet ไม่ได้');
   }
-  // ซ่อน loading screen
   document.getElementById('loading-overlay').classList.add('hide');
   updateProgress(); updateBadge(); renderSummary();
 }

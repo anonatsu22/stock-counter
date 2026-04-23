@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Stock Counter Pro</title>
+<title>Stock Counter Pro v4</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 <style>
@@ -22,14 +22,15 @@
   .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
   .header-title { font-size: 1rem; font-weight: 700; }
   .header-sub { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
-  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-right { display: flex; align-items: center; gap: 8px; }
+  
+  /* Header Buttons */
+  .btn-icon { background: rgba(0,212,255,0.08); border: 1px solid var(--border); color: var(--accent); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 1rem; }
+  .btn-icon:hover { background: rgba(0,212,255,0.2); transform: scale(1.05); }
+  .btn-icon:active { transform: scale(0.95); }
+  .btn-icon svg { width: 18px; height: 18px; fill: currentColor; }
   
   /* Status Indicators */
-  .btn-refresh { background: rgba(0,212,255,0.08); border: 1px solid var(--border); color: var(--accent); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; font-size: 1.1rem; }
-  .btn-refresh:hover { background: rgba(0,212,255,0.2); transform: scale(1.05); }
-  .btn-refresh:active { transform: scale(0.95); }
-  .btn-refresh svg { width: 18px; height: 18px; fill: currentColor; }
-  
   .sync-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; transition: all 0.3s; white-space: nowrap; }
   .sync-indicator.idle { display: none; }
   .sync-indicator.syncing { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
@@ -83,10 +84,12 @@
   .btn-manual { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
   
   /* Cards & Stats */
-  .last-scan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: none; }
+  .last-scan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: none; position: relative; }
   .last-scan.show { display: block; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1); }
   @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-  .last-scan-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .last-scan-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); margin-bottom: 10px; letter-spacing: 0.08em; text-transform: uppercase; display: flex; justify-content: space-between; }
+  .btn-undo { background: var(--surface3); color: var(--yellow); border: none; font-size: 0.65rem; padding: 2px 8px; border-radius: 10px; cursor: pointer; font-family: var(--mono); }
+  .btn-undo:hover { background: var(--yellow); color: #000; }
   .last-scan-body { display: flex; align-items: center; gap: 12px; }
   .last-scan-icon { width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
   .icon-ok { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.25); }
@@ -128,13 +131,18 @@
   .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
   .stat-ok { color: var(--green); } .stat-diff { color: var(--red); } .stat-pending { color: var(--yellow); }
   
-  /* Search Bar */
-  .search-box { position: relative; margin-bottom: 5px; }
+  /* Sort & Search Row */
+  .controls-row { display: flex; gap: 10px; align-items: stretch; }
+  .search-box { flex: 1; position: relative; }
   .search-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.9rem; padding: 12px 16px 12px 40px; outline: none; transition: border-color 0.2s; }
   .search-input:focus { border-color: var(--accent); }
   .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem; pointer-events: none; }
   .search-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: var(--surface3); border: none; color: var(--muted); width: 20px; height: 20px; border-radius: 50%; font-size: 0.8rem; cursor: pointer; display: none; align-items: center; justify-content: center; }
   .search-clear.show { display: flex; }
+  
+  .sort-box { position: relative; }
+  .btn-sort { background: var(--surface2); border: 1.5px solid var(--border); color: var(--muted); border-radius: 12px; padding: 0 14px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; width: 42px; font-size: 1.1rem; }
+  .btn-sort.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
   .section-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px; }
   .section-hint { font-size: 0.72rem; color: var(--muted); padding: 0 2px; margin-top: -8px; display: flex; align-items: center; gap: 5px; }
@@ -233,8 +241,12 @@
       <div class="live-dot"></div>
       <span>LIVE</span>
     </div>
+    <!-- Export Button -->
+    <button class="btn-icon" onclick="exportCSV()" title="ดาวน์โหลด Excel">
+      <svg viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+    </button>
     <!-- Refresh Button -->
-    <button class="btn-refresh" id="btn-refresh" onclick="forceRefresh()" title="อัปเดตข้อมูล">
+    <button class="btn-icon" id="btn-refresh" onclick="forceRefresh()" title="อัปเดตข้อมูล">
       <svg viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
     </button>
     <div class="sync-indicator idle" id="sync-indicator">
@@ -275,7 +287,10 @@
       <button class="btn-manual" onclick="openManual()">⌨️ พิมพ์</button>
     </div>
     <div class="last-scan" id="last-scan">
-      <div class="last-scan-label">🔍 สแกนล่าสุด</div>
+      <div class="last-scan-label">
+        <span>🔍 สแกนล่าสุด</span>
+        <button class="btn-undo" id="btn-undo" style="display:none" onclick="undoLastAction()">↩️ เพิกถอย</button>
+      </div>
       <div class="last-scan-body" id="last-scan-body"></div>
     </div>
     <div class="mini-stats">
@@ -302,11 +317,18 @@
       <div class="stat-card"><div class="stat-num stat-pending" id="stat-pending">0</div><div class="stat-label">⏳ ยังไม่นับ</div></div>
     </div>
     
-    <!-- Search Bar -->
-    <div class="search-box">
-      <span class="search-icon">🔍</span>
-      <input type="text" class="search-input" id="search-input" placeholder="ค้นหาชื่อ หรือ รหัสสินค้า...">
-      <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+    <!-- Sort & Search Row -->
+    <div class="controls-row">
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" id="search-input" placeholder="ค้นหาชื่อ หรือ รหัส...">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="sort-box">
+        <button class="btn-sort" id="btn-sort" onclick="toggleSort()" title="เรียงยังไม่นับก่อน">
+          ⬇️
+        </button>
+      </div>
     </div>
 
     <div class="section-label">รายการสินค้าทั้งหมด</div>
@@ -361,6 +383,7 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFnjPD7Cs6ES8Ohnzz
 // ============================================================
 
 const POLL_INTERVAL_MS = 15000;
+const UNDO_TIME_LIMIT = 60000; // 1 Minute
 
 // 📢 เสียง Beep (Web Audio API)
 function playBeep() {
@@ -389,20 +412,87 @@ let scanning = false, lastCode = '', lastCodeTime = 0, codeReader = null;
 let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
 let pollTimer = null;
 let isPendingSync = false;
-let searchTerm = ''; // Search state
+let searchTerm = ''; 
+let sortMode = 'default'; // 'default' | 'priority'
+let lastUndoAction = null; // { code, prevCount, prevNote, time }
+
+// ── Export CSV ─────────────────────────────────────
+function exportCSV() {
+  if (!STOCK_DATA.length) { showToast('⚠️ ไม่มีข้อมูลสินค้า'); return; }
+  
+  // CSV Header
+  let csvContent = "Material Code,Name,Expected,Counted,Difference,Note,Status\n";
+  
+  // Sort data for export
+  const sortedData = [...STOCK_DATA].sort((a,b) => {
+    const ca = counts[a.matcode] || 0;
+    const cb = counts[b.matcode] || 0;
+    const sa = ca === 0 ? 1 : (ca !== a.expected ? 2 : 3);
+    const sb = cb === 0 ? 1 : (cb !== b.expected ? 2 : 3);
+    if (sa !== sb) return sa - sb;
+    return a.matcode.localeCompare(b.matcode);
+  });
+
+  sortedData.forEach(item => {
+    const c = counts[item.matcode] || 0;
+    const diff = c - item.expected;
+    const note = notes[item.matcode] || '';
+    const status = c === 0 ? 'ยังไม่นับ' : c === item.expected ? 'ตรง' : (diff > 0 ? `เกิน ${diff}` : `ขาด ${Math.abs(diff)}`);
+    
+    // Escape quotes for CSV
+    const safeName = `"${(item.name || '').replace(/"/g, '""')}"`;
+    const safeNote = `"${(note || '').replace(/"/g, '""')}"`;
+    
+    csvContent += `${item.matcode},${safeName},${item.expected},${c},${diff},${safeNote},${status}\n`;
+  });
+
+  // Add BOM for Excel UTF-8 support
+  const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement("a");
+  const url = URL.createObjectURL(blob);
+  link.setAttribute("href", url);
+  link.setAttribute("download", `stock_count_${new Date().toISOString().slice(0,10)}.csv`);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  showToast('✅ ดาวน์โหลดข้อมูลเรียบร้อย');
+}
+
+// ── Undo Logic ─────────────────────────────────────
+function undoLastAction() {
+  if (!lastUndoAction || Date.now() - lastUndoAction.time > UNDO_TIME_LIMIT) return;
+  
+  const { code, prevCount, prevNote } = lastUndoAction;
+  const item = STOCK_DATA.find(i => i.matcode === code);
+  
+  // Restore values
+  counts[code] = prevCount;
+  if (prevNote) notes[code] = prevNote; else delete notes[code];
+  
+  // Hide undo button
+  lastUndoAction = null;
+  document.getElementById('btn-undo').style.display = 'none';
+  document.getElementById('last-scan-label').innerHTML = '🔍 สแกนล่าสุด';
+  
+  // Update UI
+  showLastScan({ code, item, count: prevCount, found: true });
+  updateProgress(); updateBadge();
+  renderSummary();
+  
+  // Sync back to sheet
+  syncToSheet(code);
+  showToast('↩️ เพิกถอยการนับล่าสุดแล้ว');
+}
 
 // ── ฟังก์ชันกด Refresh แบบ Manual ──────────────────
 async function forceRefresh() {
-  // แสดงหมุนๆ ที่ปุ่ม และสถานะ
   const btn = document.getElementById('btn-refresh');
-  btn.classList.add('spin'); // CSS animation handle
+  btn.classList.add('spin');
   btn.style.opacity = '0.7';
   setSyncIndicator('syncing', 'กำลังอัปเดต...');
   
   try {
     await loadStockData(false);
-    // หลังจากโหลดเสร็จ loadStockData จะเซ็ต sync indicator เป็น ok/err เอง
-    // ดังนั้นเราแค่หยุดหมุนปุ่ม
     showToast('✅ อัปเดตข้อมูลล่าสุดแล้ว');
   } catch (e) {
     showToast('❌ อัปเดตไม่ได้');
@@ -410,6 +500,14 @@ async function forceRefresh() {
     btn.classList.remove('spin');
     btn.style.opacity = '1';
   }
+}
+
+// ── Toggle Sort ─────────────────────────────────────
+function toggleSort() {
+  sortMode = sortMode === 'default' ? 'priority' : 'default';
+  const btn = document.getElementById('btn-sort');
+  btn.classList.toggle('active', sortMode === 'priority');
+  renderSummary();
 }
 
 // ── โหลดข้อมูล ──────────────────────────────────────────
@@ -425,7 +523,6 @@ async function loadStockData(isInitial = true) {
     const json = await res.json();
     if (!json.ok || !json.data || !json.data.length) throw new Error('no data');
 
-    // ✅ ตรวจการเปลี่ยนแปลงจากเครื่องอื่น — เช็คทั้ง count และ note
     const changedCodes = [];
     if (!isInitial) {
       json.data.forEach(item => {
@@ -441,7 +538,6 @@ async function loadStockData(isInitial = true) {
 
     STOCK_DATA = json.data;
 
-    // ✅ คืนค่าทั้งหมดจาก Sheet — ลบ note เมื่อค่าว่างด้วย
     let restored = 0;
     STOCK_DATA.forEach(item => {
       if (item.count !== undefined && item.count !== '') {
@@ -457,7 +553,7 @@ async function loadStockData(isInitial = true) {
 
     if (isInitial) {
       const restoredMsg = restored > 0 ? ` · คืนค่า ${restored} รายการ` : '';
-      sub.textContent = `v3.3 · ${STOCK_DATA.length} รายการ${restoredMsg}`;
+      sub.textContent = `v4.0 Pro · ${STOCK_DATA.length} รายการ${restoredMsg}`;
       setSyncIndicator('ok', 'โหลดแล้ว');
       setTimeout(() => setSyncIndicator('idle'), 3000);
       if (restored > 0) showToast(`♻️ คืนค่าการนับ ${restored} รายการจาก Sheet`);
@@ -465,15 +561,13 @@ async function loadStockData(isInitial = true) {
       document.getElementById('live-badge').style.display = 'flex';
       startPolling();
     } else {
-      // ✅ Poll สำเร็จ: แจ้งเฉพาะรายการที่เปลี่ยน
       if (changedCodes.length > 0) {
         const desc = changedCodes.length === 1
           ? `🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`
           : `🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`;
         showRefreshToast(desc);
         highlightUpdatedCards(changedCodes);
-        // Force refresh specific status
-        sub.textContent = `v3.3 · ${STOCK_DATA.length} รายการ`;
+        sub.textContent = `v4.0 Pro · ${STOCK_DATA.length} รายการ`;
         setSyncIndicator('ok', 'อัปเดตแล้ว');
         setTimeout(() => setSyncIndicator('idle'), 3000);
       }
@@ -482,7 +576,7 @@ async function loadStockData(isInitial = true) {
   } catch (e) {
     console.error(e);
     if (isInitial) {
-      sub.textContent = 'v3.3 · โหลดไม่ได้';
+      sub.textContent = 'v4.0 Pro · โหลดไม่ได้';
       setSyncIndicator('err', 'โหลดไม่ได้');
       loadingText.textContent = '❌ โหลดข้อมูลไม่ได้ — ตรวจสอบ SCRIPT_URL';
       setTimeout(() => {
@@ -490,7 +584,6 @@ async function loadStockData(isInitial = true) {
       }, 2000);
       showToast('❌ โหลดข้อมูลจาก Sheet ไม่ได้');
     } else {
-      // Manual refresh failed
       setSyncIndicator('err', 'อัปเดตไม่ได้');
       setTimeout(() => setSyncIndicator('idle'), 5000);
     }
@@ -575,10 +668,8 @@ function showTab(t) {
   document.getElementById('page-' + t).classList.add('active');
   document.getElementById('tab-' + t).classList.add('active');
   if (t === 'summary') {
-    // ✅ ไม่ Focus ที่ช่องค้นหา เพื่อไม่ให้คีย์บอร์ดเด้งเอง
     renderSummary();
   } else {
-    // Blur search when leaving tab to prevent keyboard sticking
     document.getElementById('search-input').blur();
   }
 }
@@ -599,7 +690,7 @@ function startScan() {
       const code = result.getText(), now = Date.now(); 
       if (code === lastCode && now - lastCodeTime < 2000) return; 
       lastCode = code; lastCodeTime = now; 
-      playBeep(); // 🔊 Play sound
+      playBeep(); 
       handleCode(code); 
     }
   }).then(() => {
@@ -628,6 +719,18 @@ function handleCode(code) {
 }
 
 function applyCount(code, item, qty, mode, note) {
+  // Save state for Undo (Only for 'add' mode to avoid complexity)
+  if (mode === 'add') {
+    lastUndoAction = {
+      code: code,
+      prevCount: counts[code] || 0,
+      prevNote: notes[code] || '',
+      time: Date.now()
+    };
+    // Show Undo button
+    document.getElementById('btn-undo').style.display = 'inline-flex';
+  }
+
   counts[code] = mode === 'set' ? qty : (counts[code] || 0) + qty;
   if (note && note.trim()) notes[code] = note.trim(); else if (mode === 'set') notes[code] = '';
   showLastScan({ code, item, count: counts[code], found: true }); updateProgress(); updateBadge();
@@ -657,8 +760,6 @@ function openQty(code, item, mode = 'add') {
   }
   updateQtyDisplay(); 
   document.getElementById('qty-overlay').classList.add('show');
-  // ✅ แก้ไข: เอา focus ที่หมายเหตุออก เพื่อไม่ให้คีย์บอร์ดเด้งอัตโนมัติ
-  // document.getElementById('note-textarea').focus(); 
 }
 
 function closeQty() { document.getElementById('qty-overlay').classList.remove('show'); qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add'; lastCode = ''; }
@@ -684,7 +785,15 @@ function confirmQty() {
 function editCount(matcode) { const item = STOCK_DATA.find(i => i.matcode === matcode); if (item) openQty(matcode, item, 'set'); }
 
 function showLastScan({ code, item, count, found }) {
-  const el = document.getElementById('last-scan'), body = document.getElementById('last-scan-body'); el.classList.add('show');
+  const el = document.getElementById('last-scan'), body = document.getElementById('last-scan-body'), label = document.getElementById('last-scan-label'); el.classList.add('show');
+  
+  // Reset label default
+  if(!lastUndoAction || Date.now() - lastUndoAction.time > UNDO_TIME_LIMIT) {
+     label.innerHTML = '🔍 สแกนล่าสุด';
+  } else {
+    label.innerHTML = '<span>🔍 สแกนล่าสุด</span>';
+  }
+  
   if (!found) { body.innerHTML = `<div class="last-scan-icon icon-err">❓</div><div class="last-scan-info"><div class="last-scan-name" style="color:var(--red)">ไม่พบในระบบ</div><div class="last-scan-code">${escHtml(code)}</div></div>`; return; }
   const diff = count - item.expected; let iconClass, countClass, tag;
   if (count === item.expected) { iconClass = 'icon-ok'; countClass = 'count-ok'; tag = `<span class="tag tag-ok">✅ ครบ</span>`; }
@@ -729,10 +838,23 @@ function renderSummary() {
   document.getElementById('stat-ok').textContent = ok; document.getElementById('stat-diff').textContent = diff; document.getElementById('stat-pending').textContent = pending;
 
   // Filter logic
-  const filteredData = STOCK_DATA.filter(item => {
+  let filteredData = STOCK_DATA.filter(item => {
     if (!searchTerm) return true;
     return item.name.toLowerCase().includes(searchTerm) || item.matcode.toLowerCase().includes(searchTerm);
   });
+
+  // Sort logic (Smart Sort)
+  if (sortMode === 'priority') {
+    filteredData.sort((a,b) => {
+      const ca = counts[a.matcode] || 0;
+      const cb = counts[b.matcode] || 0;
+      // Priority: Pending (0) > Diff > OK
+      const sa = ca === 0 ? 1 : (ca !== a.expected ? 2 : 3);
+      const sb = cb === 0 ? 1 : (cb !== b.expected ? 2 : 3);
+      if (sa !== sb) return sa - sb;
+      return a.matcode.localeCompare(b.matcode);
+    });
+  }
 
   document.getElementById('item-list').innerHTML = filteredData.map(item => {
     const c = counts[item.matcode] || 0, note = notes[item.matcode] || '', ss = syncStatus[item.matcode] || '';
@@ -786,14 +908,9 @@ document.addEventListener('keydown', (e) => {
   const manualOverlay = document.getElementById('manual-overlay');
   
   if (qtyOverlay.classList.contains('show')) {
-    // Numpad support
-    if ((e.key >= '0' && e.key <= '9')) {
-      numpad(e.key);
-    } else if (e.key === 'Backspace') {
-      numpad('del');
-    } else if (e.key === 'Enter') {
-      if (!document.getElementById('btn-qty-ok').disabled) confirmQty();
-    }
+    if ((e.key >= '0' && e.key <= '9')) numpad(e.key);
+    else if (e.key === 'Backspace') numpad('del');
+    else if (e.key === 'Enter') { if (!document.getElementById('btn-qty-ok').disabled) confirmQty(); }
   } else if (manualOverlay.classList.contains('show')) {
     if (e.key === 'Enter') confirmManual();
   }

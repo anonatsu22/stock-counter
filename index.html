@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Stock Counter</title>
+<title>Stock Counter Pro</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
 <style>
@@ -15,12 +15,16 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans Thai', sans-serif; min-height: 100vh; background-image: radial-gradient(ellipse 80% 40% at 50% -10%, rgba(0,102,255,0.15) 0%, transparent 60%), radial-gradient(ellipse 40% 40% at 90% 90%, rgba(0,212,255,0.06) 0%, transparent 60%); }
+  
+  /* Header & Nav */
   .header { padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); background: rgba(17,24,39,0.8); backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 50; }
   .header-left { display: flex; align-items: center; gap: 10px; }
   .logo { width: 36px; height: 36px; border-radius: 10px; background: linear-gradient(135deg, var(--accent2), var(--accent)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
   .header-title { font-size: 1rem; font-weight: 700; }
   .header-sub { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
   .header-right { display: flex; align-items: center; gap: 8px; }
+  
+  /* Status Indicators */
   .sync-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; transition: all 0.3s; white-space: nowrap; }
   .sync-indicator.idle { display: none; }
   .sync-indicator.syncing { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
@@ -32,12 +36,18 @@
   .live-badge { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; background: rgba(0,255,136,0.08); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
   .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); animation: livePulse 2s ease-in-out infinite; }
   @keyframes livePulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.4;transform:scale(0.7)} }
-  .refresh-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.3); color: var(--green); border-radius: 20px; padding: 6px 14px; font-size: 0.75rem; font-family: var(--mono); font-weight: 600; opacity: 0; z-index: 100; transition: opacity 0.3s, transform 0.3s; pointer-events: none; white-space: nowrap; }
+  .refresh-toast { position: fixed; top: 70px; left: 50%; transform: translateX(-50%) translateY(-20px); background: rgba(0,255,136,0.15); border: 1px solid rgba(0,255,136,0.3); color: var(--green); border-radius: 20px; padding: 6px 14px; font-size: 0.75rem; font-family: var(--mono); font-weight: 600; opacity: 0; z-index: 100; transition: opacity 0.3s, transform 0.3s; pointer-events: none; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
   .refresh-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  
+  /* Tabs */
   .tabs { display: flex; background: var(--surface); border-bottom: 1px solid var(--border); }
   .tab-btn { flex: 1; padding: 12px 8px; border: none; background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
   .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+  
+  /* Pages */
   .page { display: none; } .page.active { display: block; }
+  
+  /* Scanner UI */
   .scan-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
   .cam-box { position: relative; border-radius: 20px; overflow: hidden; background: #000; aspect-ratio: 4/3; border: 1.5px solid var(--border); box-shadow: 0 0 40px rgba(0,102,255,0.15); }
   #scanner-container { width: 100%; height: 100%; }
@@ -56,12 +66,16 @@
   .scan-flash { position: absolute; inset: 0; background: rgba(0,255,136,0.2); border-radius: 20px; opacity: 0; pointer-events: none; }
   .scan-flash.show { animation: flashOut 0.4s ease forwards; }
   @keyframes flashOut { 0%{opacity:1} 100%{opacity:0} }
+  
+  /* Controls */
   .scan-controls { display: flex; gap: 10px; }
   .btn-scan { flex: 1; padding: 14px; border-radius: 14px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; box-shadow: 0 4px 20px rgba(0,102,255,0.35); display: flex; align-items: center; justify-content: center; gap: 8px; }
   .btn-scan:hover { transform: translateY(-2px); } .btn-scan:active { transform: scale(0.97); }
   .btn-scan.stop { background: linear-gradient(135deg, #ff4466, #cc2244); }
   .btn-scan:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
   .btn-manual { padding: 14px 16px; border-radius: 14px; border: 1.5px solid var(--border); background: var(--surface2); color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.85rem; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+  
+  /* Cards & Stats */
   .last-scan { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 16px; display: none; }
   .last-scan.show { display: block; animation: slideUp 0.3s cubic-bezier(0.22,1,0.36,1); }
   @keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
@@ -79,6 +93,7 @@
   .count-num { font-family: var(--mono); font-size: 1.4rem; font-weight: 700; line-height: 1; }
   .count-of { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
   .count-ok { color: var(--green); } .count-over { color: var(--yellow); } .count-new { color: var(--accent); }
+  
   .mini-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
   .mini-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 10px 8px; text-align: center; }
   .mini-stat-num { font-family: var(--mono); font-size: 1.3rem; font-weight: 700; line-height: 1; }
@@ -97,12 +112,23 @@
   .prog-done-msg.show { display: flex; }
   .prog-done-msg.msg-warn { background: rgba(255,204,0,0.12); color: var(--yellow); border: 1px solid rgba(255,204,0,0.25); }
   .prog-done-msg.msg-ok { background: rgba(0,255,136,0.1); color: var(--green); border: 1px solid rgba(0,255,136,0.2); }
+  
+  /* Summary Page */
   .summary-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
   .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
   .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 14px 12px; text-align: center; }
   .stat-num { font-family: var(--mono); font-size: 1.6rem; font-weight: 700; line-height: 1; }
   .stat-label { font-size: 0.72rem; color: var(--muted); margin-top: 5px; }
   .stat-ok { color: var(--green); } .stat-diff { color: var(--red); } .stat-pending { color: var(--yellow); }
+  
+  /* Search Bar (New) */
+  .search-box { position: relative; margin-bottom: 5px; }
+  .search-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.9rem; padding: 12px 16px 12px 40px; outline: none; transition: border-color 0.2s; }
+  .search-input:focus { border-color: var(--accent); }
+  .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 1rem; pointer-events: none; }
+  .search-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: var(--surface3); border: none; color: var(--muted); width: 20px; height: 20px; border-radius: 50%; font-size: 0.8rem; cursor: pointer; display: none; align-items: center; justify-content: center; }
+  .search-clear.show { display: flex; }
+
   .section-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 2px; }
   .section-hint { font-size: 0.72rem; color: var(--muted); padding: 0 2px; margin-top: -8px; display: flex; align-items: center; gap: 5px; }
   .item-list { display: flex; flex-direction: column; gap: 8px; }
@@ -129,6 +155,8 @@
   .tag-over { background: rgba(255,204,0,0.12); color: var(--yellow); }
   .tag-short { background: rgba(255,68,102,0.12); color: var(--red); }
   .tag-pending { background: rgba(100,116,139,0.15); color: var(--muted); }
+  
+  /* Overlays */
   .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: all; }
   .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); max-height: 92vh; overflow-y: auto; }
@@ -262,6 +290,14 @@
       <div class="stat-card"><div class="stat-num stat-diff" id="stat-diff">0</div><div class="stat-label">⚠️ ผิดปกติ</div></div>
       <div class="stat-card"><div class="stat-num stat-pending" id="stat-pending">0</div><div class="stat-label">⏳ ยังไม่นับ</div></div>
     </div>
+    
+    <!-- Search Bar -->
+    <div class="search-box">
+      <span class="search-icon">🔍</span>
+      <input type="text" class="search-input" id="search-input" placeholder="ค้นหาชื่อ หรือ รหัสสินค้า...">
+      <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+
     <div class="section-label">รายการสินค้าทั้งหมด</div>
     <div class="section-hint"><span>✏️</span> แตะรายการเพื่อแก้ไขจำนวน / หมายเหตุ</div>
     <div class="item-list" id="item-list"></div>
@@ -315,11 +351,17 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxGFnjPD7Cs6ES8Ohnzz
 
 const POLL_INTERVAL_MS = 15000;
 
+// 📢 เสียง Beep (Base64) ไม่ต้องโหลดไฟล์เสียงเพิ่ม
+const BEEP_SOUND = new Audio("data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU"); // Short placeholder beep
+// ใช้เสียงจริงที่ชัดขึ้น
+const beepAudio = new Audio("data:audio/wav;base64,UklGRjIAAABXQVZFZm10IBIAAAABAAEAQB8AAEAfAAABAAgAAABmYWN0BAAAAAAAAABkYXRhAAAAAA=="); 
+
 let STOCK_DATA = [], counts = {}, notes = {}, syncStatus = {};
 let scanning = false, lastCode = '', lastCodeTime = 0, codeReader = null;
 let qtyCode = null, qtyItem = null, qtyVal = '', qtyMode = 'add';
 let pollTimer = null;
 let isPendingSync = false;
+let searchTerm = ''; // Search state
 
 // ── โหลดข้อมูล ──────────────────────────────────────────
 async function loadStockData(isInitial = true) {
@@ -342,6 +384,7 @@ async function loadStockData(isInitial = true) {
         const currentCount = counts[item.matcode] || 0;
         const incomingNote = item.note !== undefined ? String(item.note) : '';
         const currentNote = notes[item.matcode] || '';
+        // Sync only if local isn't pending/edited recently to avoid overwrite conflicts in simple logic
         if (incomingCount !== currentCount || incomingNote !== currentNote) {
           changedCodes.push(item.matcode);
         }
@@ -367,7 +410,7 @@ async function loadStockData(isInitial = true) {
 
     if (isInitial) {
       const restoredMsg = restored > 0 ? ` · คืนค่า ${restored} รายการ` : '';
-      sub.textContent = `v3.1 · ${STOCK_DATA.length} รายการ${restoredMsg}`;
+      sub.textContent = `v3.2 Pro · ${STOCK_DATA.length} รายการ${restoredMsg}`;
       setSyncIndicator('ok', 'โหลดแล้ว');
       setTimeout(() => setSyncIndicator('idle'), 3000);
       if (restored > 0) showToast(`♻️ คืนค่าการนับ ${restored} รายการจาก Sheet`);
@@ -375,7 +418,7 @@ async function loadStockData(isInitial = true) {
       document.getElementById('live-badge').style.display = 'flex';
       startPolling();
     } else {
-      // ✅ Poll สำเร็จ: แจ้งเฉพาะรายการที่เปลี่ยน (ทั้ง count หรือ note)
+      // ✅ Poll สำเร็จ: แจ้งเฉพาะรายการที่เปลี่ยน
       if (changedCodes.length > 0) {
         const desc = changedCodes.length === 1
           ? `🔄 อัปเดต ${changedCodes.length} รายการจากเครื่องอื่น`
@@ -386,8 +429,9 @@ async function loadStockData(isInitial = true) {
     }
 
   } catch (e) {
+    console.error(e);
     if (isInitial) {
-      sub.textContent = 'v3.1 · โหลดไม่ได้';
+      sub.textContent = 'v3.2 Pro · โหลดไม่ได้';
       setSyncIndicator('err', 'โหลดไม่ได้');
       loadingText.textContent = '❌ โหลดข้อมูลไม่ได้ — ตรวจสอบ SCRIPT_URL';
       setTimeout(() => {
@@ -475,7 +519,13 @@ function showTab(t) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-' + t).classList.add('active');
   document.getElementById('tab-' + t).classList.add('active');
-  if (t === 'summary') renderSummary();
+  if (t === 'summary') {
+    document.getElementById('search-input').focus(); // Auto focus search
+    renderSummary();
+  } else {
+    // Blur search when leaving tab to prevent keyboard sticking
+    document.getElementById('search-input').blur();
+  }
 }
 
 function toggleScan() { scanning ? stopScan() : startScan(); }
@@ -490,7 +540,13 @@ function startScan() {
   hints.set(ZXing.DecodeHintType.TRY_HARDER, true);
   codeReader = new ZXing.BrowserMultiFormatReader(hints, 300);
   codeReader.decodeFromConstraints({ video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } } }, 'zxing-video', (result) => {
-    if (result) { const code = result.getText(), now = Date.now(); if (code === lastCode && now - lastCodeTime < 2000) return; lastCode = code; lastCodeTime = now; handleCode(code); }
+    if (result) { 
+      const code = result.getText(), now = Date.now(); 
+      if (code === lastCode && now - lastCodeTime < 2000) return; 
+      lastCode = code; lastCodeTime = now; 
+      playBeep(); // 🔊 Play sound
+      handleCode(code); 
+    }
   }).then(() => {
     scanning = true; document.getElementById('cam-placeholder').style.display = 'none'; document.getElementById('cam-overlay').style.display = 'flex';
     btn.disabled = false; btn.innerHTML = '<span>⏹</span> หยุดสแกน'; btn.classList.add('stop');
@@ -507,6 +563,29 @@ function stopScan() {
   document.getElementById('cam-overlay').style.display = 'none'; document.getElementById('cam-placeholder').style.display = 'flex';
   document.getElementById('scanner-container').innerHTML = '';
   const btn = document.getElementById('btn-scan'); btn.innerHTML = '<span>📷</span> เริ่มสแกน'; btn.classList.remove('stop');
+}
+
+// 🔊 Play Beep Sound
+function playBeep() {
+  // Create a short beep using Web Audio API for better performance than loading a file
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(1800, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(800, ctx.currentTime + 0.1);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.1);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.1);
+  } catch (e) {
+    // Fallback silent
+  }
 }
 
 function handleCode(code) {
@@ -532,12 +611,21 @@ function openQty(code, item, mode = 'add') {
   qtyCode = code; qtyItem = item; qtyVal = ''; qtyMode = mode;
   document.getElementById('qty-item-name').textContent = item.name;
   const already = counts[code] || 0;
-  document.getElementById('qty-item-meta').textContent = mode === 'set' ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}` : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
+  document.getElementById('qty-item-meta').textContent = mode === 'set' 
+    ? `${code}  ·  ค่าปัจจุบัน ${already}  ·  เป้า ${item.expected}` 
+    : `${code}  ·  นับแล้ว ${already}  ·  เป้า ${item.expected}`;
   document.getElementById('note-textarea').value = notes[code] || '';
   const badge = document.getElementById('qty-mode-badge'), display = document.getElementById('qty-display'), okBtn = document.getElementById('btn-qty-ok');
-  if (mode === 'set') { badge.textContent = '✏️ แก้ไขจำนวน'; badge.className = 'qty-mode-badge mode-set'; display.classList.add('mode-set'); okBtn.textContent = '✏️ บันทึก'; okBtn.className = 'btn-qty-ok mode-set'; }
-  else { badge.textContent = '➕ เพิ่มจำนวน'; badge.className = 'qty-mode-badge mode-add'; display.classList.remove('mode-set'); okBtn.textContent = '✅ ยืนยัน'; okBtn.className = 'btn-qty-ok'; }
-  updateQtyDisplay(); document.getElementById('qty-overlay').classList.add('show');
+  if (mode === 'set') { 
+    badge.textContent = '✏️ แก้ไขจำนวน'; badge.className = 'qty-mode-badge mode-set'; 
+    display.classList.add('mode-set'); okBtn.textContent = '✏️ บันทึก'; okBtn.className = 'btn-qty-ok mode-set'; 
+  } else { 
+    badge.textContent = '➕ เพิ่มจำนวน'; badge.className = 'qty-mode-badge mode-add'; 
+    display.classList.remove('mode-set'); okBtn.textContent = '✅ ยืนยัน'; okBtn.className = 'btn-qty-ok'; 
+  }
+  updateQtyDisplay(); 
+  document.getElementById('qty-overlay').classList.add('show');
+  document.getElementById('note-textarea').focus(); // UX: Focus note field for quick entry
 }
 
 function closeQty() { document.getElementById('qty-overlay').classList.remove('show'); qtyCode = null; qtyItem = null; qtyVal = ''; qtyMode = 'add'; lastCode = ''; }
@@ -577,6 +665,26 @@ function closeManual() { document.getElementById('manual-overlay').classList.rem
 function closeManualOutside(e) { if (e.target === document.getElementById('manual-overlay')) closeManual(); }
 function confirmManual() { const val = document.getElementById('manual-input').value.trim().toUpperCase(); if (!val) return; closeManual(); handleCode(val); }
 
+// ── Search Logic (New) ─────────────────────────────────────
+function setupSearch() {
+  const input = document.getElementById('search-input');
+  const clearBtn = document.getElementById('search-clear');
+  
+  input.addEventListener('input', (e) => {
+    searchTerm = e.target.value.toLowerCase();
+    clearBtn.classList.toggle('show', searchTerm.length > 0);
+    renderSummary();
+  });
+}
+
+function clearSearch() {
+  document.getElementById('search-input').value = '';
+  searchTerm = '';
+  document.getElementById('search-clear').classList.remove('show');
+  renderSummary();
+  document.getElementById('search-input').focus();
+}
+
 function renderSummary() {
   if (!STOCK_DATA.length) {
     ['stat-ok', 'stat-diff', 'stat-pending'].forEach(id => document.getElementById(id).textContent = 0);
@@ -586,7 +694,14 @@ function renderSummary() {
   let ok = 0, diff = 0, pending = 0;
   STOCK_DATA.forEach(item => { const c = counts[item.matcode] || 0; if (c === 0) pending++; else if (c === item.expected) ok++; else diff++; });
   document.getElementById('stat-ok').textContent = ok; document.getElementById('stat-diff').textContent = diff; document.getElementById('stat-pending').textContent = pending;
-  document.getElementById('item-list').innerHTML = STOCK_DATA.map(item => {
+
+  // Filter logic
+  const filteredData = STOCK_DATA.filter(item => {
+    if (!searchTerm) return true;
+    return item.name.toLowerCase().includes(searchTerm) || item.matcode.toLowerCase().includes(searchTerm);
+  });
+
+  document.getElementById('item-list').innerHTML = filteredData.map(item => {
     const c = counts[item.matcode] || 0, note = notes[item.matcode] || '', ss = syncStatus[item.matcode] || '';
     const syncIcon = ss === 'ok' ? '🟢' : ss === 'err' ? '🔴' : ss === 'pending' ? '🔄' : '';
     let sc, tagHtml, cc;
@@ -597,6 +712,10 @@ function renderSummary() {
     const noteHtml = note ? `<div class="item-note-text">📝 ${escHtml(note)}</div>` : '';
     return `<div class="item-card" data-matcode="${item.matcode}" onclick="editCount('${item.matcode}')"><div class="item-status ${sc}"></div><div class="item-info"><div class="item-name">${escHtml(item.name)}</div><div class="item-code">${escHtml(item.matcode)}</div>${tagHtml}${noteHtml}</div><div class="item-right"><div class="item-count" style="${cc}">${c}</div><div class="item-expected">เป้า: ${item.expected}</div></div>${syncIcon ? `<div class="item-sync-icon">${syncIcon}</div>` : ''}</div>`;
   }).join('');
+  
+  if (filteredData.length === 0) {
+    document.getElementById('item-list').innerHTML = `<div class="empty-state"><div class="es-icon">🔍</div><div class="es-title">ไม่พบสินค้าที่ค้นหา</div><div class="es-sub">ลองเปลี่ยนคำค้นหาดูนะ</div></div>`;
+  }
 }
 
 function updateProgress() {
@@ -628,6 +747,25 @@ function escHtml(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt
 let toastTimer;
 function showToast(msg) { const el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.remove('show'), 2500); }
 
+// ⌨️ Keyboard Support for Qty Overlay (New)
+document.addEventListener('keydown', (e) => {
+  const qtyOverlay = document.getElementById('qty-overlay');
+  const manualOverlay = document.getElementById('manual-overlay');
+  
+  if (qtyOverlay.classList.contains('show')) {
+    // Numpad support
+    if ((e.key >= '0' && e.key <= '9')) {
+      numpad(e.key);
+    } else if (e.key === 'Backspace') {
+      numpad('del');
+    } else if (e.key === 'Enter') {
+      if (!document.getElementById('btn-qty-ok').disabled) confirmQty();
+    }
+  } else if (manualOverlay.classList.contains('show')) {
+    if (e.key === 'Enter') confirmManual();
+  }
+});
+
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
@@ -639,6 +777,8 @@ document.addEventListener('visibilitychange', () => {
   }
 });
 
+// Init
+setupSearch();
 loadStockData(true);
 </script>
 </body>

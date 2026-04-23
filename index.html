@@ -21,8 +21,6 @@
   .header-title { font-size: 1rem; font-weight: 700; }
   .header-sub { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); }
   .header-right { display: flex; align-items: center; gap: 8px; }
-  .btn-import { padding: 6px 12px; border-radius: 20px; font-size: 0.72rem; font-weight: 600; background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); font-family: var(--mono); cursor: pointer; transition: background 0.2s; white-space: nowrap; }
-  .btn-import:hover { background: rgba(0,212,255,0.2); }
   .sync-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 20px; font-size: 0.68rem; font-family: var(--mono); font-weight: 600; transition: all 0.3s; white-space: nowrap; }
   .sync-indicator.idle { display: none; }
   .sync-indicator.syncing { background: rgba(0,212,255,0.12); color: var(--accent); border: 1px solid rgba(0,212,255,0.25); }
@@ -125,8 +123,7 @@
   .tag-short { background: rgba(255,68,102,0.12); color: var(--red); }
   .tag-pending { background: rgba(100,116,139,0.15); color: var(--muted); }
   .action-row { display: flex; gap: 10px; margin-top: 4px; }
-  .btn-export { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
-  .btn-reset { flex: 1; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,68,102,0.3); background: rgba(255,68,102,0.08); color: var(--red); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
+  .btn-reset { width: 100%; padding: 12px; border-radius: 12px; border: 1.5px solid rgba(255,68,102,0.3); background: rgba(255,68,102,0.08); color: var(--red); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.88rem; font-weight: 600; cursor: pointer; }
   .overlay { position: fixed; inset: 0; z-index: 200; background: rgba(0,0,0,0.75); backdrop-filter: blur(6px); display: flex; align-items: flex-end; justify-content: center; opacity: 0; pointer-events: none; transition: opacity 0.25s; }
   .overlay.show { opacity: 1; pointer-events: all; }
   .sheet { width: 100%; max-width: 520px; background: var(--surface); border-radius: 24px 24px 0 0; padding: 20px 20px 36px; border-top: 1px solid var(--border); transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); max-height: 92vh; overflow-y: auto; }
@@ -162,58 +159,6 @@
   .btn-qty-ok { flex: 1; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
   .btn-qty-ok:disabled { opacity: 0.4; cursor: not-allowed; }
   .btn-qty-ok.mode-set { background: linear-gradient(135deg, #cc8800, var(--yellow)); color: #000; }
-  .import-tabs { display: flex; gap: 6px; margin-bottom: 16px; }
-  .import-tab-btn { flex: 1; padding: 8px 10px; border-radius: 10px; border: 1.5px solid var(--border); background: transparent; color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 5px; }
-  .import-tab-btn.active { background: rgba(0,212,255,0.1); color: var(--accent); border-color: rgba(0,212,255,0.35); }
-  .import-panel { display: none; } .import-panel.active { display: block; }
-  .gsheet-info { background: rgba(0,212,255,0.06); border: 1px solid rgba(0,212,255,0.15); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.78rem; color: var(--muted); line-height: 1.7; }
-  .gsheet-info strong { color: var(--accent); }
-  .gsheet-fields { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 8px; }
-  .field-chip { padding: 3px 10px; border-radius: 20px; font-family: var(--mono); font-size: 0.7rem; background: var(--surface2); border: 1px solid var(--border); color: var(--text); display: flex; align-items: center; gap: 5px; }
-  .field-chip .arrow { color: var(--muted); } .field-chip .target { color: var(--accent); } .field-chip.optional .target { color: var(--yellow); }
-  .gsheet-steps { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; }
-  .gsheet-step { display: flex; align-items: flex-start; gap: 8px; font-size: 0.76rem; color: var(--muted); }
-  .gsheet-step-num { flex-shrink: 0; width: 18px; height: 18px; border-radius: 50%; background: rgba(0,212,255,0.15); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-family: var(--mono); font-weight: 700; }
-  .gsheet-url-wrap { position: relative; margin-bottom: 10px; }
-  .gsheet-url-input { width: 100%; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 12px; color: var(--text); font-family: var(--mono); font-size: 0.8rem; padding: 12px 44px 12px 14px; outline: none; transition: border-color 0.2s; }
-  .gsheet-url-input:focus { border-color: var(--accent); }
-  .gsheet-url-input::placeholder { color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; }
-  .gsheet-url-clear { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); font-size: 1rem; cursor: pointer; display: none; }
-  .gsheet-url-clear.show { display: block; }
-  .gsheet-sheet-row { display: flex; gap: 8px; margin-bottom: 14px; align-items: center; }
-  .gsheet-sheet-label { font-size: 0.76rem; color: var(--muted); white-space: nowrap; flex-shrink: 0; }
-  .gsheet-sheet-input { flex: 1; background: var(--surface2); border: 1.5px solid var(--border); border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 0.82rem; padding: 8px 12px; outline: none; }
-  .btn-fetch { width: 100%; padding: 13px; border-radius: 12px; border: none; background: linear-gradient(135deg, #005acc, var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.92rem; font-weight: 700; cursor: pointer; margin-bottom: 14px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-  .btn-fetch:disabled { opacity: 0.4; cursor: not-allowed; }
-  .fetch-status { border-radius: 10px; padding: 10px 14px; font-size: 0.8rem; margin-bottom: 14px; display: none; align-items: center; gap: 8px; }
-  .fetch-status.show { display: flex; }
-  .fetch-status.loading { background: rgba(0,212,255,0.08); border: 1px solid rgba(0,212,255,0.2); color: var(--accent); }
-  .fetch-status.success { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); color: var(--green); }
-  .fetch-status.error { background: rgba(255,68,102,0.08); border: 1px solid rgba(255,68,102,0.2); color: var(--red); }
-  .spinner { width: 14px; height: 14px; border: 2px solid rgba(0,212,255,0.3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.7s linear infinite; flex-shrink: 0; }
-  .script-url-section { background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.2); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
-  .script-url-label { font-size: 0.72rem; color: var(--green); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-  .script-url-input { width: 100%; background: var(--surface2); border: 1.5px solid rgba(0,255,136,0.2); border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 0.75rem; padding: 10px 12px; outline: none; }
-  .script-url-input::placeholder { color: var(--muted); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.78rem; }
-  .script-url-hint { font-size: 0.7rem; color: var(--muted); margin-top: 6px; }
-  .btn-save-script { margin-top: 8px; width: 100%; padding: 9px; border-radius: 9px; border: 1px solid rgba(0,255,136,0.3); background: rgba(0,255,136,0.08); color: var(--green); font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.82rem; font-weight: 600; cursor: pointer; }
-  .import-format { background: var(--surface2); border-radius: 12px; padding: 12px 14px; font-size: 0.78rem; color: var(--muted); margin-bottom: 14px; line-height: 1.7; }
-  .import-format code { font-family: var(--mono); color: var(--accent); background: rgba(0,212,255,0.08); padding: 1px 6px; border-radius: 4px; }
-  .import-drop { border: 2px dashed rgba(0,212,255,0.3); border-radius: 16px; padding: 28px 20px; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; margin-bottom: 14px; }
-  .import-drop:hover, .import-drop.drag-over { border-color: var(--accent); background: rgba(0,212,255,0.05); }
-  .import-drop-icon { font-size: 2.5rem; margin-bottom: 8px; }
-  .import-drop-text { font-size: 0.88rem; color: var(--muted); }
-  .import-drop-text strong { color: var(--accent); }
-  .import-preview { margin-bottom: 14px; display: none; }
-  .import-preview.show { display: block; }
-  .import-preview-label { font-size: 0.72rem; color: var(--muted); font-family: var(--mono); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 8px; }
-  .import-preview-list { display: flex; flex-direction: column; gap: 6px; max-height: 160px; overflow-y: auto; }
-  .import-preview-item { background: var(--surface2); border-radius: 10px; padding: 8px 12px; font-size: 0.82rem; display: flex; justify-content: space-between; align-items: center; }
-  .icode { font-family: var(--mono); color: var(--accent); font-size: 0.78rem; }
-  .iexp { font-family: var(--mono); color: var(--muted); font-size: 0.78rem; }
-  .btn-import-confirm { width: 100%; padding: 14px; border-radius: 12px; border: none; background: linear-gradient(135deg, var(--accent2), var(--accent)); color: #fff; font-family: 'IBM Plex Sans Thai', sans-serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; }
-  .btn-import-confirm:disabled { opacity: 0.4; cursor: not-allowed; }
-  #import-file-input { display: none; }
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 12px 20px; font-size: 0.88rem; font-weight: 600; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), opacity 0.3s; opacity: 0; z-index: 300; white-space: nowrap; max-width: 90vw; }
   .toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
   .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
@@ -236,7 +181,6 @@
       <div class="sync-dot" id="sync-dot"></div>
       <span id="sync-text">sync</span>
     </div>
-    <button class="btn-import" onclick="openImport()">📥 นำเข้าข้อมูล</button>
   </div>
 </div>
 <div class="tabs">
@@ -298,7 +242,6 @@
     <div class="section-hint"><span>✏️</span> แตะรายการเพื่อแก้ไขจำนวน / หมายเหตุ</div>
     <div class="item-list" id="item-list"></div>
     <div class="action-row">
-      <button class="btn-export" onclick="exportCSV()">📤 Export CSV</button>
       <button class="btn-reset" onclick="resetAll()">🔄 รีเซ็ต</button>
     </div>
   </div>
@@ -337,79 +280,10 @@
     </div>
   </div>
 </div>
-<div class="overlay" id="import-overlay" onclick="closeImportOutside(event)">
-  <div class="sheet">
-    <div class="sheet-handle"></div>
-    <div class="sheet-title">📥 นำเข้าข้อมูลสินค้า</div>
-    <div class="import-tabs">
-      <button class="import-tab-btn active" id="itab-gsheet" onclick="switchImportTab('gsheet')">🔗 Google Sheet</button>
-      <button class="import-tab-btn" id="itab-csv" onclick="switchImportTab('csv')">📄 CSV</button>
-    </div>
-    <div class="import-panel active" id="ipanel-gsheet">
-      <div class="script-url-section">
-        <div class="script-url-label">⚡ Apps Script URL (สำหรับ Sync)</div>
-        <input type="url" class="script-url-input" id="script-url-input" placeholder="https://script.google.com/macros/s/AKfy.../exec" />
-        <div class="script-url-hint">วาง Web App URL จาก Apps Script เพื่อ sync ข้อมูลกลับ Sheet แบบ real-time</div>
-        <button class="btn-save-script" onclick="saveScriptUrl()">💾 บันทึก URL</button>
-      </div>
-      <div class="gsheet-info">
-        <strong>Field ที่ดึงจาก Sheet:</strong>
-        <div class="gsheet-fields">
-          <div class="field-chip"><span>Material</span><span class="arrow">→</span><span class="target">matcode</span></div>
-          <div class="field-chip"><span>Material Description</span><span class="arrow">→</span><span class="target">name</span></div>
-          <div class="field-chip"><span>Unrestricted</span><span class="arrow">→</span><span class="target">expected</span></div>
-          <div class="field-chip optional"><span>Count</span><span class="arrow">→</span><span class="target">นับแล้ว</span></div>
-          <div class="field-chip optional"><span>Remark</span><span class="arrow">→</span><span class="target">หมายเหตุ</span></div>
-        </div>
-        <div class="gsheet-steps">
-          <div class="gsheet-step"><div class="gsheet-step-num">1</div><div>Share Sheet → <strong style="color:var(--text)">Anyone with the link</strong></div></div>
-          <div class="gsheet-step"><div class="gsheet-step-num">2</div><div>วาง URL ด้านล่าง แล้วกด "ดึงข้อมูล"</div></div>
-        </div>
-      </div>
-      <div class="gsheet-url-wrap">
-        <input type="url" class="gsheet-url-input" id="gsheet-url-input" placeholder="วาง URL Google Sheet ที่นี่..." oninput="onUrlInput()" />
-        <button class="gsheet-url-clear" id="gsheet-url-clear" onclick="clearUrl()">✕</button>
-      </div>
-      <div class="gsheet-sheet-row">
-        <span class="gsheet-sheet-label">ชื่อ Sheet (tab):</span>
-        <input type="text" class="gsheet-sheet-input" id="gsheet-sheet-name" placeholder="Sheet1" value="Sheet1" />
-      </div>
-      <div class="fetch-status" id="fetch-status">
-        <div class="spinner" id="fetch-spinner"></div>
-        <span id="fetch-status-text"></span>
-      </div>
-      <button class="btn-fetch" id="btn-fetch" onclick="fetchGSheet()" disabled>🔗 ดึงข้อมูลจาก Google Sheet</button>
-      <div class="import-preview" id="gsheet-preview">
-        <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="gsheet-count">0</span> รายการ)</div>
-        <div class="import-preview-list" id="gsheet-preview-list"></div>
-      </div>
-      <button class="btn-import-confirm" id="btn-gsheet-confirm" onclick="confirmGSheet()" disabled>✅ นำเข้าข้อมูล</button>
-    </div>
-    <div class="import-panel" id="ipanel-csv">
-      <div class="import-format">คอลัมน์ที่รองรับ:<br><code>Material</code>, <code>Material Description</code>, <code>Unrestricted</code><br>(ไม่บังคับ) <code>Count</code>, <code>Remark</code></div>
-      <div class="import-drop" id="import-drop" onclick="document.getElementById('import-file-input').click()" ondragover="dragOver(event)" ondragleave="dragLeave()" ondrop="dropFile(event)">
-        <div class="import-drop-icon">📂</div>
-        <div class="import-drop-text"><strong>แตะเพื่อเลือกไฟล์</strong> หรือลากมาวาง</div>
-      </div>
-      <input type="file" id="import-file-input" accept=".csv,.txt" onchange="handleFileSelect(event)">
-      <div class="import-preview" id="csv-preview">
-        <div class="import-preview-label">ตัวอย่างข้อมูล (<span id="csv-count">0</span> รายการ)</div>
-        <div class="import-preview-list" id="csv-preview-list"></div>
-      </div>
-      <button class="btn-import-confirm" id="btn-csv-confirm" onclick="confirmImport()" disabled>📥 นำเข้าข้อมูล</button>
-    </div>
-  </div>
-</div>
 <div class="toast" id="toast"></div>
 <script>
 let STOCK_DATA=[],counts={},notes={},syncStatus={},scanning=false,lastCode='',lastCodeTime=0,codeReader=null;
-let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add',pendingImport=[],pendingGSheet=[],SCRIPT_URL='';
-
-function saveScriptUrl(){
-  const v=document.getElementById('script-url-input').value.trim();
-  if(!v||!v.startsWith('https://script.google.com')){showToast('❌ URL ไม่ถูกต้อง');return;}
-  SCRIPT_URL=v; showToast('✅ บันทึก Script URL — พร้อม sync!');
-}
+let qtyCode=null,qtyItem=null,qtyVal='',qtyMode='add',SCRIPT_URL='';
 
 async function syncToSheet(matcode){
   if(!SCRIPT_URL)return;
@@ -539,117 +413,8 @@ function closeManual(){document.getElementById('manual-overlay').classList.remov
 function closeManualOutside(e){if(e.target===document.getElementById('manual-overlay'))closeManual();}
 function confirmManual(){const val=document.getElementById('manual-input').value.trim().toUpperCase();if(!val)return;closeManual();handleCode(val);}
 
-function switchImportTab(tab){
-  ['gsheet','csv'].forEach(t=>{document.getElementById('itab-'+t).classList.toggle('active',t===tab);document.getElementById('ipanel-'+t).classList.toggle('active',t===tab);});
-}
-
-function onUrlInput(){
-  const val=document.getElementById('gsheet-url-input').value.trim();
-  document.getElementById('gsheet-url-clear').classList.toggle('show',val.length>0);
-  document.getElementById('btn-fetch').disabled=val.length===0;
-  setFetchStatus(''); pendingGSheet=[];
-  document.getElementById('gsheet-preview').classList.remove('show');
-  document.getElementById('btn-gsheet-confirm').disabled=true;
-}
-
-function clearUrl(){document.getElementById('gsheet-url-input').value='';onUrlInput();}
-
-function setFetchStatus(type,msg=''){
-  const el=document.getElementById('fetch-status'); el.className='fetch-status';
-  if(!type){el.style.display='none';return;}
-  el.classList.add('show',type); el.style.display='';
-  document.getElementById('fetch-spinner').style.display=type==='loading'?'block':'none';
-  document.getElementById('fetch-status-text').textContent=msg;
-}
-
-function buildCsvUrl(rawUrl,sheetName){
-  const m=rawUrl.match(/\/spreadsheets\/d\/([a-zA-Z0-9_-]+)/); if(!m)return null;
-  const sheetId=m[1],gidMatch=rawUrl.match(/[#&?]gid=(\d+)/);
-  if(gidMatch)return `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv&gid=${gidMatch[1]}`;
-  return `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(sheetName||'Sheet1')}`;
-}
-
-async function fetchGSheet(){
-  const rawUrl=document.getElementById('gsheet-url-input').value.trim(),sheetName=document.getElementById('gsheet-sheet-name').value.trim()||'Sheet1';
-  const csvUrl=buildCsvUrl(rawUrl,sheetName); if(!csvUrl){setFetchStatus('error','❌ URL ไม่ถูกต้อง');return;}
-  setFetchStatus('loading','กำลังดึงข้อมูล...'); document.getElementById('btn-fetch').disabled=true; document.getElementById('btn-gsheet-confirm').disabled=true; pendingGSheet=[];
-  try{
-    const res=await fetch(csvUrl); if(!res.ok)throw new Error(`HTTP ${res.status}`);
-    const text=await res.text(),parsed=parseStockCSV(text);
-    if(!parsed.length)throw new Error('ไม่พบข้อมูล หรือ Sheet ยังไม่ได้เปิดเป็น Public');
-    pendingGSheet=parsed; setFetchStatus('success',`✅ ดึงสำเร็จ ${parsed.length} รายการ`);
-    renderPreview('gsheet',parsed); document.getElementById('btn-gsheet-confirm').disabled=false;
-  }catch(err){setFetchStatus('error',err.message.includes('fetch')?'❌ ดึงไม่ได้ — ตรวจสอบ Public setting':`❌ ${err.message}`);}
-  finally{document.getElementById('btn-fetch').disabled=false;}
-}
-
-function confirmGSheet(){if(pendingGSheet.length){applyImport(pendingGSheet);closeImport();}}
-
-function openImport(){
-  pendingImport=[];pendingGSheet=[];
-  ['csv-preview','gsheet-preview'].forEach(id=>document.getElementById(id).classList.remove('show'));
-  document.getElementById('btn-csv-confirm').disabled=true; document.getElementById('btn-gsheet-confirm').disabled=true;
-  document.getElementById('import-file-input').value=''; document.getElementById('script-url-input').value=SCRIPT_URL;
-  setFetchStatus(''); document.getElementById('import-overlay').classList.add('show');
-}
-function closeImport(){document.getElementById('import-overlay').classList.remove('show');}
-function closeImportOutside(e){if(e.target===document.getElementById('import-overlay'))closeImport();}
-function dragOver(e){e.preventDefault();document.getElementById('import-drop').classList.add('drag-over');}
-function dragLeave(){document.getElementById('import-drop').classList.remove('drag-over');}
-function dropFile(e){e.preventDefault();dragLeave();if(e.dataTransfer.files[0])parseCSVFile(e.dataTransfer.files[0]);}
-function handleFileSelect(e){if(e.target.files[0])parseCSVFile(e.target.files[0]);}
-
-function parseCSVFile(file){
-  const reader=new FileReader();
-  reader.onload=(e)=>{const parsed=parseStockCSV(e.target.result);if(!parsed.length){showToast('❌ ไม่พบข้อมูล');return;}pendingImport=parsed;renderPreview('csv',parsed);document.getElementById('btn-csv-confirm').disabled=false;};
-  reader.readAsText(file,'UTF-8');
-}
-function confirmImport(){if(pendingImport.length){applyImport(pendingImport);closeImport();}}
-
-function parseStockCSV(raw){
-  const lines=raw.split(/\r?\n/).map(l=>l.trim()).filter(l=>l); if(lines.length<2)return[];
-  const headers=splitCSVRow(lines[0]).map(h=>h.trim().toLowerCase().replace(/^"|"$/g,''));
-  const COL={matcode:findCol(headers,['material']),name:findCol(headers,['material description','description','name']),expected:findCol(headers,['unrestricted','expected','qty']),count:findCol(headers,['count']),remark:findCol(headers,['remark','note','หมายเหตุ'])};
-  const usePos=COL.matcode===-1&&COL.name===-1,startIdx=usePos?(isNaN(parseInt(lines[0].split(',').pop()))?1:0):1;
-  const parsed=[];
-  for(let i=startIdx;i<lines.length;i++){
-    const parts=splitCSVRow(lines[i]).map(p=>p.trim().replace(/^"|"$/g,''));if(parts.length<2)continue;
-    let matcode,name,expected,count,remark;
-    if(usePos){matcode=(parts[0]||'').toUpperCase();name=parts.slice(1,parts.length-1).join(' ').trim()||parts[1]||'';expected=parseInt(parts[parts.length-1]);count=NaN;remark='';}
-    else{matcode=COL.matcode>=0?(parts[COL.matcode]||'').toUpperCase():'';name=COL.name>=0?(parts[COL.name]||''):'';expected=COL.expected>=0?parseInt(parts[COL.expected]||'0'):0;count=COL.count>=0?parseInt(parts[COL.count]||''):NaN;remark=COL.remark>=0?(parts[COL.remark]||''):'';}
-    if(!matcode||!name||isNaN(expected))continue;
-    parsed.push({matcode,name,expected,count:isNaN(count)?null:count,remark});
-  }
-  return parsed;
-}
-
-function findCol(headers,candidates){
-  for(const c of candidates){const idx=headers.indexOf(c);if(idx!==-1)return idx;const p=headers.findIndex(h=>h.includes(c)||c.includes(h));if(p!==-1)return p;}return -1;
-}
-
-function splitCSVRow(line){
-  const result=[];let cur='',inQ=false;
-  for(let i=0;i<line.length;i++){const ch=line[i];if(ch==='"')inQ=!inQ;else if(ch===','&&!inQ){result.push(cur);cur='';}else cur+=ch;}
-  result.push(cur);return result;
-}
-
-function renderPreview(source,parsed){
-  document.getElementById(source+'-count').textContent=parsed.length;
-  document.getElementById(source+'-preview-list').innerHTML=parsed.slice(0,5).map(p=>`<div class="import-preview-item"><div><span class="icode">${escHtml(p.matcode)}</span> ${escHtml(p.name)}</div><span class="iexp">เป้า ${p.expected}${p.count!==null?' · นับ '+p.count:''}</span></div>`).join('')+(parsed.length>5?`<div style="text-align:center;color:var(--muted);font-size:0.75rem;padding:6px">...และอีก ${parsed.length-5} รายการ</div>`:'');
-  document.getElementById(source+'-preview').classList.add('show');
-}
-
-function applyImport(parsed){
-  STOCK_DATA=parsed; counts={}; notes={}; syncStatus={};
-  STOCK_DATA.forEach(item=>{counts[item.matcode]=item.count!==null?item.count:0;notes[item.matcode]=item.remark||'';syncStatus[item.matcode]='';});
-  document.getElementById('header-sub').textContent=`v3.0 · ${STOCK_DATA.length} รายการ`;
-  document.getElementById('last-scan').classList.remove('show');
-  updateProgress(); updateBadge(); renderSummary();
-  showToast(`✅ นำเข้าสำเร็จ ${STOCK_DATA.length} รายการ`);
-}
-
 function renderSummary(){
-  if(!STOCK_DATA.length){['stat-ok','stat-diff','stat-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('item-list').innerHTML=`<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">ยังไม่มีข้อมูลสินค้า</div><div class="es-sub">กดปุ่ม "📥 นำเข้าข้อมูล"</div></div>`;return;}
+  if(!STOCK_DATA.length){['stat-ok','stat-diff','stat-pending'].forEach(id=>document.getElementById(id).textContent=0);document.getElementById('item-list').innerHTML=`<div class="empty-state"><div class="es-icon">📂</div><div class="es-title">ยังไม่มีข้อมูลสินค้า</div><div class="es-sub">กรุณานำเข้าข้อมูลผ่านระบบภายนอก</div></div>`;return;}
   let ok=0,diff=0,pending=0;
   STOCK_DATA.forEach(item=>{const c=counts[item.matcode]||0;if(c===0)pending++;else if(c===item.expected)ok++;else diff++;});
   document.getElementById('stat-ok').textContent=ok; document.getElementById('stat-diff').textContent=diff; document.getElementById('stat-pending').textContent=pending;
@@ -690,14 +455,6 @@ function resetAll(){
   STOCK_DATA.forEach(item=>{counts[item.matcode]=0;notes[item.matcode]='';syncStatus[item.matcode]='';});
   document.getElementById('last-scan').classList.remove('show');
   updateProgress(); updateBadge(); renderSummary(); showToast('🔄 รีเซ็ตเรียบร้อย');
-}
-
-function exportCSV(){
-  if(!STOCK_DATA.length){showToast('⚠️ ไม่มีข้อมูล');return;}
-  const now=new Date(),stamp=`${now.getFullYear()}${String(now.getMonth()+1).padStart(2,'0')}${String(now.getDate()).padStart(2,'0')}_${String(now.getHours()).padStart(2,'0')}${String(now.getMinutes()).padStart(2,'0')}`;
-  const rows=[['Material','Material Description','Unrestricted','Count','Difference','Status','Remark'],...STOCK_DATA.map(item=>{const c=counts[item.matcode]||0,diff=c-item.expected,remark=notes[item.matcode]||'',status=c===0?'ยังไม่นับ':c===item.expected?'ตรง':diff>0?`เกิน ${diff}`:`ขาด ${Math.abs(diff)}`;return[item.matcode,`"${item.name}"`,item.expected,c,diff,status,`"${remark}"`];})];
-  const csv='\uFEFF'+rows.map(r=>r.join(',')).join('\n'),blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');
-  a.href=url;a.download=`stock_count_${stamp}.csv`;a.click();URL.revokeObjectURL(url);showToast('📤 Export เรียบร้อย');
 }
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}

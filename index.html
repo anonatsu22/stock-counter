@@ -692,7 +692,9 @@ function editCount(matcode) {
 }
 
 function showLastScan({ code, item, count, found }) {
-  const el = document.getElementById('last-scan'), body = document.getElementById('last-scan-body'), label = document.getElementById('last-scan-label'); el.classList.add('show');
+  const el = document.getElementById('last-scan'), body = document.getElementById('last-scan-body'), label = document.getElementById('last-scan-label');
+  if (!el || !body || !label) return;
+  el.classList.add('show');
   if(!lastUndoAction || Date.now() - lastUndoAction.time > UNDO_TIME_LIMIT) {
      label.innerHTML = '🔍 สแกนล่าสุด';
   } else {
